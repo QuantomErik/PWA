@@ -1,3 +1,5 @@
+import './components/dock/dock.js'
+
 /**
  * The main script file of the application.
  *
