@@ -28,6 +28,14 @@ const IMG_URLS = [
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
+/* #Window, #dragHandle, #game-board {
+  border: 1px solid red; 
+} */
+
+#resetButton {
+    display: none;
+    /* other styles for the button */
+  }
 
 #exitButton {
       position: absolute;
@@ -44,8 +52,11 @@ template.innerHTML = `
     background-color: #f0f0f0;
     padding: 5px;
     cursor: move;
-    text-align: center;
-  }
+    /* text-align: center; */
+    /* width: 400px;
+    box-sizing: border-box;
+    margin-left: 0px;
+  } */}
 
 #Window {
         position: relative; /* Needed for absolute positioning of the exit button */
@@ -58,7 +69,11 @@ template.innerHTML = `
     max-height: 600px;
     overflow: hidden;
     margin: 20px;
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
+    /* align-items: stretch; */
+    padding: 0;
+   /*  align-items: center; */
+    /* justify-content: center; */
     }
 
     :host {
@@ -68,6 +83,12 @@ template.innerHTML = `
       display: grid;
       grid-template-columns: repeat(4, var(--tile-size));
       gap: 20px;
+      /* width: 100%; */
+      width: 400px; 
+      justify-content: center;
+      align-items: center;
+      /* text-align: center; */
+      /* max-width: 400px; */
     }
     #game-board.small {
       grid-template-columns: repeat(2, var(--tile-size));
@@ -80,18 +101,68 @@ template.innerHTML = `
       border-width: 5px;
       background: url("${IMG_URLS[0]}") no-repeat center/80%, radial-gradient(#fff, #ffd700);;
     }
+
+    #menu {
+      align-items: center;
+      text-align: center;
+    }
+
+   
+
+
   </style>
    <div id="Window">
-  <div id="dragHandle">Drag Me</div>
-  <button id="exitButton">X</button>
- 
-  <template id="tile-template">
+   <div id="dragHandle">Drag Me</div>
+   <button id="exitButton">X</button>
+   <button id="resetButton">New Game</button>
+
+   <div id="menu">
+  <label for="boardSizeSelect">Choose game size:</label>
+  <select id="boardSizeSelect">
+    <option value="4x4">4x4</option>
+    <option value="4x2">4x2</option>
+    <option value="2x2">2x2</option>
+  </select>
+
+   <template id="tile-template">
     <my-flipping-tile>
       <img />
     </my-flipping-tile>
   </template>
   <div id="game-board">
   </div>
+   <!-- <div id="welcomePage"> -->
+   <!--  <h1>Welcome to the Memory Game!</h1> -->
+    <!-- <button id="startGameButton">Start Game</button> -->
+   <!--  <button class="difficultyButton" data-size="2x2">Easy</button>
+    <button class="difficultyButton" data-size="4x2">Medium</button>
+    <button class="difficultyButton" data-size="4x4">Difficult</button>
+  </div> -->
+  </div>
+
+  <!-- <div id="dragHandle">Drag Me</div> -->
+  <!-- <button id="exitButton">X</button> -->
+
+  
+
+  <!-- <div id="menu">
+  <label for="boardSizeSelect">Choose game size:</label>
+  <select id="boardSizeSelect">
+    <option value="4x4">4x4</option>
+    <option value="4x2">4x2</option>
+    <option value="2x2">2x2</option>
+  </select> -->
+  
+</div>
+
+ 
+ <!--  <template id="tile-template">
+    <my-flipping-tile>
+      <img />
+    </my-flipping-tile>
+  </template>
+  <div id="game-board">
+  </div> -->
 `
 
 /*
@@ -136,6 +207,8 @@ customElements.define('memory-game',
        this.isDragging = false
        this.offsetX = 0
        this.offsetY = 0
+
+       this.attempts = 0
      }
 
      handleDragMove(event) {
@@ -278,7 +351,35 @@ customElements.define('memory-game',
     const dragHandle = this.shadowRoot.getElementById('dragHandle')
     dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-    this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
+    this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp()) //change the name
+
+    this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
+
+    this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
+      const selectedSize = event.target.value
+      this.setBoardSize(selectedSize)
+    })
+
+   /*  const difficultyButtons = this.shadowRoot.querySelectorAll('.difficultyButton');
+  difficultyButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      const size = event.target.getAttribute('data-size')
+      this.setBoardSize(size);
+      this.startGame()
+    });
+  }); */
+
+    /* const startGameButton = this.shadowRoot.getElementById('startGameButton');
+  startGameButton.addEventListener('click', () => {
+    this.startGame();
+  }); */
+
+    /* this.shadowRoot.getElementById('startGameButton').addEventListener('click', () => {
+      const selectedSize = this.shadowRoot.getElementById('boardSizeSelect').value;
+      this.setBoardSize(selectedSize);
+      this.resetGame();
+    }); */
+    
      }
 
      
@@ -293,6 +394,8 @@ customElements.define('memory-game',
 
      closeMessageApp() {
       this.remove() // Removes the element from the DOM
+
+      this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.resetGame)
   }
 
      /**
@@ -325,6 +428,8 @@ customElements.define('memory-game',
      * Initializes the game board size and tiles.
      */
     #init () {
+      
+
       const { width, height } = this.#gameBoardSize
 
       const tilesCount = width * height
@@ -353,7 +458,7 @@ customElements.define('memory-game',
       const indexes = [...Array(tilesCount).keys()]
 
       for (let i = indexes.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(Math.random() * (i + 1))
         [indexes[i], indexes[j]] = [indexes[j], indexes[i]]
       }
 
@@ -373,6 +478,16 @@ customElements.define('memory-game',
 
       if (tiles.faceUp.length > 1) {
         tilesToDisable.push(...tiles.faceDown)
+        this.attempts++
+      }
+
+     
+
+      if (tiles.all.every(tile => tile.hidden)) {
+        // existing code...
+        alert(`Game Over! Total Attempts: ${this.attempts}`);
+        this.#init();
+        console.log('game completed')
       }
 
       tilesToDisable.forEach(tile => (tile.setAttribute('disabled', '')))
@@ -405,6 +520,10 @@ customElements.define('memory-game',
               bubbles: true
             }))
 
+            console.log("Tiles:", this.#tiles.all); //debugg
+  console.log("All tiles hidden:", this.#tiles.all.every(tile => tile.hidden)) //debugg
+ 
+            this.gameCompleted()
             this.#init()
           } else {
             tilesToEnable?.forEach(tile => (tile.removeAttribute('disabled')))
@@ -412,5 +531,97 @@ customElements.define('memory-game',
         }, delay)
       }
     }
+
+    resetGame() {
+      
+      this.#gameBoard.style.display = ''
+
+      this.#init();
+      this.attempts = 0;
+      console.log('restart')
+
+   /*    const welcomePage = this.shadowRoot.getElementById('welcomePage') */
+  /* const gameBoard = this.shadowRoot.getElementById('game-board') */
+
+  /* if (gameBoard) {
+    gameBoard.style.display = 'grid'
+  } */
+
+  /* if (welcomePage) {
+    welcomePage.style.display = 'block'
+  } */
+
+      /* this.setBoardSize() */
+
+      const tiles = this.#tiles.all;
+  tiles.forEach(tile => {
+    tile.removeAttribute('face-up');
+    tile.removeAttribute('disabled');
+    tile.removeAttribute('hidden');
+  });
+
+      const resetButton = this.shadowRoot.getElementById('resetButton')
+  if (resetButton) {
+    resetButton.style.display = 'none'
+  }
+    }
+
+    setBoardSize(size) {
+      switch (size) {
+        case '4x4':
+          this.boardSize = 'large'; // Assuming 'large' is for 4x4
+          break;
+        case '4x2':
+          this.boardSize = 'medium'; // Assuming 'medium' is for 4x2
+          break;
+        case '2x2':
+          this.boardSize = 'small'; // Assuming 'small' is for 2x2
+          break;
+        default:
+          this.boardSize = 'large'; // Default size
+      }
+    }
+    
+    gameCompleted() {
+      console.log('gameover')
+      console.log(this.attempts)
+      this.#gameBoard.style.display = 'none'
+      const resetButton = this.shadowRoot.getElementById('resetButton');
+  if (resetButton) {
+    resetButton.style.display = 'inline-block'
+  }
+
+  const gameIsCompleted = document.createElement('game-completed')
+  this.shadowRoot.append(gameIsCompleted)
+
+  
+
+    }
+
+    /* startGame() {
+      const welcomePage = this.shadowRoot.getElementById('welcomePage');
+      const gameBoard = this.shadowRoot.getElementById('game-board');
+      
+      if (welcomePage) {
+        welcomePage.style.display = 'none'
+      }
+    
+      if (gameBoard) {
+        gameBoard.style.display = 'grid'
+      }
+    
+      
+    } */
+
+
+
+
+
+
+
+
+
+
+
   }
 )

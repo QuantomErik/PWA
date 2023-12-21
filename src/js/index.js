@@ -39,6 +39,11 @@ dockElement.addEventListener('start-memory-game', () => {
     // Logic to handle the event
 });
 
+/* dockElement.addEventListener('memory-game:game-over', () => {
+
+console.log('gameOver')
+})
+ */
 
 }
 createDock()

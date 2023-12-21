@@ -73,7 +73,7 @@ template.innerHTML = `
     background-color: #f0f0f0;
     padding: 5px;
     cursor: move;
-    text-align: center;
+    /* text-align: center; */
   }
 
   </style>
@@ -254,7 +254,7 @@ class MessageApp extends HTMLElement {
             this.messageInput.value = ''
             console.log('SendChatMessage')
            
-            };
+            }
 
 
            
