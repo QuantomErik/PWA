@@ -69,12 +69,12 @@ template.innerHTML = `
       color: #333;
     }
 
-    #dragHandle {
+   /*  #dragHandle {
     background-color: #f0f0f0;
     padding: 5px;
     cursor: move;
-    /* text-align: center; */
-  }
+    
+  } */
 
   </style>
   <div id="chatWindow">
@@ -100,9 +100,9 @@ class MessageApp extends HTMLElement {
         this.messageInput = this.shadowRoot.getElementById('messageInput')
         this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
 
-        this.isDragging = false
+       /*  this.isDragging = false
         this.offsetX = 0
-        this.offsetY = 0
+        this.offsetY = 0 */
 
         this.identifier = Date.now().toString()
     }
@@ -129,8 +129,8 @@ class MessageApp extends HTMLElement {
 
         
     })
-    this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
-    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true)
+   /*  this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
+    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true) */
 
     const lastMessages = this.wsService.getMessagesHistory()
     lastMessages.forEach(message => this.displayMessage(message))
@@ -176,7 +176,7 @@ class MessageApp extends HTMLElement {
         
     }
 
-    handleDragMove(event) {
+    /* handleDragMove(event) {
         if (!this.isDragging) return;
     
         // Calculate new position
@@ -199,7 +199,7 @@ class MessageApp extends HTMLElement {
         this.style.position = 'absolute'
         this.style.left = `${newX}px`
         this.style.top = `${newY}px`
-    }
+    } */
     
 
     handleDragStart(event) {
@@ -248,13 +248,13 @@ class MessageApp extends HTMLElement {
 
     sendChatMessage() {
         /* console.log('Active instance:', MessageApp.activeInstance, 'Current instance:', this) */
-        console.log('Attempting to send message. Active instance:', MessageApp.activeInstance, 'Current instance:', this)
+       /*  console.log('Attempting to send message. Active instance:', MessageApp.activeInstance, 'Current instance:', this) */ active
 
-        if (MessageApp.activeInstance !== this) {
-            console.log('Not the active instance. Message not sent.')
-            // This instance is not the active one, do not send the message
+       /*  if (MessageApp.activeInstance !== this) {
+            console.log('Not the active instance. Message not sent.') active
+           
             return;
-        }
+        } */
 
         const messageText = this.messageInput.value.trim()
         if (messageText) {
@@ -262,7 +262,7 @@ class MessageApp extends HTMLElement {
             this.messageInput.value = ''
             console.log('SendChatMessage')
 
-            this.wsService.broadcastMessage(messageText, this.username, 'myChannel')
+            /* this.wsService.broadcastMessage(messageText, this.username, 'myChannel') */
            
             }
 
@@ -286,11 +286,11 @@ class MessageApp extends HTMLElement {
         }
     }
 
-    makeActive() {
+   /*  makeActive() { focus position
         MessageApp.activeInstance = this
         console.log('Active instance set', this)
         this.style.zIndex = 100
-    }
+    } */
 
     /* makeInactive() {
         if (MessageApp.activeInstance === this) {
@@ -298,7 +298,7 @@ class MessageApp extends HTMLElement {
             console.log('Active instance unset', this)
         }
     } */
-    makeInactive() {
+   /*  makeInactive() { focus position
         // This timeout ensures that we check the active element after the blur event completes
         setTimeout(() => {
             if (!this.shadowRoot.activeElement) {
@@ -307,7 +307,7 @@ class MessageApp extends HTMLElement {
                 this.style.zIndex = 1
             }
         });
-    }
+    } */
 
 
 
