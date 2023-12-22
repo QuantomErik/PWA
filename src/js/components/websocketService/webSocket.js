@@ -1,28 +1,30 @@
 // websocketService.js
 export class WebSocketService {
-    /* static instance = null
- */
+    static instance = null
+
     constructor(url) {
 
-       /*  if (WebSocketService.instance) { //Singleton
+        if (WebSocketService.instance) { //Singleton
             return WebSocketService.instance;
-        } */
+        }
 
         this.url = url
-        this.socket = null
-       /*  WebSocketService.instance = this */ //SIngleton
+        /* this.socket = null */
+        /* this.socket = new WebSocket(this.url) */
+        this.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
+        WebSocketService.instance = this //SIngleton
 
         
     }
 
 
 
-   /*  static getInstance(url) { // Singleton
+    static getInstance(url) { // Singleton
         if (!WebSocketService.instance) {
             WebSocketService.instance = new WebSocketService(url);
         }
         return WebSocketService.instance;
-    } */
+    }
 
     addMessageListener(callback) {
         this.messageReceivedCallback = callback
@@ -82,6 +84,20 @@ export class WebSocketService {
             console.error('WebSocket is not connected.')
         }
     }
+/* 
+    subscribers = [];
+
+subscribe(subscriber) {
+    this.subscribers.push(subscriber);
+}
+
+unsubscribe(subscriber) {
+    this.subscribers = this.subscribers.filter(sub => sub !== subscriber);
+}
+
+broadcastMessage(message) {
+    this.subscribers.forEach(sub => sub.receiveMessage(message));
+} */
 
     // Additional methods for handling specific tasks can be added here
 }

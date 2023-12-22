@@ -144,7 +144,8 @@ class MessageApp extends HTMLElement {
    /*  this.messageInput.addEventListener('focus', () => this.makeActive())
     this.messageInput.addEventListener('blur', () => this.makeInactive()) */
 
-    
+    /* this.wsService = WebSocketService.getInstance('wss://your-websocket-url');
+    this.wsService.subscribe(this); */
 
     }
 
@@ -161,11 +162,15 @@ class MessageApp extends HTMLElement {
     window.removeEventListener('mousemove', this.handleDragMove)
     window.removeEventListener('mouseup', this.handleDragEnd)
 
+    /* this.wsService.unsubscribe(this) */
+
     }
     
 
     closeMessageApp() {
         this.remove() // Removes the element from the DOM
+
+        
     }
 
     handleDragMove(event) {
@@ -228,11 +233,11 @@ class MessageApp extends HTMLElement {
     }
 
     initializeWebSocket() {
-        this.wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket')
-        /* this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket') */ //SIngleton
+        /* this.wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket') */
+        this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket') //SIngleton
 
         /* this.wsService.onMessageReceived = (message) => this.displayMessage(message) */
-        this.wsService.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd') // Pass your API key here
+       /*  this.wsService.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd') */ // Pass your API key here
 
         /* this.wsService.addMessageListener((message) => this.displayMessage(message)) */
         
@@ -253,6 +258,8 @@ class MessageApp extends HTMLElement {
             this.wsService.sendMessage(messageText, this.username, 'myChannel')
             this.messageInput.value = ''
             console.log('SendChatMessage')
+
+            this.wsService.broadcastMessage(messageText, this.username, 'myChannel')
            
             }
 
