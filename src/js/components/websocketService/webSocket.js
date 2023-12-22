@@ -9,6 +9,7 @@ export class WebSocketService {
         }
 
         this.url = url
+        /* this.apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
         /* this.socket = null */
         /* this.socket = new WebSocket(this.url) */
         this.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
@@ -17,7 +18,7 @@ export class WebSocketService {
         
     }
 
-
+    messageHistory = []
 
     static getInstance(url) { // Singleton
         if (!WebSocketService.instance) {
@@ -55,12 +56,22 @@ export class WebSocketService {
 
     handleMessage(event) {
         const message = JSON.parse(event.data)
+        
+        this.messageHistory.push(message)
+        if (this.messageHistory.length > 30) {
+            this.messageHistory.shift()
+        }
+
         window.dispatchEvent(new CustomEvent('message-received', { detail: message }))
         if (this.messageReceivedCallback) {
             this.messageReceivedCallback(message)
         }
         /* console.log(message) */
         console.log('handlemessage')
+    }
+
+    getMessagesHistory() {
+        return this.messageHistory
     }
 
     onMessageReceived(callback) {

@@ -132,6 +132,9 @@ class MessageApp extends HTMLElement {
     this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
     this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true)
 
+    const lastMessages = this.wsService.getMessagesHistory()
+    lastMessages.forEach(message => this.displayMessage(message))
+
 
     /* this.addEventListener('click', (event) => {
         // Check if the clicked element is not the exit button
