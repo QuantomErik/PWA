@@ -41,6 +41,13 @@ template.innerHTML = `
     overflow: hidden;
     margin: 20px;
     background-color: #f9f9f9;
+    text-align: center;
+    /* padding: 10px; */
+   /*  padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px; */
+    /* justify-content: center;
+      align-items: center; */
     }
 
     :host {
@@ -52,6 +59,7 @@ template.innerHTML = `
       gap: 20px;
       justify-content: center;
       align-items: center;
+      
     }
     #game-board.small {
       grid-template-columns: repeat(2, var(--tile-size));
@@ -59,19 +67,58 @@ template.innerHTML = `
 
     #exitButton {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      right: 1px;
+      /* margin-top: 1px;
+      margin-bottom: 10px; */
       cursor: pointer;
       border: none;
       background: none;
-      font-size: 20px;
-      color: #333;
+      font-size: 30px;
+      color: white;
+
+
+      
     }
 
     #resetButton {
     display: none;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+	width: 150px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
     /* other styles for the button */
   }
+
+  #completionMessage {
+    text-align: center;
+      color: red;
+      font-size: 24px;
+      /* justify-content: center;
+      align-items: center; */
+
+  }
+
+  #dragHandle {
+    margin-bottom: 5px;
+    background-color: blue;
+    color: transparent;
+    width: 100%;
+    height: 30px;
+    align-items: center; 
+    display: flex; 
+    justify-content: center;
+    
+  }
+
+  #menu {
+    margin-bottom: 5px;
+  }
+  
 
     
 
@@ -85,10 +132,12 @@ template.innerHTML = `
     }
   </style>
   <div id="Window">
-  <div id="dragHandle">Drag Me</div>
-   <button id="exitButton">X</button>
+  <div id="dragHandle">
+  <button id="exitButton">&times;</button>
+  </div>
+   <!-- <button id="exitButton">&times;</button> -->
    <button id="resetButton">New Game</button>
-
+   
    <div id="menu">
   <label for="boardSizeSelect">Choose game size:</label>
   <select id="boardSizeSelect">
@@ -96,6 +145,10 @@ template.innerHTML = `
     <option value="4x2">4x2</option>
     <option value="2x2">2x2</option>
   </select>
+  </div>
+  
+
+  
 
   <template id="tile-template">
     <my-flipping-tile>
@@ -104,6 +157,10 @@ template.innerHTML = `
   </template>
   <div id="game-board">
   </div>
+
+   </div>
+
+     
 `
 
 /*
@@ -244,6 +301,7 @@ customElements.define('memory-game',
        this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
         const selectedSize = event.target.value
         this.setBoardSize(selectedSize)
+        this.resetGame()
       })
 
       this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
@@ -364,20 +422,51 @@ this.style.height = `${this.offsetHeight}px`
         tile.querySelector('img').setAttribute('src', IMG_URLS[indexes[i] % (tilesCount / 2) + 1])
         tile.faceUp = tile.disabled = tile.hidden = false
       })
+
+      const totalBoardWidth = this.#calculateBoardWidth(width)
+      const windowDiv = this.shadowRoot.querySelector('#Window');
+      if (windowDiv) {
+        windowDiv.style.width = `${totalBoardWidth}px`;
+      }
+    }
+
+    #calculateBoardWidth(tilesInRow) {
+      const tileSize = parseInt(getComputedStyle(this).getPropertyValue('--tile-size'), 10)
+      const gapSize = 20 // Assuming a gap of 20px, adjust as necessary
+      return (tilesInRow * tileSize) + ((tilesInRow - 1) * gapSize)
     }
 
     gameCompleted() {
       console.log('gameover')
       console.log(this.attempts)
+
+      this.#displayCompletionMessage(this.attempts)
       this.#gameBoard.style.display = 'none'
       const resetButton = this.shadowRoot.getElementById('resetButton');
   if (resetButton) {
-    resetButton.style.display = 'inline-block'
+    resetButton.style.display = 'block'
   }
 
   /* const gameIsCompleted = document.createElement('game-completed')
   this.shadowRoot.append(gameIsCompleted) */
 
+    }
+
+    #displayCompletionMessage(attempts) {
+      const message = `Congratulations! You completed the game in ${attempts} attempts.`
+      
+      // Create a new element to display the message or use an existing element
+      
+        // If there is no existing element, create a new one
+        const newMessageElement = document.createElement('div')
+        newMessageElement.id = 'completionMessage'
+        newMessageElement.textContent = message
+
+        /* this.shadowRoot.appendChild(newMessageElement) */
+        const windowDiv = this.shadowRoot.querySelector('#Window')
+        windowDiv.appendChild(newMessageElement)
+
+      
     }
 
     resetGame() {
@@ -387,6 +476,13 @@ this.style.height = `${this.offsetHeight}px`
       this.#init()
       this.attempts = 0
       console.log('restart')
+
+      const completionMessage = this.shadowRoot.querySelector('#completionMessage')
+      if (completionMessage) {
+        completionMessage.remove()
+      }
+
+      /* document.querySelector('#completionMessage').remove() */
 
    /*    const welcomePage = this.shadowRoot.getElementById('welcomePage') */
   /* const gameBoard = this.shadowRoot.getElementById('game-board') */

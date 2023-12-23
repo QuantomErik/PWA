@@ -1,4 +1,6 @@
 import WebSocketService from '../websocketService/webSocket.js'
+
+
 /* import { chatState } from '../chatState/chatState.js' */
 
 
@@ -89,6 +91,7 @@ template.innerHTML = `
 customElements.define('message-app',
 
 class MessageApp extends HTMLElement {
+    
     static activeInstance = null
 
     constructor() {
@@ -100,12 +103,17 @@ class MessageApp extends HTMLElement {
         this.messageInput = this.shadowRoot.getElementById('messageInput')
         this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
 
-       /*  this.isDragging = false
+        this.isDragging = false
         this.offsetX = 0
-        this.offsetY = 0 */
+        this.offsetY = 0
 
         this.identifier = Date.now().toString()
+
+        
+
+       
     }
+    
 
     connectedCallback() {
         this.checkAndSetUsername()
@@ -129,11 +137,23 @@ class MessageApp extends HTMLElement {
 
         
     })
-   /*  this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
-    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true) */
+    this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
+    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true)
 
     const lastMessages = this.wsService.getMessagesHistory()
     lastMessages.forEach(message => this.displayMessage(message))
+
+    
+
+        
+
+   
+
+    /* if (clicked) {
+        window.focus();
+      } */
+
+    
 
 
     /* this.addEventListener('click', (event) => {
@@ -152,13 +172,18 @@ class MessageApp extends HTMLElement {
 
     }
 
+   
+
+   
+    
+
     disconnectedCallback() {
         // Remove event listeners to prevent memory leaks
     this.sendMessageButton.removeEventListener('click', this.sendChatMessage)
     // If you have a WebSocket connection, close it here
-    if (this.wsService) {
+    /* if (this.wsService) {
         this.wsService.close()
-    }
+    } */
     this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.closeMessageApp)
     /* this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.sendChatMessage) */
 
@@ -166,6 +191,8 @@ class MessageApp extends HTMLElement {
     window.removeEventListener('mouseup', this.handleDragEnd)
 
     /* this.wsService.unsubscribe(this) */
+
+    
 
     }
     
@@ -248,7 +275,7 @@ class MessageApp extends HTMLElement {
 
     sendChatMessage() {
         /* console.log('Active instance:', MessageApp.activeInstance, 'Current instance:', this) */
-       /*  console.log('Attempting to send message. Active instance:', MessageApp.activeInstance, 'Current instance:', this) */ active
+       /*  console.log('Attempting to send message. Active instance:', MessageApp.activeInstance, 'Current instance:', this) */
 
        /*  if (MessageApp.activeInstance !== this) {
             console.log('Not the active instance. Message not sent.') active
@@ -286,11 +313,15 @@ class MessageApp extends HTMLElement {
         }
     }
 
-   /*  makeActive() { focus position
+  
+
+ 
+
+    makeActive() {
         MessageApp.activeInstance = this
         console.log('Active instance set', this)
         this.style.zIndex = 100
-    } */
+    }
 
     /* makeInactive() {
         if (MessageApp.activeInstance === this) {
@@ -298,16 +329,16 @@ class MessageApp extends HTMLElement {
             console.log('Active instance unset', this)
         }
     } */
-   /*  makeInactive() { focus position
+    makeInactive() {
         // This timeout ensures that we check the active element after the blur event completes
-        setTimeout(() => {
+        /* setTimeout(() => { */
             if (!this.shadowRoot.activeElement) {
                 MessageApp.activeInstance = null
                 console.log('Active instance unset', this)
                 this.style.zIndex = 1
             }
-        });
-    } */
+        /* }) */
+    }
 
 
 
