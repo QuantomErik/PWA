@@ -62,14 +62,30 @@ template.innerHTML = `
 
   #exitButton {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      right: 1px;
+      /* margin-top: 1px;
+      margin-bottom: 10px; */
       cursor: pointer;
       border: none;
       background: none;
-      font-size: 20px;
-      color: #333;
+      font-size: 30px;
+      color: white;
+
+
+      
     }
+
+    #dragHandle {
+    margin-bottom: 5px;
+    background-color: orange;
+    color: transparent;
+    width: 100%;
+    height: 30px;
+    align-items: center; 
+    display: flex; 
+    justify-content: center;
+    
+  }
 
    /*  #dragHandle {
     background-color: #f0f0f0;
@@ -80,8 +96,10 @@ template.innerHTML = `
 
   </style>
   <div id="chatWindow">
-  <div id="dragHandle">Drag Me</div>
-  <button id="exitButton">X</button>
+  <div id="dragHandle">
+  <button id="exitButton">&times;</button>
+  </div>
+  
     <div id="messageContainer"></div>
     <textarea id="messageInput"></textarea>
     <button id="sendMessageButton">Send</button>
@@ -107,7 +125,7 @@ class MessageApp extends HTMLElement {
         this.offsetX = 0
         this.offsetY = 0
 
-        this.identifier = Date.now().toString()
+       /*  this.identifier = Date.now().toString() */
 
         
 

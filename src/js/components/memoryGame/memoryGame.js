@@ -96,8 +96,8 @@ template.innerHTML = `
 
   #completionMessage {
     text-align: center;
-      color: red;
-      font-size: 24px;
+      color: black;
+      font-size: 20px;
       /* justify-content: center;
       align-items: center; */
 
@@ -105,7 +105,7 @@ template.innerHTML = `
 
   #dragHandle {
     margin-bottom: 5px;
-    background-color: blue;
+    background-color: orange;
     color: transparent;
     width: 100%;
     height: 30px;
@@ -167,10 +167,14 @@ template.innerHTML = `
  * Define custom element.
  */
 customElements.define('memory-game',
+
+
   /**
    * Represents a memory game
    */
   class extends HTMLElement {
+
+    
     /**
      * The game board element.
      *
@@ -188,6 +192,9 @@ customElements.define('memory-game',
      /**
       * Creates an instance of the current type.
       */
+
+     #startTime
+
      constructor () {
        super()
 
@@ -203,6 +210,9 @@ customElements.define('memory-game',
        this.#tileTemplate = this.shadowRoot.querySelector('#tile-template')
 
        this.attempts = 0
+       this.#init()
+
+      
      }
 
      /**
@@ -305,6 +315,8 @@ customElements.define('memory-game',
       })
 
       this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
+
+     
      }
 
      setBoardSize(size) {
@@ -379,10 +391,58 @@ this.style.height = `${this.offsetHeight}px`
        }
      }
 
+
+     #handleArrowKey(event, currentIndex, width, height) {
+      let nextIndex = currentIndex
+      const row = Math.floor(currentIndex / width)
+      const col = currentIndex % width
+  
+      switch(event.key) {
+        case 'ArrowUp':
+          if (row > 0) nextIndex -= width
+          break
+        case 'ArrowDown':
+          if (row < height - 1) nextIndex += width;
+          break
+        case 'ArrowLeft':
+          if (col > 0) nextIndex -= 1
+          break
+        case 'ArrowRight':
+          if (col < width - 1) nextIndex += 1
+          break
+        case 'Enter':
+         /*  const currentTile = this.#tiles.all[currentIndex]
+          if (currentTile.hasAttribute('face-up')) {
+            currentTile.removeAttribute('face-up')
+          } else {
+            currentTile.setAttribute('face-up', '')
+          } */
+          
+         /*  const currentTile = this.#tiles.all[currentIndex];
+          if (currentTile.flip) {  // Ensure the flip method exists
+            currentTile.flip();   // Call the flip method
+          } */
+          break
+      }
+  
+      if (nextIndex !== currentIndex) {
+        this.#tiles.all[nextIndex].focus()
+        event.preventDefault()
+      }
+    }
     /**
      * Initializes the game board size and tiles.
      */
     #init () {
+      
+
+      this.#tiles.all.forEach((tile, index) => {
+        
+        tile.tabIndex = 0 // Make the tile focusable
+        tile.addEventListener('keydown', (event) => this.#handleArrowKey(event, index, width, height));
+      })
+
+      this.startTimer()
       const { width, height } = this.#gameBoardSize
 
       const tilesCount = width * height
@@ -440,7 +500,9 @@ this.style.height = `${this.offsetHeight}px`
       console.log('gameover')
       console.log(this.attempts)
 
-      this.#displayCompletionMessage(this.attempts)
+      const elapsedTime = this.getElapsedTime()
+
+      this.#displayCompletionMessage(this.attempts, elapsedTime)
       this.#gameBoard.style.display = 'none'
       const resetButton = this.shadowRoot.getElementById('resetButton');
   if (resetButton) {
@@ -452,21 +514,30 @@ this.style.height = `${this.offsetHeight}px`
 
     }
 
-    #displayCompletionMessage(attempts) {
-      const message = `Congratulations! You completed the game in ${attempts} attempts.`
+    #displayCompletionMessage(attempts, elapsedTime) {
+      const message = `Total attempts: ${attempts}<br> Total time: ${elapsedTime} seconds.`
       
       // Create a new element to display the message or use an existing element
       
-        // If there is no existing element, create a new one
-        const newMessageElement = document.createElement('div')
+       
+       /*  const newMessageElement = document.createElement('div')
         newMessageElement.id = 'completionMessage'
         newMessageElement.textContent = message
 
-        /* this.shadowRoot.appendChild(newMessageElement) */
+        
         const windowDiv = this.shadowRoot.querySelector('#Window')
         windowDiv.appendChild(newMessageElement)
-
+ */
+        let completionMessage = this.shadowRoot.querySelector('#completionMessage');
+        if (!completionMessage) {
+          completionMessage = document.createElement('div')
+          completionMessage.id = 'completionMessage'
+          const windowDiv = this.shadowRoot.querySelector('#Window')
+          windowDiv.appendChild(completionMessage)
+        }
+        completionMessage.innerHTML = message
       
+
     }
 
     resetGame() {
@@ -567,5 +638,18 @@ this.style.height = `${this.offsetHeight}px`
         }, delay)
       }
     }
+
+    startTimer() {
+      this.#startTime = Date.now()
+    }
+
+    getElapsedTime() {
+      const endTime = Date.now()
+      return ((endTime - this.#startTime) / 1000).toFixed(2) // Elapsed time in seconds
+    }
+
+    
+
+
   }
 )

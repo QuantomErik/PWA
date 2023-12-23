@@ -160,6 +160,12 @@ customElements.define('my-flipping-tile',
            this.#flip()
          }
        })
+
+       this.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          this.#flip()
+        }
+      })
      }
 
      /**
