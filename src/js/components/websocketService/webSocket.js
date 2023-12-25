@@ -79,13 +79,14 @@ export class WebSocketService {
         console.log('MessageReceived')
     }
 
-    sendMessage(messageText, username, channel) {
+    sendMessage(messageText, username, channel, senderId) {
         const message = {
             type: 'message',
             data: messageText,
             username: username,
             channel: channel,
-            key: this.apiKey/* 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
+            key: this.apiKey,
+            senderId: senderId/* 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
         }
 
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {

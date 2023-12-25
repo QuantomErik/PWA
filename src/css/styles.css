@@ -1,4 +1,18 @@
 body {
-	background: #ffffff;
+	/* background: white; */
 	overflow: hidden; /* This prevents scrolling */
+	/* background: rgba(231, 230, 229, 0.87); */
 }
+
+html {
+	background-image: url('/js/components/dock/images/yellow.jpg');
+	background-repeat: no-repeat;
+	background-position: center;
+	display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0;
+		width: 100%;
+		background-size: cover;
+		height: 100vh;
+	}

@@ -42,6 +42,16 @@ template.innerHTML = `
     margin: 20px;
     background-color: #f9f9f9;
     text-align: center;
+
+   /*  max-width: none;
+    max-height: none; */
+    /* width: 400px; */
+   /*  height: 400px; */
+    /* overflow: hidden; */
+    /* margin: 20px; */
+    /* background-color: #f9f9f9; */
+   /*  z-index: 1; */
+    /* resize: both; */
     /* padding: 10px; */
    /*  padding-right: 10px;
     padding-left: 10px;
@@ -53,13 +63,14 @@ template.innerHTML = `
     :host {
       --tile-size: 80px;
     }
+
+    
     #game-board {
       display: grid;
       grid-template-columns: repeat(4, var(--tile-size));
       gap: 20px;
       justify-content: center;
       align-items: center;
-      
     }
     #game-board.small {
       grid-template-columns: repeat(2, var(--tile-size));
@@ -317,7 +328,11 @@ customElements.define('memory-game',
       this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
 
      
+
+     
      }
+
+  
 
      setBoardSize(size) {
       switch (size) {

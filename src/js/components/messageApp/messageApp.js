@@ -13,22 +13,30 @@ template.innerHTML = `
         position: relative; /* Needed for absolute positioning of the exit button */
         display: flex;
     flex-direction: column;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    max-height: 600px;
+    max-width: none;
+    max-height: none;
+    width: 380px;
+    height: 440px;
     overflow: hidden;
-    margin: 20px;
+    /* margin: 20px; */
     background-color: #f9f9f9;
-    z-index: 1
+    z-index: 1;
+    resize: both;
+  
+  /* border: 1px solid black; */
     }
     #messageContainer {
         flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
     background-color: #fff;
-    border-bottom: 1px solid #eee;
+    /* border-bottom: 1px solid #eee; */
+    height: 300px;
+    /* background-color: #b0bbe7; */
+    background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     }
 
      /* Styles for individual messages */
@@ -41,19 +49,28 @@ template.innerHTML = `
     word-wrap: break-word;
   }
     #messageInput {
+        flex-grow: 1;
         border: none;
     padding: 10px;
+    background: linear-gradient(to right, #5a5b5b 0%, #2a2b2b 100%);
+    color: #23b82a;
+    font-weight: bold;
     resize: none;
-    border-top: 1px solid #eee;
     }
+
+    #messageInput:focus {
+    outline: none;
+}
+
     #sendMessageButton {
         background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
+    /* height: 40px; */
     }
 
     #sendMessageButton:hover {
@@ -76,8 +93,9 @@ template.innerHTML = `
     }
 
     #dragHandle {
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
     background-color: orange;
+    /* background: linear-gradient(to right, #ffcc80 0%, #ff8c00 20%); */
     color: transparent;
     width: 100%;
     height: 30px;
@@ -86,6 +104,43 @@ template.innerHTML = `
     justify-content: center;
     
   }
+
+  #chatInputContainer {
+    display: flex;
+       /*  padding: 10px; */
+        /* border-top: 1px solid #eee; */
+        /* background-color: #f9f9f9; */
+        height: 40px;
+        background: #2a2b2b;
+    }
+
+    /* #resizer {
+        width: 20px;
+        height: 20px;
+        background-color: grey;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        cursor: nwse-resize;
+    } */
+
+    .message-sent {
+    background-color: #95f08d; 
+    text-align: right;
+    float: left; 
+}
+
+.message-received {
+    background-color: #89d6f5; 
+    text-align: left;
+    float: right; 
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
 
    /*  #dragHandle {
     background-color: #f0f0f0;
@@ -98,11 +153,18 @@ template.innerHTML = `
   <div id="chatWindow">
   <div id="dragHandle">
   <button id="exitButton">&times;</button>
+  <!-- <div id="resizer"></div> -->
   </div>
   
     <div id="messageContainer"></div>
-    <textarea id="messageInput"></textarea>
+
+    <div id="chatInputContainer">
+    
+
+    
+    <textarea id="messageInput" placeholder="Type your message..."></textarea>
     <button id="sendMessageButton">Send</button>
+  </div>
   </div>
 `
 
@@ -110,7 +172,7 @@ customElements.define('message-app',
 
 class MessageApp extends HTMLElement {
     
-    static activeInstance = null
+    /* static activeInstance = null */
 
     constructor() {
         super()
@@ -124,6 +186,8 @@ class MessageApp extends HTMLElement {
         this.isDragging = false
         this.offsetX = 0
         this.offsetY = 0
+
+        this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
 
        /*  this.identifier = Date.now().toString() */
 
@@ -155,11 +219,14 @@ class MessageApp extends HTMLElement {
 
         
     })
-    this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
-    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true)
+    /* this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
+    this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true) */
 
     const lastMessages = this.wsService.getMessagesHistory()
     lastMessages.forEach(message => this.displayMessage(message))
+
+    /* this.resizer = this.shadowRoot.getElementById('resizer')
+        this.resizer.addEventListener('click', (event) => this.quarter(event)) */
 
     
 
@@ -189,6 +256,16 @@ class MessageApp extends HTMLElement {
     this.wsService.subscribe(this); */
 
     }
+
+    /* quarter() {
+
+        const screenAvailWidth = window.screen.availWidth
+        console.log(screenAvailWidth)
+        window.outerHeight = window.screen.availHeight
+        window.resizeTo(window.screen.availWidth / 2, window.screen.availHeight / 2);
+      } */
+
+   
 
    
 
@@ -303,7 +380,7 @@ class MessageApp extends HTMLElement {
 
         const messageText = this.messageInput.value.trim()
         if (messageText) {
-            this.wsService.sendMessage(messageText, this.username, 'myChannel')
+            this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
             this.messageInput.value = ''
             console.log('SendChatMessage')
 
@@ -321,9 +398,21 @@ class MessageApp extends HTMLElement {
         /* if (message.senderId !== this.identifier) */ {
             const messageElement = document.createElement('div')
             messageElement.classList.add('message')
+            
+            if (message.senderId === this.userId) {
+                messageElement.classList.add('message-sent')
+            } else {
+                messageElement.classList.add('message-received')
+            }
+            
             messageElement.textContent = `${message.username}: ${message.data}`
             this.messageContainer.appendChild(messageElement)
             console.log('Sending message')
+
+             // Add clearfix
+    const clearfix = document.createElement('div')
+    clearfix.classList.add('clearfix');
+    this.messageContainer.appendChild(clearfix)
 
     
             // Auto-scroll to the bottom
@@ -331,32 +420,29 @@ class MessageApp extends HTMLElement {
         }
     }
 
+    isMessageSentByUser(message) {
+        return message.username === this.username
+    }
+
   
 
  
 
-    makeActive() {
+   /*  makeActive() {
         MessageApp.activeInstance = this
         console.log('Active instance set', this)
         this.style.zIndex = 100
-    }
-
-    /* makeInactive() {
-        if (MessageApp.activeInstance === this) {
-            MessageApp.activeInstance = null
-            console.log('Active instance unset', this)
-        }
     } */
-    makeInactive() {
-        // This timeout ensures that we check the active element after the blur event completes
-        /* setTimeout(() => { */
+
+    
+   /*  makeInactive() {
             if (!this.shadowRoot.activeElement) {
                 MessageApp.activeInstance = null
                 console.log('Active instance unset', this)
                 this.style.zIndex = 1
             }
-        /* }) */
-    }
+        
+    } */
 
 
 
