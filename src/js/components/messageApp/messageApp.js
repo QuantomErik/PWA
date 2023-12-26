@@ -1,4 +1,5 @@
 import WebSocketService from '../websocketService/webSocket.js'
+import CryptoJS from 'crypto-js'
 
 
 /* import { chatState } from '../chatState/chatState.js' */
@@ -159,6 +160,9 @@ template.innerHTML = `
     <div id="messageContainer"></div>
 
     <div id="chatInputContainer">
+
+    <label for="encryptionToggle">Encrypt Messages:</label>
+    <input type="checkbox" id="encryptionToggle">
     
 
     
@@ -171,6 +175,7 @@ template.innerHTML = `
 customElements.define('message-app',
 
 class MessageApp extends HTMLElement {
+    encryptionEnabled = false
     
     /* static activeInstance = null */
 
@@ -188,6 +193,8 @@ class MessageApp extends HTMLElement {
         this.offsetY = 0
 
         this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
+
+        this.secretKey = "ey222ci"
 
        /*  this.identifier = Date.now().toString() */
 
@@ -224,6 +231,17 @@ class MessageApp extends HTMLElement {
 
     const lastMessages = this.wsService.getMessagesHistory()
     lastMessages.forEach(message => this.displayMessage(message))
+
+    const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
+    encryptionToggle.addEventListener('change', () => {
+        this.encryptionEnabled = encryptionToggle.checked
+        console.log('Going dark..')
+    })
+
+    /* const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle');
+    encryptionToggle.addEventListener('change', () => {
+        this.encryptionEnabled = encryptionToggle.checked;
+    }) */
 
     /* this.resizer = this.shadowRoot.getElementById('resizer')
         this.resizer.addEventListener('click', (event) => this.quarter(event)) */
@@ -369,18 +387,28 @@ class MessageApp extends HTMLElement {
     }
 
     sendChatMessage() {
-        /* console.log('Active instance:', MessageApp.activeInstance, 'Current instance:', this) */
-       /*  console.log('Attempting to send message. Active instance:', MessageApp.activeInstance, 'Current instance:', this) */
-
-       /*  if (MessageApp.activeInstance !== this) {
-            console.log('Not the active instance. Message not sent.') active
-           
-            return;
-        } */
+       
 
         const messageText = this.messageInput.value.trim()
         if (messageText) {
-            this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
+
+            if (this.encryptionEnabled) {
+                /* finalMessage = this.encryptMessage(messageText) */
+            
+            
+            const encryptedMessage = this.encryptMessage(messageText)
+            this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
+            } else {
+                this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
+            }
+
+         
+
+            /* this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId) */
+            console.log(messageText)
+            console.log(this.encryptMessage)
+            
+
             this.messageInput.value = ''
             console.log('SendChatMessage')
 
@@ -396,6 +424,12 @@ class MessageApp extends HTMLElement {
     displayMessage(message) {
         if (message.type === 'message')
         /* if (message.senderId !== this.identifier) */ {
+
+          
+
+            /* const decryptedMessage = this.decryptMessage(message.data) */
+
+
             const messageElement = document.createElement('div')
             messageElement.classList.add('message')
             
@@ -404,8 +438,22 @@ class MessageApp extends HTMLElement {
             } else {
                 messageElement.classList.add('message-received')
             }
+
+
+
+            if (this.encryptionEnabled) {
+                const decryptedMessage = this.decryptMessage(message.data)
+                messageElement.textContent = `${message.username}: ${decryptedMessage}`
+               
+            } else {
+                messageElement.textContent = `${message.username}: ${message.data}`
+            }
             
-            messageElement.textContent = `${message.username}: ${message.data}`
+
+            
+           /*  messageElement.textContent = `${message.username}: ${message.data}` */
+            /* messageElement.textContent = `${message.username}: ${decryptedMessage}` */
+            /* messageElement.textContent = `${message.username}: ${displayText}` */
             this.messageContainer.appendChild(messageElement)
             console.log('Sending message')
 
@@ -422,6 +470,16 @@ class MessageApp extends HTMLElement {
 
     isMessageSentByUser(message) {
         return message.username === this.username
+    }
+
+
+    encryptMessage(message) {
+        return CryptoJS.AES.encrypt(message, this.secretKey).toString()
+    }
+
+    decryptMessage(ciphertext) {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
     }
 
   

@@ -40,7 +40,8 @@ template.innerHTML = `
     max-height: 600px;
     overflow: hidden;
     margin: 20px;
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
+    background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
 
    /*  max-width: none;
@@ -128,10 +129,20 @@ template.innerHTML = `
 
   #menu {
     margin-bottom: 5px;
+    position: absolute;
+  top: 5px;
+  left: 5px;
+  
   }
+
+ /*  #boardSizeSelect {
+    display: none;
+  } */
   
 
-    
+  /* .hidden {
+  display: none;
+} */
 
     my-flipping-tile {
       width: var(--tile-size);
@@ -139,7 +150,7 @@ template.innerHTML = `
     }
     my-flipping-tile::part(tile-back) {
       border-width: 5px;
-      background: url("${IMG_URLS[0]}") no-repeat center/80%, radial-gradient(#fff, #ffd700);;
+      background: url("${IMG_URLS[0]}") no-repeat center/80%, radial-gradient(#fff, #031a8b);;
     }
   </style>
   <div id="Window">
@@ -150,8 +161,8 @@ template.innerHTML = `
    <button id="resetButton">New Game</button>
    
    <div id="menu">
-  <label for="boardSizeSelect">Choose game size:</label>
-  <select id="boardSizeSelect">
+  <!-- <label for="boardSizeSelect"></label> -->
+  <select id="boardSizeSelect" class="hidden">
     <option value="4x4">4x4</option>
     <option value="4x2">4x2</option>
     <option value="2x2">2x2</option>
