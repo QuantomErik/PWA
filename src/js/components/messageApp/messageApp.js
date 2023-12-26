@@ -1,5 +1,7 @@
 import WebSocketService from '../websocketService/webSocket.js'
 import CryptoJS from 'crypto-js'
+const IMG_URL = (new URL('images/open-data.png', import.meta.url)).href
+const IMG_URL2 = (new URL('images/encrypted-data.png', import.meta.url)).href
 
 
 /* import { chatState } from '../chatState/chatState.js' */
@@ -102,7 +104,8 @@ template.innerHTML = `
     height: 30px;
     align-items: center; 
     display: flex; 
-    justify-content: center;
+    /* justify-content: center; */
+    justify-content: space-between;
     
   }
 
@@ -143,6 +146,36 @@ template.innerHTML = `
     display: table;
 }
 
+#encryptionToggle {
+    /* position: absolute; */
+    /* top: 0; */
+    left: 1px;
+    font-size: 30px;
+    display: none
+    /* justify-content: left; */
+   /*  text-align: left; */
+   /*  align-items: left;  */
+}
+
+#encryptionToggleLabel {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    /* background-image: url('js/components/messageApp/images/open-data.png'); */
+    background: url("${IMG_URL}") no-repeat center/50%;
+   /*  element.style.backgroundImage = "url('./images/open-data.png')"; */
+    cursor: pointer;
+    /* Add any additional styling such as margin, alignment, etc. */
+}
+
+#encryptionToggle:checked + #encryptionToggleLabel {
+    display: inline-block;
+    /* background-image: url('js/components/messageApp/images/encrypted-data.png'); */
+    background: url("${IMG_URL2}") no-repeat center/50%;
+    width: 40px;
+    height: 40px;
+}
+
    /*  #dragHandle {
     background-color: #f0f0f0;
     padding: 5px;
@@ -152,7 +185,12 @@ template.innerHTML = `
 
   </style>
   <div id="chatWindow">
+
+  
+
   <div id="dragHandle">
+  <input type="checkbox" id="encryptionToggle">
+  <label for="encryptionToggle" id="encryptionToggleLabel"></label>
   <button id="exitButton">&times;</button>
   <!-- <div id="resizer"></div> -->
   </div>
@@ -161,8 +199,8 @@ template.innerHTML = `
 
     <div id="chatInputContainer">
 
-    <label for="encryptionToggle">Encrypt Messages:</label>
-    <input type="checkbox" id="encryptionToggle">
+    <!-- <label for="encryptionToggle">Encrypt Messages:</label>
+    <input type="checkbox" id="encryptionToggle"> -->
     
 
     
@@ -233,10 +271,16 @@ class MessageApp extends HTMLElement {
     lastMessages.forEach(message => this.displayMessage(message))
 
     const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
+    
     encryptionToggle.addEventListener('change', () => {
         this.encryptionEnabled = encryptionToggle.checked
         console.log('Going dark..')
     })
+
+    /* const encryptionToggleLabel = this.shadowRoot.getElementById('encryptionToggleLabel');
+    if (encryptionToggleLabel) {
+        encryptionToggleLabel.style.backgroundImage = "url('js/components/messageApp/images/open-data.png')";
+    } */
 
     /* const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle');
     encryptionToggle.addEventListener('change', () => {
