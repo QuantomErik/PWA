@@ -1,6 +1,7 @@
 import './components/dock/index.js'
 import './components/messageApp/index.js'
 import './components/memoryGame/index.js'
+import './components/customApp/index.js'
 
 /**
  * The main script file of the application.
@@ -31,6 +32,12 @@ dockElement.addEventListener('start-message-app', () => {
 dockElement.addEventListener('start-memory-game', () => {
     console.log('Starting memoryGame...')
     createWindow('memory-game')
+})
+
+
+dockElement.addEventListener('start-custom-app', () => {
+    console.log('Starting customApp...')
+    createWindow('custom-app')
 })
 
 

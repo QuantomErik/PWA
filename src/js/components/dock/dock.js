@@ -95,6 +95,16 @@ class extends HTMLElement {
 
 
       }
+
+      if (appName === 'customApp') {
+       
+        this.dispatchEvent(new CustomEvent('start-custom-app', {
+          bubbles: true,
+          
+        }))
+
+
+      }
   
       // Handle other apps similarly
     }
