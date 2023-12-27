@@ -113,6 +113,16 @@ template.innerHTML = `
     /* background-size: contain; */
 }
 
+/* #weatherImageContainer {
+    height: 50px;
+    width: 50px;
+} */
+
+#weatherImage {
+    height: 200px;
+    width: 200px;
+}
+
 
 
 </style>
@@ -131,6 +141,16 @@ template.innerHTML = `
    </button>
    </div>
    
+   <div id="weatherImageContainer">
+    <img id="weatherImage" src="" alt="Weather Image">
+</div>
+
+   <div id="weatherInfo">
+    <div id="temperature"></div>
+    <div id="windSpeed"></div>
+    <div id="humidity"></div>
+    <div id="weatherState"></div>
+</div>
    
   </div>
 
@@ -187,20 +207,72 @@ connectedCallback () {
     const dragHandle = this.shadowRoot.getElementById('dragHandle')
     dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-    this.searchButton.addEventListener('click', () => console.log('Search Button'))
+
+
+    this.searchButton.addEventListener('click', () => this.fetchWeather())
 
     /* this.findMcDonaldsButton.addEventListener('click', () => this.findLocations()) */
     /* const mcDonaldsButton = this.shadowRoot.getElementById('mcDonalds')
     mcDonaldsButton.addEventListener('click', () => this.findMcDonalds()) */
 
 }
-findLocations() {
+/* findLocations() {
     console.log('findMcDOnalds function')
     this.fetchLocations(59.3293, 18.0686, 10, 10)
     // Example: Open a new window. You can replace this with your specific logic
-}
+} */
 
-async fetchLocations(latitude, longitude, radius, count) {
+async fetchWeather() {
+
+    console.log('fetching weather')
+
+    const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
+    const searchBox = this.shadowRoot.getElementById('searchBox')
+    const city = searchBox.value
+
+    if (!city) {
+        console.error('No city provided.')
+        return
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${APIkey}`
+
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+
+        this.shadowRoot.getElementById('temperature').textContent = `Temperature: ${data.main.temp}°C`
+        this.shadowRoot.getElementById('windSpeed').textContent = `Wind Speed: ${data.wind.speed} m/s`
+        this.shadowRoot.getElementById('humidity').textContent = `Humidity: ${data.main.humidity}%`
+        this.shadowRoot.getElementById('weatherState').textContent = `Weather: ${data.weather[0].main} (${data.weather[0].description})`
+
+        const weatherStateImages = {
+            snow: 'js/components/customApp/images/snowing.png',
+            clouds: 'js/components/customApp/images/cloud.png',
+            mist: 'js/components/customApp/images/rain-drops.png',
+            haze: 'js/components/customApp/images/cloudy-day.png',
+            clear: 'js/components/customApp/images/sun.png',
+            rain: 'js/components/customApp/images/raining.png',
+            sunny: 'js/components/customApp/images/sun.png'
+        }
+
+        const weatherState = data.weather[0].main.toLowerCase();
+    const weatherImageSrc = weatherStateImages[weatherState];
+    if (weatherImageSrc) {
+        this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc;
+        this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`;
+    } else {
+        console.error('No image found for this weather state:', weatherState);
+    }
+
+        console.log(data)
+    }  catch (error) {
+        console.error('Error fetching weather data:', error)
+    }
+
     /* try {
         
         const response = await fetch('https://api.open-meteo.com/v1/metno?latitude=62&longitude=15&hourly=temperature_2m')
