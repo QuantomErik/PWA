@@ -3,10 +3,7 @@ import CryptoJS from 'crypto-js'
 const IMG_URL = (new URL('images/open-data.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/encrypted-data.png', import.meta.url)).href
 
-
 /* import { chatState } from '../chatState/chatState.js' */
-
-
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -212,111 +209,102 @@ template.innerHTML = `
 
 customElements.define('message-app',
 
-class MessageApp extends HTMLElement {
+  /**
+   *
+   */
+  class MessageApp extends HTMLElement {
     encryptionEnabled = false
-    
+
     /* static activeInstance = null */
 
-    constructor() {
-        super()
-        this.attachShadow({ mode: 'open' })
-        this.shadowRoot.appendChild(template.content.cloneNode(true))
+    /**
+     *
+     */
+    constructor () {
+      super()
+      this.attachShadow({ mode: 'open' })
+      this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-        this.messageContainer = this.shadowRoot.getElementById('messageContainer')
-        this.messageInput = this.shadowRoot.getElementById('messageInput')
-        this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
+      this.messageContainer = this.shadowRoot.getElementById('messageContainer')
+      this.messageInput = this.shadowRoot.getElementById('messageInput')
+      this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
 
-        this.isDragging = false
-        this.offsetX = 0
-        this.offsetY = 0
+      this.isDragging = false
+      this.offsetX = 0
+      this.offsetY = 0
 
-        this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
+      this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
 
-        this.secretKey = "ey222ci"
+      this.secretKey = 'ey222ci'
 
-       /*  this.identifier = Date.now().toString() */
-
-        
-
-       
+      /*  this.identifier = Date.now().toString() */
     }
-    
 
-    connectedCallback() {
-        this.checkAndSetUsername()
-        this.initializeWebSocket()
-        this.sendMessageButton.addEventListener('click', () => this.sendChatMessage())
-        this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
+    /**
+     *
+     */
+    connectedCallback () {
+      this.checkAndSetUsername()
+      this.initializeWebSocket()
+      this.sendMessageButton.addEventListener('click', () => this.sendChatMessage())
+      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
 
-         // Add drag event listeners
-    /* const chatWindow = this.shadowRoot.getElementById('chatWindow') */
-    /* chatWindow.addEventListener('mousedown', (event) => this.handleDragStart(event)) */
-    window.addEventListener('mousemove', (event) => this.handleDragMove(event))
-    window.addEventListener('mouseup', () => this.handleDragEnd())
+      // Add drag event listeners
+      /* const chatWindow = this.shadowRoot.getElementById('chatWindow') */
+      /* chatWindow.addEventListener('mousedown', (event) => this.handleDragStart(event)) */
+      window.addEventListener('mousemove', (event) => this.handleDragMove(event))
+      window.addEventListener('mouseup', () => this.handleDragEnd())
 
-    const dragHandle = this.shadowRoot.getElementById('dragHandle')
-    dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
+      const dragHandle = this.shadowRoot.getElementById('dragHandle')
+      dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-    window.addEventListener('message-received', (event) => {
-        this.displayMessage(event.detail);
+      window.addEventListener('message-received', (event) => {
+        this.displayMessage(event.detail)
         console.log('Answering from server..')
         console.log(event.detail)
-
-        
-    })
-    /* this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
+      })
+      /* this.shadowRoot.addEventListener('focus', () => this.makeActive(), true)
     this.shadowRoot.addEventListener('blur', () => this.makeInactive(), true) */
 
-    const lastMessages = this.wsService.getMessagesHistory()
-    lastMessages.forEach(message => this.displayMessage(message))
+      const lastMessages = this.wsService.getMessagesHistory()
+      lastMessages.forEach(message => this.displayMessage(message))
 
-    const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
-    
-    encryptionToggle.addEventListener('change', () => {
+      const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
+
+      encryptionToggle.addEventListener('change', () => {
         this.encryptionEnabled = encryptionToggle.checked
         console.log('Going dark..')
-    })
+      })
 
-    /* const encryptionToggleLabel = this.shadowRoot.getElementById('encryptionToggleLabel');
+      /* const encryptionToggleLabel = this.shadowRoot.getElementById('encryptionToggleLabel');
     if (encryptionToggleLabel) {
         encryptionToggleLabel.style.backgroundImage = "url('js/components/messageApp/images/open-data.png')";
     } */
 
-    /* const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle');
+      /* const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle');
     encryptionToggle.addEventListener('change', () => {
         this.encryptionEnabled = encryptionToggle.checked;
     }) */
 
-    /* this.resizer = this.shadowRoot.getElementById('resizer')
+      /* this.resizer = this.shadowRoot.getElementById('resizer')
         this.resizer.addEventListener('click', (event) => this.quarter(event)) */
 
-    
-
-        
-
-   
-
-    /* if (clicked) {
+      /* if (clicked) {
         window.focus();
       } */
 
-    
-
-
-    /* this.addEventListener('click', (event) => {
+      /* this.addEventListener('click', (event) => {
         // Check if the clicked element is not the exit button
         if (event.target.id !== 'exitButton') {
             this.makeActive()
         }
     }); */
 
-    
-   /*  this.messageInput.addEventListener('focus', () => this.makeActive())
+      /*  this.messageInput.addEventListener('focus', () => this.makeActive())
     this.messageInput.addEventListener('blur', () => this.makeInactive()) */
 
-    /* this.wsService = WebSocketService.getInstance('wss://your-websocket-url');
+      /* this.wsService = WebSocketService.getInstance('wss://your-websocket-url');
     this.wsService.subscribe(this); */
-
     }
 
     /* quarter() {
@@ -327,293 +315,235 @@ class MessageApp extends HTMLElement {
         window.resizeTo(window.screen.availWidth / 2, window.screen.availHeight / 2);
       } */
 
-   
-
-   
-
-   
-    
-
-    disconnectedCallback() {
-        // Remove event listeners to prevent memory leaks
-    this.sendMessageButton.removeEventListener('click', this.sendChatMessage)
-    // If you have a WebSocket connection, close it here
-    /* if (this.wsService) {
+    /**
+     *
+     */
+    disconnectedCallback () {
+      // Remove event listeners to prevent memory leaks
+      this.sendMessageButton.removeEventListener('click', this.sendChatMessage)
+      // If you have a WebSocket connection, close it here
+      /* if (this.wsService) {
         this.wsService.close()
     } */
-    this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.closeMessageApp)
-    /* this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.sendChatMessage) */
+      this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.closeMessageApp)
+      /* this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.sendChatMessage) */
 
-    window.removeEventListener('mousemove', this.handleDragMove)
-    window.removeEventListener('mouseup', this.handleDragEnd)
+      window.removeEventListener('mousemove', this.handleDragMove)
+      window.removeEventListener('mouseup', this.handleDragEnd)
 
-    /* this.wsService.unsubscribe(this) */
-
-    
-
+      /* this.wsService.unsubscribe(this) */
     }
-    
 
-    closeMessageApp() {
-        this.remove() // Removes the element from the DOM
-
-        
+    /**
+     *
+     */
+    closeMessageApp () {
+      this.remove() // Removes the element from the DOM
     }
 
     /* handleDragMove(event) {
         if (!this.isDragging) return;
-    
+
         // Calculate new position
         let newX = event.clientX - this.offsetX
         let newY = event.clientY - this.offsetY
-    
+
         // Get window dimensions
         const windowWidth = window.innerWidth
         const windowHeight = window.innerHeight
-    
+
         // Get dimensions of the element
         const elementWidth = this.offsetWidth
         const elementHeight = this.offsetHeight
-    
+
         // Boundary checks
         newX = Math.min(windowWidth - elementWidth, Math.max(0, newX))
         newY = Math.min(windowHeight - elementHeight, Math.max(0, newY))
-    
+
         // Set new position
         this.style.position = 'absolute'
         this.style.left = `${newX}px`
         this.style.top = `${newY}px`
     } */
-    
 
-    handleDragStart(event) {
-        this.isDragging = true
-        this.offsetX = event.clientX - this.getBoundingClientRect().left
-        this.offsetY = event.clientY - this.getBoundingClientRect().top
+    /**
+     *
+     * @param event
+     */
+    handleDragStart (event) {
+      this.isDragging = true
+      this.offsetX = event.clientX - this.getBoundingClientRect().left
+      this.offsetY = event.clientY - this.getBoundingClientRect().top
 
-        // Set width and height explicitly
-    this.style.width = `${this.offsetWidth}px`
-    this.style.height = `${this.offsetHeight}px`
-        event.preventDefault()
+      // Set width and height explicitly
+      this.style.width = `${this.offsetWidth}px`
+      this.style.height = `${this.offsetHeight}px`
+      event.preventDefault()
     }
 
-    handleDragMove(event) {
-        if (!this.isDragging) return
-        this.style.position = 'absolute'
-        this.style.left = `${event.clientX - this.offsetX}px`
-        this.style.top = `${event.clientY - this.offsetY}px`
+    /**
+     *
+     * @param event
+     */
+    handleDragMove (event) {
+      if (!this.isDragging) return
+      this.style.position = 'absolute'
+      this.style.left = `${event.clientX - this.offsetX}px`
+      this.style.top = `${event.clientY - this.offsetY}px`
     }
 
-    handleDragEnd() {
-        this.isDragging = false;
+    /**
+     *
+     */
+    handleDragEnd () {
+      this.isDragging = false
     }
 
-    checkAndSetUsername() {
-        let username = localStorage.getItem('username')
-        if (!username) {
-            username = prompt('Please enter your username:')
-            if (username) {
-                localStorage.setItem('username', username)
-            }
+    /**
+     *
+     */
+    checkAndSetUsername () {
+      let username = localStorage.getItem('username')
+      if (!username) {
+        username = prompt('Please enter your username:')
+        if (username) {
+          localStorage.setItem('username', username)
         }
-        this.username = username;
+      }
+      this.username = username
     }
 
-    initializeWebSocket() {
-        /* this.wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket') */
-        this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket') //SIngleton
+    /**
+     *
+     */
+    initializeWebSocket () {
+      /* this.wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket') */
+      this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket') // SIngleton
 
-        /* this.wsService.onMessageReceived = (message) => this.displayMessage(message) */
-       /*  this.wsService.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd') */ // Pass your API key here
+      /* this.wsService.onMessageReceived = (message) => this.displayMessage(message) */
+      /*  this.wsService.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd') */ // Pass your API key here
 
-        /* this.wsService.addMessageListener((message) => this.displayMessage(message)) */
-        
+      /* this.wsService.addMessageListener((message) => this.displayMessage(message)) */
     }
 
-    sendChatMessage() {
-       
+    /**
+     *
+     */
+    sendChatMessage () {
+      const messageText = this.messageInput.value.trim()
+      if (messageText) {
+        if (this.encryptionEnabled) {
+          /* finalMessage = this.encryptMessage(messageText) */
 
-        const messageText = this.messageInput.value.trim()
-        if (messageText) {
-
-            if (this.encryptionEnabled) {
-                /* finalMessage = this.encryptMessage(messageText) */
-            
-            
-            const encryptedMessage = this.encryptMessage(messageText)
-            this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
-            } else {
-                this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
-            }
-
-         
-
-            /* this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId) */
-            console.log(messageText)
-            console.log(this.encryptMessage)
-            
-
-            this.messageInput.value = ''
-            console.log('SendChatMessage')
-
-            /* this.wsService.broadcastMessage(messageText, this.username, 'myChannel') */
-           
-            }
-
-
-           
+          const encryptedMessage = this.encryptMessage(messageText)
+          this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
+        } else {
+          this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
         }
-    
 
-    displayMessage(message) {
-        if (message.type === 'message')
-        /* if (message.senderId !== this.identifier) */ {
+        /* this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId) */
+        console.log(messageText)
+        console.log(this.encryptMessage)
 
-          
+        this.messageInput.value = ''
+        console.log('SendChatMessage')
 
-            /* const decryptedMessage = this.decryptMessage(message.data) */
+        /* this.wsService.broadcastMessage(messageText, this.username, 'myChannel') */
+      }
+    }
 
+    /**
+     *
+     * @param message
+     */
+    displayMessage (message) {
+      if (message.type === 'message')
+      /* if (message.senderId !== this.identifier) */ {
+        /* const decryptedMessage = this.decryptMessage(message.data) */
 
-            const messageElement = document.createElement('div')
-            messageElement.classList.add('message')
-            
-            if (message.senderId === this.userId) {
-                messageElement.classList.add('message-sent')
-            } else {
-                messageElement.classList.add('message-received')
-            }
+        const messageElement = document.createElement('div')
+        messageElement.classList.add('message')
 
-
-
-            if (this.encryptionEnabled) {
-                const decryptedMessage = this.decryptMessage(message.data)
-                messageElement.textContent = `${message.username}: ${decryptedMessage}`
-               
-            } else {
-                messageElement.textContent = `${message.username}: ${message.data}`
-            }
-            
-
-            
-           /*  messageElement.textContent = `${message.username}: ${message.data}` */
-            /* messageElement.textContent = `${message.username}: ${decryptedMessage}` */
-            /* messageElement.textContent = `${message.username}: ${displayText}` */
-            this.messageContainer.appendChild(messageElement)
-            console.log('Sending message')
-
-             // Add clearfix
-    const clearfix = document.createElement('div')
-    clearfix.classList.add('clearfix');
-    this.messageContainer.appendChild(clearfix)
-
-    
-            // Auto-scroll to the bottom
-            this.messageContainer.scrollTop = this.messageContainer.scrollHeight
+        if (message.senderId === this.userId) {
+          messageElement.classList.add('message-sent')
+        } else {
+          messageElement.classList.add('message-received')
         }
+
+        if (this.encryptionEnabled) {
+          const decryptedMessage = this.decryptMessage(message.data)
+          messageElement.textContent = `${message.username}: ${decryptedMessage}`
+        } else {
+          messageElement.textContent = `${message.username}: ${message.data}`
+        }
+
+        /*  messageElement.textContent = `${message.username}: ${message.data}` */
+        /* messageElement.textContent = `${message.username}: ${decryptedMessage}` */
+        /* messageElement.textContent = `${message.username}: ${displayText}` */
+        this.messageContainer.appendChild(messageElement)
+        console.log('Sending message')
+
+        // Add clearfix
+        const clearfix = document.createElement('div')
+        clearfix.classList.add('clearfix')
+        this.messageContainer.appendChild(clearfix)
+
+        // Auto-scroll to the bottom
+        this.messageContainer.scrollTop = this.messageContainer.scrollHeight
+      }
     }
 
-    isMessageSentByUser(message) {
-        return message.username === this.username
+    /**
+     *
+     * @param message
+     */
+    isMessageSentByUser (message) {
+      return message.username === this.username
     }
 
-
-    encryptMessage(message) {
-        return CryptoJS.AES.encrypt(message, this.secretKey).toString()
+    /**
+     *
+     * @param message
+     */
+    encryptMessage (message) {
+      return CryptoJS.AES.encrypt(message, this.secretKey).toString()
     }
 
-    decryptMessage(ciphertext) {
-        const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey);
-        return bytes.toString(CryptoJS.enc.Utf8);
+    /**
+     *
+     * @param ciphertext
+     */
+    decryptMessage (ciphertext) {
+      const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey)
+      return bytes.toString(CryptoJS.enc.Utf8)
     }
 
-  
-
- 
-
-   /*  makeActive() {
+    /*  makeActive() {
         MessageApp.activeInstance = this
         console.log('Active instance set', this)
         this.style.zIndex = 100
     } */
 
-    
-   /*  makeInactive() {
+    /*  makeInactive() {
             if (!this.shadowRoot.activeElement) {
                 MessageApp.activeInstance = null
                 console.log('Active instance unset', this)
                 this.style.zIndex = 1
             }
-        
+
     } */
-
-
-
-}
-
+  }
 
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* const wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket')
-const apiKey = 'your-api-key' 
+const apiKey = 'your-api-key'
 wsService.connect(apiKey)
-
 
 wsService.sendMessage('Hello!', 'MyUsername', 'myChannel') */
 
 // Add logic to handle incoming messages
 // For example, you could subscribe to certain events emitted by the WebSocketService
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* const socket = new WebSocket('wss://courselab.lnu.se/message-app/socket')
 
@@ -654,4 +584,3 @@ function sendMessage(messageText) {
 
     socket.send(JSON.stringify(message))
 } */
-

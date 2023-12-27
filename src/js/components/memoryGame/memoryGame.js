@@ -1,6 +1,5 @@
 import '../my-flipping-tile'
 
-
 /*
  * Get image URLs.
  */
@@ -19,9 +18,9 @@ const IMG_URLS = [
   new URL('./images/5.png', import.meta.url).href,
   new URL('./images/6.png', import.meta.url).href,
   new URL('./images/7.png', import.meta.url).href,
-  new URL('./images/8.png', import.meta.url).href,
+  new URL('./images/8.png', import.meta.url).href
   // ... repeat for all images
-];
+]
 /*
  * Define template.
  */
@@ -190,13 +189,10 @@ template.innerHTML = `
  */
 customElements.define('memory-game',
 
-
   /**
    * Represents a memory game
    */
   class extends HTMLElement {
-
-    
     /**
      * The game board element.
      *
@@ -209,200 +205,211 @@ customElements.define('memory-game',
      *
      * @type {HTMLTemplateElement}
      */
-     #tileTemplate
+    #tileTemplate
 
-     /**
-      * Creates an instance of the current type.
-      */
+    /**
+     * Creates an instance of the current type.
+     */
 
-     #startTime
+    #startTime
 
-     constructor () {
-       super()
+    /**
+     *
+     */
+    constructor () {
+      super()
 
-       // Attach a shadow DOM tree to this element and
-       // append the template to the shadow root.
-       this.attachShadow({ mode: 'open' })
-         .appendChild(template.content.cloneNode(true))
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
+      this.attachShadow({ mode: 'open' })
+        .appendChild(template.content.cloneNode(true))
 
-       // Get the game board element in the shadow root.
-       this.#gameBoard = this.shadowRoot.querySelector('#game-board')
+      // Get the game board element in the shadow root.
+      this.#gameBoard = this.shadowRoot.querySelector('#game-board')
 
-       // Get the tile template element in the shadow root.
-       this.#tileTemplate = this.shadowRoot.querySelector('#tile-template')
+      // Get the tile template element in the shadow root.
+      this.#tileTemplate = this.shadowRoot.querySelector('#tile-template')
 
-       this.attempts = 0
-       this.#init()
+      this.attempts = 0
+      this.#init()
+    }
 
-      
-     }
+    /**
+     * Gets the board size.
+     *
+     * @returns {string} The size of the game board.
+     */
+    get boardSize () {
+      return this.getAttribute('boardsize')
+    }
 
-     /**
-      * Gets the board size.
-      *
-      * @returns {string} The size of the game board.
-      */
-     get boardSize () {
-       return this.getAttribute('boardsize')
-     }
+    /**
+     * Sets the board size.
+     *
+     * @param {string} value - The size of the game board.
+     */
+    set boardSize (value) {
+      this.setAttribute('boardsize', value)
+    }
 
-     /**
-      * Sets the board size.
-      *
-      * @param {string} value - The size of the game board.
-      */
-     set boardSize (value) {
-       this.setAttribute('boardsize', value)
-     }
+    /**
+     * Attributes to monitor for changes.
+     *
+     * @returns {string[]} A string array of attributes to monitor.
+     */
+    static get observedAttributes () {
+      return ['boardsize']
+    }
 
-     /**
-      * Attributes to monitor for changes.
-      *
-      * @returns {string[]} A string array of attributes to monitor.
-      */
-     static get observedAttributes () {
-       return ['boardsize']
-     }
+    /**
+     * Get the game board size dimensions.
+     *
+     * @returns {object} The width and height of the game board.
+     */
+    get #gameBoardSize () {
+      const gameBoardSize = {
+        width: 4,
+        height: 4
+      }
 
-     /**
-      * Get the game board size dimensions.
-      *
-      * @returns {object} The width and height of the game board.
-      */
-     get #gameBoardSize () {
-       const gameBoardSize = {
-         width: 4,
-         height: 4
-       }
+      switch (this.boardSize) {
+        case 'small' : {
+          gameBoardSize.width = gameBoardSize.height = 2
+          break
+        }
 
-       switch (this.boardSize) {
-         case 'small' : {
-           gameBoardSize.width = gameBoardSize.height = 2
-           break
-         }
+        case 'medium' : {
+          gameBoardSize.height = 2
+          break
+        }
+      }
 
-         case 'medium' : {
-           gameBoardSize.height = 2
-           break
-         }
-       }
+      return gameBoardSize
+    }
 
-       return gameBoardSize
-     }
+    /**
+     * Get all tiles.
+     *
+     * @returns {object} An object containing grouped tiles.
+     */
+    get #tiles () {
+      const tiles = Array.from(this.#gameBoard.children)
+      return {
+        all: tiles,
+        faceUp: tiles.filter(tile => tile.hasAttribute('face-up') && !tile.hasAttribute('hidden')),
+        faceDown: tiles.filter(tile => !tile.hasAttribute('face-up') && !tile.hasAttribute('hidden')),
+        hidden: tiles.filter(tile => tile.hasAttribute('hidden'))
+      }
+    }
 
-     /**
-      * Get all tiles.
-      *
-      * @returns {object} An object containing grouped tiles.
-      */
-     get #tiles () {
-       const tiles = Array.from(this.#gameBoard.children)
-       return {
-         all: tiles,
-         faceUp: tiles.filter(tile => tile.hasAttribute('face-up') && !tile.hasAttribute('hidden')),
-         faceDown: tiles.filter(tile => !tile.hasAttribute('face-up') && !tile.hasAttribute('hidden')),
-         hidden: tiles.filter(tile => tile.hasAttribute('hidden'))
-       }
-     }
+    /**
+     * Called after the element is inserted into the DOM.
+     */
+    connectedCallback () {
+      if (!this.hasAttribute('boardsize')) {
+        this.setAttribute('boardsize', 'large')
+      }
 
-     /**
-      * Called after the element is inserted into the DOM.
-      */
-     connectedCallback () {
-       if (!this.hasAttribute('boardsize')) {
-         this.setAttribute('boardsize', 'large')
-       }
+      this.#upgradeProperty('boardsize')
 
-       this.#upgradeProperty('boardsize')
+      this.#gameBoard.addEventListener('my-flipping-tile:flip', () => this.#onTileFlip())
+      this.addEventListener('dragstart', (event) => {
+        // Disable element dragging.
+        event.preventDefault()
+        event.stopPropagation()
+      })
 
-       this.#gameBoard.addEventListener('my-flipping-tile:flip', () => this.#onTileFlip())
-       this.addEventListener('dragstart', (event) => {
-         // Disable element dragging.
-         event.preventDefault()
-         event.stopPropagation()
-       })
+      window.addEventListener('mousemove', (event) => this.handleDragMove(event))
+      window.addEventListener('mouseup', () => this.handleDragEnd())
 
-       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
-       window.addEventListener('mouseup', () => this.handleDragEnd())
-   
-       const dragHandle = this.shadowRoot.getElementById('dragHandle')
-       dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
-   
-       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp()) //change the name
+      const dragHandle = this.shadowRoot.getElementById('dragHandle')
+      dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-       this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
+      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp()) // change the name
+
+      this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
         const selectedSize = event.target.value
         this.setBoardSize(selectedSize)
         this.resetGame()
       })
 
       this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
+    }
 
-     
-
-     
-     }
-
-  
-
-     setBoardSize(size) {
+    /**
+     *
+     * @param size
+     */
+    setBoardSize (size) {
       switch (size) {
         case '4x4':
-          this.boardSize = 'large';
-          break;
+          this.boardSize = 'large'
+          break
         case '4x2':
           this.boardSize = 'medium'
-          break;
+          break
         case '2x2':
           this.boardSize = 'small'
-          break;
+          break
         default:
           this.boardSize = 'large'
       }
     }
 
-     closeMessageApp() {
+    /**
+     *
+     */
+    closeMessageApp () {
       this.remove() // Removes the element from the DOM
 
       this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.resetGame)
-  }
+    }
 
-  handleDragMove(event) {
-    if (!this.isDragging) return
-    this.style.position = 'absolute'
-    this.style.left = `${event.clientX - this.offsetX}px`
-    this.style.top = `${event.clientY - this.offsetY}px`
-}
+    /**
+     *
+     * @param event
+     */
+    handleDragMove (event) {
+      if (!this.isDragging) return
+      this.style.position = 'absolute'
+      this.style.left = `${event.clientX - this.offsetX}px`
+      this.style.top = `${event.clientY - this.offsetY}px`
+    }
 
-handleDragEnd() {
-  this.isDragging = false;
-}
+    /**
+     *
+     */
+    handleDragEnd () {
+      this.isDragging = false
+    }
 
-handleDragStart(event) {
-  this.isDragging = true
-  this.offsetX = event.clientX - this.getBoundingClientRect().left
-  this.offsetY = event.clientY - this.getBoundingClientRect().top
+    /**
+     *
+     * @param event
+     */
+    handleDragStart (event) {
+      this.isDragging = true
+      this.offsetX = event.clientX - this.getBoundingClientRect().left
+      this.offsetY = event.clientY - this.getBoundingClientRect().top
 
-  // Set width and height explicitly
-this.style.width = `${this.offsetWidth}px`
-this.style.height = `${this.offsetHeight}px`
-  event.preventDefault()
-}
+      // Set width and height explicitly
+      this.style.width = `${this.offsetWidth}px`
+      this.style.height = `${this.offsetHeight}px`
+      event.preventDefault()
+    }
 
-
-
-     /**
-      * Called when observed attribute(s) changes.
-      *
-      * @param {string} name - The attribute's name.
-      * @param {*} oldValue - The old value.
-      * @param {*} newValue - The new value.
-      */
-     attributeChangedCallback (name, oldValue, newValue) {
-       if (name === 'boardsize') {
-         this.#init()
-       }
-     }
+    /**
+     * Called when observed attribute(s) changes.
+     *
+     * @param {string} name - The attribute's name.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     */
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'boardsize') {
+        this.#init()
+      }
+    }
 
     /**
      * Run the specified instance property through the class setter.
@@ -410,25 +417,31 @@ this.style.height = `${this.offsetHeight}px`
      * @param {string} prop - The property's name.
      */
     #upgradeProperty (prop) {
-       if (Object.hasOwnProperty.call(this, prop)) {
-         const value = this[prop]
-         delete this[prop]
-         this[prop] = value
-       }
-     }
+      if (Object.hasOwnProperty.call(this, prop)) {
+        const value = this[prop]
+        delete this[prop]
+        this[prop] = value
+      }
+    }
 
-
-     #handleArrowKey(event, currentIndex, width, height) {
+    /**
+     *
+     * @param event
+     * @param currentIndex
+     * @param width
+     * @param height
+     */
+    #handleArrowKey (event, currentIndex, width, height) {
       let nextIndex = currentIndex
       const row = Math.floor(currentIndex / width)
       const col = currentIndex % width
-  
-      switch(event.key) {
+
+      switch (event.key) {
         case 'ArrowUp':
           if (row > 0) nextIndex -= width
           break
         case 'ArrowDown':
-          if (row < height - 1) nextIndex += width;
+          if (row < height - 1) nextIndex += width
           break
         case 'ArrowLeft':
           if (col > 0) nextIndex -= 1
@@ -437,35 +450,33 @@ this.style.height = `${this.offsetHeight}px`
           if (col < width - 1) nextIndex += 1
           break
         case 'Enter':
-         /*  const currentTile = this.#tiles.all[currentIndex]
+          /*  const currentTile = this.#tiles.all[currentIndex]
           if (currentTile.hasAttribute('face-up')) {
             currentTile.removeAttribute('face-up')
           } else {
             currentTile.setAttribute('face-up', '')
           } */
-          
-         /*  const currentTile = this.#tiles.all[currentIndex];
+
+          /*  const currentTile = this.#tiles.all[currentIndex];
           if (currentTile.flip) {  // Ensure the flip method exists
             currentTile.flip();   // Call the flip method
           } */
           break
       }
-  
+
       if (nextIndex !== currentIndex) {
         this.#tiles.all[nextIndex].focus()
         event.preventDefault()
       }
     }
+
     /**
      * Initializes the game board size and tiles.
      */
     #init () {
-      
-
       this.#tiles.all.forEach((tile, index) => {
-        
         tile.tabIndex = 0 // Make the tile focusable
-        tile.addEventListener('keydown', (event) => this.#handleArrowKey(event, index, width, height));
+        tile.addEventListener('keydown', (event) => this.#handleArrowKey(event, index, width, height))
       })
 
       this.startTimer()
@@ -496,13 +507,13 @@ this.style.height = `${this.offsetHeight}px`
       // and then shuffle the sequence.
       const indexes = [...Array(tilesCount).keys()]
 
-      console.log("Indexes before shuffle:", indexes)
+      console.log('Indexes before shuffle:', indexes)
 
       for (let i = indexes.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [indexes[i], indexes[j]] = [indexes[j], indexes[i]]
       }
-      console.log("Indexes after shuffle:", indexes)
+      console.log('Indexes after shuffle:', indexes)
       // Set the tiles' images.
       this.#tiles.all.forEach((tile, i) => {
         tile.querySelector('img').setAttribute('src', IMG_URLS[indexes[i] % (tilesCount / 2) + 1])
@@ -510,19 +521,26 @@ this.style.height = `${this.offsetHeight}px`
       })
 
       const totalBoardWidth = this.#calculateBoardWidth(width)
-      const windowDiv = this.shadowRoot.querySelector('#Window');
+      const windowDiv = this.shadowRoot.querySelector('#Window')
       if (windowDiv) {
-        windowDiv.style.width = `${totalBoardWidth}px`;
+        windowDiv.style.width = `${totalBoardWidth}px`
       }
     }
 
-    #calculateBoardWidth(tilesInRow) {
+    /**
+     *
+     * @param tilesInRow
+     */
+    #calculateBoardWidth (tilesInRow) {
       const tileSize = parseInt(getComputedStyle(this).getPropertyValue('--tile-size'), 10)
       const gapSize = 20 // Assuming a gap of 20px, adjust as necessary
       return (tilesInRow * tileSize) + ((tilesInRow - 1) * gapSize)
     }
 
-    gameCompleted() {
+    /**
+     *
+     */
+    gameCompleted () {
       console.log('gameover')
       console.log(this.attempts)
 
@@ -530,44 +548,46 @@ this.style.height = `${this.offsetHeight}px`
 
       this.#displayCompletionMessage(this.attempts, elapsedTime)
       this.#gameBoard.style.display = 'none'
-      const resetButton = this.shadowRoot.getElementById('resetButton');
-  if (resetButton) {
-    resetButton.style.display = 'block'
-  }
+      const resetButton = this.shadowRoot.getElementById('resetButton')
+      if (resetButton) {
+        resetButton.style.display = 'block'
+      }
 
-  /* const gameIsCompleted = document.createElement('game-completed')
+      /* const gameIsCompleted = document.createElement('game-completed')
   this.shadowRoot.append(gameIsCompleted) */
-
     }
 
-    #displayCompletionMessage(attempts, elapsedTime) {
+    /**
+     *
+     * @param attempts
+     * @param elapsedTime
+     */
+    #displayCompletionMessage (attempts, elapsedTime) {
       const message = `Total attempts: ${attempts}<br> Total time: ${elapsedTime} seconds.`
-      
+
       // Create a new element to display the message or use an existing element
-      
-       
-       /*  const newMessageElement = document.createElement('div')
+
+      /*  const newMessageElement = document.createElement('div')
         newMessageElement.id = 'completionMessage'
         newMessageElement.textContent = message
 
-        
         const windowDiv = this.shadowRoot.querySelector('#Window')
         windowDiv.appendChild(newMessageElement)
  */
-        let completionMessage = this.shadowRoot.querySelector('#completionMessage');
-        if (!completionMessage) {
-          completionMessage = document.createElement('div')
-          completionMessage.id = 'completionMessage'
-          const windowDiv = this.shadowRoot.querySelector('#Window')
-          windowDiv.appendChild(completionMessage)
-        }
-        completionMessage.innerHTML = message
-      
-
+      let completionMessage = this.shadowRoot.querySelector('#completionMessage')
+      if (!completionMessage) {
+        completionMessage = document.createElement('div')
+        completionMessage.id = 'completionMessage'
+        const windowDiv = this.shadowRoot.querySelector('#Window')
+        windowDiv.appendChild(completionMessage)
+      }
+      completionMessage.innerHTML = message
     }
 
-    resetGame() {
-      
+    /**
+     *
+     */
+    resetGame () {
       this.#gameBoard.style.display = ''
 
       this.#init()
@@ -581,30 +601,30 @@ this.style.height = `${this.offsetHeight}px`
 
       /* document.querySelector('#completionMessage').remove() */
 
-   /*    const welcomePage = this.shadowRoot.getElementById('welcomePage') */
-  /* const gameBoard = this.shadowRoot.getElementById('game-board') */
+      /*    const welcomePage = this.shadowRoot.getElementById('welcomePage') */
+      /* const gameBoard = this.shadowRoot.getElementById('game-board') */
 
-  /* if (gameBoard) {
+      /* if (gameBoard) {
     gameBoard.style.display = 'grid'
   } */
 
-  /* if (welcomePage) {
+      /* if (welcomePage) {
     welcomePage.style.display = 'block'
   } */
 
       /* this.setBoardSize() */
 
-      const tiles = this.#tiles.all;
-  tiles.forEach(tile => {
-    tile.removeAttribute('face-up');
-    tile.removeAttribute('disabled');
-    tile.removeAttribute('hidden');
-  });
+      const tiles = this.#tiles.all
+      tiles.forEach(tile => {
+        tile.removeAttribute('face-up')
+        tile.removeAttribute('disabled')
+        tile.removeAttribute('hidden')
+      })
 
       const resetButton = this.shadowRoot.getElementById('resetButton')
-  if (resetButton) {
-    resetButton.style.display = 'none'
-  }
+      if (resetButton) {
+        resetButton.style.display = 'none'
+      }
     }
 
     /**
@@ -665,17 +685,19 @@ this.style.height = `${this.offsetHeight}px`
       }
     }
 
-    startTimer() {
+    /**
+     *
+     */
+    startTimer () {
       this.#startTime = Date.now()
     }
 
-    getElapsedTime() {
+    /**
+     *
+     */
+    getElapsedTime () {
       const endTime = Date.now()
       return ((endTime - this.#startTime) / 1000).toFixed(2) // Elapsed time in seconds
     }
-
-    
-
-
   }
 )
