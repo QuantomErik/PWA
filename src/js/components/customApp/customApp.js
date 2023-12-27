@@ -1,3 +1,6 @@
+const IMG_URL = (new URL('images/magnifying-glass.png', import.meta.url)).href
+const IMG_URL2 = (new URL('images/position.png', import.meta.url)).href
+
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
@@ -18,6 +21,8 @@ template.innerHTML = `
     /* background-color: #f9f9f9; */
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
+    align-items: center; 
+    
 }
 
 #dragHandle {
@@ -44,6 +49,72 @@ template.innerHTML = `
       color: white;
     }
 
+    #searchInputContainer {
+        position: relative; /* Allows absolute positioning inside the container */
+    display: flex;
+    align-items: center; /* Aligns children vertically in the middle */
+
+    }
+
+    #searchBox {
+        flex-grow: 0;
+        border: none;
+    padding: 0px;
+    background: linear-gradient(to right, #5a5b5b 0%, #2a2b2b 100%);
+    color: #23b82a;
+    font-weight: bold;
+    resize: none;
+    height: 35px;
+    width: 300px;
+    border-radius: 8px;
+    padding-left: 40px;
+
+    /* text-align: center; */
+    /* align-items: center;  */
+    /* justify-content: center; */
+    }
+
+    #searchButton {
+    position: absolute; /* Positions the button over the textarea */
+    right: 5px; /* Adjust as needed */
+    height: 30px; /* Match the height of the searchBox */
+    width: 30px;
+    border: none;
+    /* background-color: #23b82a; */ /* Or any color you prefer */
+    color: white; /* Text color */
+    /* border-radius: 8px; */ /* Optional for rounded corners */
+    cursor: pointer;
+    border: none;
+    /* background: none; */
+    cursor: pointer;
+    /* font-size: 50px; */
+    /* Add padding, font-size, etc., as needed */
+    background: url("${IMG_URL}") no-repeat center/50%;
+    background-size: 60%;
+}
+
+/* #searchButton img {
+    width: 100%;
+    height: auto;
+} */
+
+    #searchBox:focus {
+    outline: none;
+}
+
+#positionIcon {
+    position: absolute;
+    left: 5px; /* Adjust as needed */
+    width: 30px; /* Icon width */
+    height: 30px; /* Icon height */
+    background: url("${IMG_URL2}") no-repeat center/50%; /* Replace with your icon path */
+    background-size: 60%;
+    
+    /* background-size: contain; */
+}
+
+
+
 </style>
 
 <div id="Window">
@@ -51,11 +122,16 @@ template.innerHTML = `
   <button id="exitButton">&times;</button>
   </div>
    <!-- <button id="exitButton">&times;</button> -->
-   <button id="findMcDonalds">Find nearby McDonalds</button>
-   <div id="locationsContainer"></div>
+   <!-- <div id="searchInputContainer"> -->
+   <div id="searchInputContainer">
+    <span id="positionIcon"></span>
+    <input type="text" id="searchBox" placeholder="Search City..." />
+   <button id="searchButton">
+    <!-- <img src="./images/magnifying-glass.png" alt="search"> -->
+   </button>
+   </div>
    
    
-  
   </div>
 
 
@@ -71,8 +147,8 @@ constructor () {
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-        this.findMcDonaldsButton = this.shadowRoot.querySelector('#findMcDonalds')
-        this.locationsContainer = this.shadowRoot.querySelector('#locationsContainer')
+        this.searchButton = this.shadowRoot.querySelector('#searchButton')
+        
 }
 
 handleDragStart(event) {
@@ -111,16 +187,38 @@ connectedCallback () {
     const dragHandle = this.shadowRoot.getElementById('dragHandle')
     dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-    this.findMcDonaldsButton.addEventListener('click', () => this.findLocations())
+    this.searchButton.addEventListener('click', () => console.log('Search Button'))
+
+    /* this.findMcDonaldsButton.addEventListener('click', () => this.findLocations()) */
     /* const mcDonaldsButton = this.shadowRoot.getElementById('mcDonalds')
     mcDonaldsButton.addEventListener('click', () => this.findMcDonalds()) */
 
 }
 findLocations() {
     console.log('findMcDOnalds function')
+    this.fetchLocations(59.3293, 18.0686, 10, 10)
     // Example: Open a new window. You can replace this with your specific logic
+}
+
+async fetchLocations(latitude, longitude, radius, count) {
+    /* try {
+        
+        const response = await fetch('https://api.open-meteo.com/v1/metno?latitude=62&longitude=15&hourly=temperature_2m')
+        const locations = await response.json()
+        console.log(response)
+
+        this.locationsContainer.innerHTML = ''
+
+        
+        // Handle locations data
+    } catch (error) {
+        console.error('Error:', error)
+    } */
+
     
 }
+
+
 
 
 })
