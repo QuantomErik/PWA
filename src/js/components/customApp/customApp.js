@@ -536,7 +536,8 @@ customElements.define('custom-app',
           haze: 'js/components/customApp/images/cloudy-day.png',
           clear: 'js/components/customApp/images/sun.png',
           rain: 'js/components/customApp/images/raining.png',
-          sunny: 'js/components/customApp/images/sun.png'
+          sunny: 'js/components/customApp/images/sun.png',
+          drizzle: 'js/components/customApp/images/rain-drops.png'
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
@@ -591,7 +592,8 @@ customElements.define('custom-app',
       haze: 'js/components/customApp/images/cloudy-day.png',
       clear: 'js/components/customApp/images/sun.png',
       rain: 'js/components/customApp/images/raining.png',
-      sunny: 'js/components/customApp/images/sun.png'
+      sunny: 'js/components/customApp/images/sun.png',
+      drizzle: 'js/components/customApp/images/rain-drops.png'
   }
 
     const currentTime = new Date()
@@ -623,18 +625,76 @@ customElements.define('custom-app',
 
 async getLocation() {
   if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(function(position) {
+      navigator.geolocation.getCurrentPosition((position) => {
           console.log("Latitude: " + position.coords.latitude)
           console.log("Longitude: " + position.coords.longitude)
 
-          fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
-      }, function(error) {
+          this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
+      }, (error) => {
           console.error("Error Code = " + error.code + " - " + error.message)
       })
   } else {
       console.error("Geolocation is not supported by this browser.")
   }
 }
+
+async fetchWeatherByCoordinates(lat, lon) {
+  this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
+  const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
+  const city = 'Stockholm'
+      const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
+
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+
+    const roundedTemp = Math.round(data.main.temp)
+
+    this.shadowRoot.getElementById('temperature').textContent = `${roundedTemp}°C`
+    this.shadowRoot.getElementById('windSpeedValue').textContent = `${data.wind.speed} m/s`
+    this.shadowRoot.getElementById('humidityValue').textContent = `${data.main.humidity}%`
+    this.shadowRoot.getElementById('weatherState').textContent = `${data.weather[0].main}`
+
+    this.shadowRoot.getElementById('windSpeedContainer').style.visibility = 'visible'
+    this.shadowRoot.getElementById('humidityContainer').style.visibility = 'visible'
+    /* (${data.weather[0].description}) */
+    /* searchBox.value = '' */
+
+    cityNameDisplay.textContent = `${city}`
+    cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+    this.shadowRoot.getElementById('Window').classList.add('expanded')
+    await this.fetchWeatherForecast(city)
+
+    const weatherStateImages = {
+      snow: 'js/components/customApp/images/snowing.png',
+      clouds: 'js/components/customApp/images/cloud.png',
+      mist: 'js/components/customApp/images/rain-drops.png',
+      haze: 'js/components/customApp/images/cloudy-day.png',
+      clear: 'js/components/customApp/images/sun.png',
+      rain: 'js/components/customApp/images/raining.png',
+      sunny: 'js/components/customApp/images/sun.png'
+    }
+
+    const weatherState = data.weather[0].main.toLowerCase()
+    const weatherImageSrc = weatherStateImages[weatherState]
+    if (weatherImageSrc) {
+      this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
+      this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
+    } else {
+      console.error('No image found for this weather state:', weatherState)
+    }
+    
+
+    console.log(data)
+  } catch (error) {
+    console.error('Error fetching weather data:', error)
+  }
+}
+
 
 // Call this function when your app initializes
 /* this.getLocation(); */
