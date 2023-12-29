@@ -28,8 +28,8 @@ template.innerHTML = `
     max-height: 600px; */
     overflow: hidden;
     width: 390px;
-    height: 300px;
-    transition: width 0.5s ease, height 0.5s ease;
+    height: 600px;
+    /* transition: width 0.5s ease, height 0.5s ease; */
     border: 1px solid rgba(255, 255, 255, 0.5);
     /* background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7)); */
 
@@ -53,10 +53,10 @@ template.innerHTML = `
     
 }
 
-#Window.expanded {
+/* #Window.expanded {
     width: 390px;  
     height: 600px; 
-}
+} */
 
 #dragHandle {
     margin-bottom: 5px;
@@ -387,21 +387,22 @@ template.innerHTML = `
    <button id="searchButton"></button>
    </div>
 
-   <div id="welcomeContainer">
-   <div id="welcomeText">What's the weather like?</div>
-   <h2>Enter city name or</h2>
-   <h2>Press the location button</h2>
-   <button id="disclaimerButton">Disclaimer</button>
+   <!-- <div id="welcomeContainer">
+        <div id="welcomeText">What's the weather like?</div>
+        <h2>Enter city name or</h2>
+        <h2>Press the location button</h2>
+       -->
 
-   <div id="disclaimerModal" class="modal">
-    <div class="modal-content">
+       <!-- <button id="disclaimerButton">Disclaimer</button> -->
+      <div id="disclaimerModal" class="modal">
+      <div class="modal-content">
+      <button id="disclaimerAcknowledgeButton">Allow</button>
         <span class="close">&times;</span>
         <div id="disclaimerText">Loading disclaimer...</div>
-        <!-- <p>Your disclaimer message goes here...</p> -->
-    </div>
-</div>
+      </div>
+    </div> 
 
-</div>
+
    
 
    <div id="cityNameDisplay"></div>
@@ -480,6 +481,7 @@ customElements.define('custom-app',
       this.searchBox = this.shadowRoot.querySelector('#searchBox')
       this.positionButton = this.shadowRoot.querySelector('#positionButton')
       this.disclaimerButton = this.shadowRoot.querySelector('#disclaimerButton')
+      this.disclaimerAcknowledgeButton = this.shadowRoot.querySelector('#disclaimerAcknowledgeButton')
     }
 
     /**
@@ -523,9 +525,9 @@ customElements.define('custom-app',
     }
 
     hideWelcomeContainer() {
-      const welcomeContainer = this.shadowRoot.getElementById('welcomeContainer');
+      const welcomeContainer = this.shadowRoot.getElementById('welcomeContainer')
       if (welcomeContainer) {
-          welcomeContainer.style.display = 'none';
+          welcomeContainer.style.display = 'none'
       }
   }
 
@@ -533,6 +535,17 @@ customElements.define('custom-app',
      *
      */
     connectedCallback () {
+
+      if (localStorage.getItem('disclaimerAcknowledged') !== 'true') {
+        this.showDisclaimerModal(),
+        this.loadDisclaimer()
+      } else {
+        
+        this.requestLocationAccess()
+      }
+      /* this.showDisclaimerModal()
+      this.loadDisclaimer() */
+
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
       window.addEventListener('mouseup', () => this.handleDragEnd())
@@ -542,45 +555,71 @@ customElements.define('custom-app',
 
       this.searchButton.addEventListener('click', () =>  {
         this.fetchWeather()
-        this.hideWelcomeContainer()
+        
       })
 
       this.positionButton.addEventListener('click', () => {
         this.getLocation()
-        this.hideWelcomeContainer()
+        
       })
 
       this.searchBox.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           this.fetchWeather()
-          this.hideWelcomeContainer()
+          
         }
       })
 
-      this.disclaimerButton.addEventListener('click', () => {
+      /* this.disclaimerButton.addEventListener('click', () => {
         this.showDisclaimerModal()
         this.loadDisclaimer()
-    })
+    }) */
     
     
-      const closeModal = this.shadowRoot.querySelector('.close')
-    closeModal.addEventListener('click', () => this.hideDisclaimerModal())
 
+    this.disclaimerAcknowledgeButton.addEventListener('click', () => this.disclaimerAcknowledged())
+      
+      /* const closeModal = this.shadowRoot.querySelector('.close')
+    closeModal.addEventListener('click', () => this.hideDisclaimerModal()) */
+
+    /* this.getLocation() */
       
     }
 
+    disclaimerAcknowledged() {
+      localStorage.setItem('disclaimerAcknowledged', 'true')
+      this.hideDisclaimerModal()
+      this.requestLocationAccess()
+    }
+
     showDisclaimerModal() {
-      const modal = this.shadowRoot.getElementById('disclaimerModal');
+      const modal = this.shadowRoot.getElementById('disclaimerModal')
       if (modal) {
-          modal.style.display = 'block';
+          modal.style.display = 'block'
       }
   }
     
   hideDisclaimerModal() {
-    const modal = this.shadowRoot.getElementById('disclaimerModal');
+    const modal = this.shadowRoot.getElementById('disclaimerModal')
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.display = 'none'
     }
+}
+
+requestLocationAccess() {
+  if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              // Location access granted, fetch weather
+              this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
+          },
+          (error) => {
+              console.error("Error Code = " + error.code + " - " + error.message)
+          }
+      )
+  } else {
+      console.error("Geolocation is not supported by this browser.")
+  }
 }
 
     /**
@@ -644,7 +683,8 @@ customElements.define('custom-app',
           clear: 'js/components/customApp/images/sun.png',
           rain: 'js/components/customApp/images/raining.png',
           sunny: 'js/components/customApp/images/sun.png',
-          drizzle: 'js/components/customApp/images/rain-drops.png'
+          drizzle: 'js/components/customApp/images/rain-drops.png',
+          fog: 'js/components/customApp/images/cloud.png'
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
@@ -674,11 +714,11 @@ customElements.define('custom-app',
     async fetchWeatherForecast(city) {
       console.log('fetching weather forecast')
   
-      const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973';
+      const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
       const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&units=metric&appid=${APIkey}`
   
       try {
-          const response = await fetch(url);
+          const response = await fetch(url)
           if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`)
           }
@@ -703,14 +743,15 @@ customElements.define('custom-app',
       clear: 'js/components/customApp/images/sun.png',
       rain: 'js/components/customApp/images/raining.png',
       sunny: 'js/components/customApp/images/sun.png',
-      drizzle: 'js/components/customApp/images/rain-drops.png'
+      drizzle: 'js/components/customApp/images/rain-drops.png',
+      fog: 'js/components/customApp/images/cloud.png'
   }
 
     const currentTime = new Date()
     const next24Hours = forecastData.list.filter(item => {
         const itemTime = new Date(item.dt * 1000)
         return itemTime > currentTime && itemTime < new Date(currentTime.getTime() + 24 * 60 * 60 * 1000)
-    });
+    })
 
     next24Hours.forEach(item => {
 
@@ -808,7 +849,8 @@ async fetchWeatherByCoordinates(lat, lon) {
       clear: 'js/components/customApp/images/sun.png',
       rain: 'js/components/customApp/images/raining.png',
       sunny: 'js/components/customApp/images/sun.png',
-      drizzle: 'js/components/customApp/images/rain-drops.png'
+      drizzle: 'js/components/customApp/images/rain-drops.png',
+      fog: 'js/components/customApp/images/cloud.png'
     }
 
     const weatherState = data.weather[0].main.toLowerCase()
