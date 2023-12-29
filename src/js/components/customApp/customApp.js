@@ -266,6 +266,8 @@ template.innerHTML = `
     width: 340px;
     margin-top: 10px;
     justify-content: center;
+    color: white;
+    font-weight: bold;
 }
 
 .weatherSlot {

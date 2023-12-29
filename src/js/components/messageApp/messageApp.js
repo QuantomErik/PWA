@@ -246,7 +246,18 @@ customElements.define('message-app',
     connectedCallback () {
       this.checkAndSetUsername()
       this.initializeWebSocket()
-      this.sendMessageButton.addEventListener('click', () => this.sendChatMessage())
+      this.sendMessageButton.addEventListener('click', () => {
+        event.preventDefault()
+        this.sendChatMessage()
+    })
+
+
+      this.messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          this.sendChatMessage()
+        }
+      })
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
 
       // Add drag event listeners
