@@ -402,6 +402,9 @@ template.innerHTML = `
     <img id="weatherImage" src="" alt="Weather Image">
 </div>
 
+
+<div id="weatherPageContainer">
+
    <div id="weatherInfo">
     <div id="temperature"></div>
     <div id="weatherState"></div>
@@ -429,8 +432,10 @@ template.innerHTML = `
 </div>
     <div id="windSpeed"></div>
     <div id="humidity"></div>
-    
 </div>
+
+</div>
+
    
   </div>
   
@@ -574,6 +579,8 @@ customElements.define('custom-app',
      *
      */
     async fetchWeather () {
+      const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
+      weatherPageContainer.style.display = 'block'
       
       this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
       console.log('fetching weather')
@@ -582,10 +589,16 @@ customElements.define('custom-app',
       const searchBox = this.shadowRoot.getElementById('searchBox')
       const city = searchBox.value
       const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
+      const weatherImage = this.shadowRoot.getElementById('weatherImage')
+     
+      
 
       if (!city) {
         console.error('No city provided.')
-        cityNameDisplay.textContent = ''
+        weatherImage.src = 'js/components/customApp/images/error.png'
+        cityNameDisplay.textContent = 'No city provided'
+        weatherPageContainer.style.display = 'none'
+
         return
       }
 
@@ -639,6 +652,9 @@ customElements.define('custom-app',
         console.log(data)
       } catch (error) {
         console.error('Error fetching weather data:', error)
+        weatherImage.src = 'js/components/customApp/images/error.png'
+        cityNameDisplay.textContent = 'No city provided'
+        weatherPageContainer.style.display = 'none'
       }
     }
 
@@ -710,6 +726,8 @@ customElements.define('custom-app',
 }
 
 async getLocation() {
+  const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
+      weatherPageContainer.style.display = 'block'
   if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
           console.log("Latitude: " + position.coords.latitude)
