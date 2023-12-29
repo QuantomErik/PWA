@@ -1,0 +1,7 @@
+Share your location
+Get more useful information from sites by letting them see your location. For example, by sharing your location, you can retrieve current weather conditions near you.
+
+Let a site know your location
+By default, Chrome asks you when a site wants to see your location. To let the site know where you are, choose Allow. Before sharing your location, review the site's privacy policy.
+
+If you use Google as your default search engine on your phone, your location is used by default for your searches on Google.

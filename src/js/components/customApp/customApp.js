@@ -28,8 +28,8 @@ template.innerHTML = `
     max-height: 600px; */
     overflow: hidden;
     width: 390px;
-    height: 600px;
-    /* transition: width 0.5s ease, height 1s ease; */
+    height: 300px;
+    transition: width 0.5s ease, height 0.5s ease;
     border: 1px solid rgba(255, 255, 255, 0.5);
     /* background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7)); */
 
@@ -53,10 +53,10 @@ template.innerHTML = `
     
 }
 
-/* #Window.expanded {
+#Window.expanded {
     width: 390px;  
     height: 600px; 
-} */
+}
 
 #dragHandle {
     margin-bottom: 5px;
@@ -311,6 +311,58 @@ template.innerHTML = `
     height: 8px;
 }
 
+#welcomeText {
+  margin-top: 10px;
+}
+
+#disclaimerText {
+  text-align: left;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  position: relative;
+    /* background-color: #fefefe; */
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7));
+}
+
+.close {
+  position: absolute;
+  top: 1px;
+    right: 7px;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* #welcomeContainer {
+
+} */
+
 
 
 
@@ -327,6 +379,23 @@ template.innerHTML = `
    <button id="searchButton"></button>
    </div>
 
+   <div id="welcomeContainer">
+   <div id="welcomeText">Please do one of the following</div>
+   <h2>Enter city name</h2>
+   <h2>Press the location button</h2>
+   <button id="disclaimerButton">Disclaimer</button>
+
+   <div id="disclaimerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="disclaimerText">Loading disclaimer...</div>
+        <!-- <p>Your disclaimer message goes here...</p> -->
+    </div>
+</div>
+
+</div>
+   
+
    <div id="cityNameDisplay"></div>
    
    <div id="weatherImageContainer">
@@ -339,22 +408,7 @@ template.innerHTML = `
 
     <div id="hourlyContainer"></div>
 
-    <!-- <div id="forecastContainer">
-    <div class="forecast-card">
-        <div class="forecast-date">Date 1</div>
-        <img src="path/to/weather-icon1.png" alt="Weather Icon" class="forecast-icon">
-        <div class="forecast-temp">Temp 1°C</div>
-        <div class="forecast-desc">Description 1</div>
-    </div>
-
-    <div class="forecast-card">
-        <div class="forecast-date">Date 2</div>
-        <img src="path/to/weather-icon2.png" alt="Weather Icon" class="forecast-icon">
-        <div class="forecast-temp">Temp 2°C</div>
-        <div class="forecast-desc">Description 2</div>
-    </div>
-
-    </div> -->
+    
 
 
     <div id="windSpeedContainer">
@@ -412,6 +466,7 @@ customElements.define('custom-app',
       this.searchButton = this.shadowRoot.querySelector('#searchButton')
       this.searchBox = this.shadowRoot.querySelector('#searchBox')
       this.positionButton = this.shadowRoot.querySelector('#positionButton')
+      this.disclaimerButton = this.shadowRoot.querySelector('#disclaimerButton')
     }
 
     /**
@@ -451,8 +506,15 @@ customElements.define('custom-app',
      *
      */
     closeMessageApp () {
-      this.remove() // Removes the element from the DOM
+      this.remove() 
     }
+
+    hideWelcomeContainer() {
+      const welcomeContainer = this.shadowRoot.getElementById('welcomeContainer');
+      if (welcomeContainer) {
+          welcomeContainer.style.display = 'none';
+      }
+  }
 
     /**
      *
@@ -465,24 +527,48 @@ customElements.define('custom-app',
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
       dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-      this.searchButton.addEventListener('click', () => this.fetchWeather())
-      this.positionButton.addEventListener('click', () => this.getLocation())
+      this.searchButton.addEventListener('click', () =>  {
+        this.fetchWeather()
+        this.hideWelcomeContainer()
+      })
+
+      this.positionButton.addEventListener('click', () => {
+        this.getLocation()
+        this.hideWelcomeContainer()
+      })
 
       this.searchBox.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           this.fetchWeather()
+          this.hideWelcomeContainer()
         }
       })
 
-      /* this.findMcDonaldsButton.addEventListener('click', () => this.findLocations()) */
-      /* const mcDonaldsButton = this.shadowRoot.getElementById('mcDonalds')
-            mcDonaldsButton.addEventListener('click', () => this.findMcDonalds()) */
+      this.disclaimerButton.addEventListener('click', () => {
+        this.showDisclaimerModal()
+        this.loadDisclaimer()
+    })
+    
+    
+      const closeModal = this.shadowRoot.querySelector('.close')
+    closeModal.addEventListener('click', () => this.hideDisclaimerModal())
+
+      
     }
-    /* findLocations() {
-            console.log('findMcDOnalds function')
-            this.fetchLocations(59.3293, 18.0686, 10, 10)
-            // Example: Open a new window. You can replace this with your specific logic
-        } */
+
+    showDisclaimerModal() {
+      const modal = this.shadowRoot.getElementById('disclaimerModal');
+      if (modal) {
+          modal.style.display = 'block';
+      }
+  }
+    
+  hideDisclaimerModal() {
+    const modal = this.shadowRoot.getElementById('disclaimerModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
     /**
      *
@@ -676,7 +762,8 @@ async fetchWeatherByCoordinates(lat, lon) {
       haze: 'js/components/customApp/images/cloudy-day.png',
       clear: 'js/components/customApp/images/sun.png',
       rain: 'js/components/customApp/images/raining.png',
-      sunny: 'js/components/customApp/images/sun.png'
+      sunny: 'js/components/customApp/images/sun.png',
+      drizzle: 'js/components/customApp/images/rain-drops.png'
     }
 
     const weatherState = data.weather[0].main.toLowerCase()
@@ -695,73 +782,16 @@ async fetchWeatherByCoordinates(lat, lon) {
   }
 }
 
+async loadDisclaimer() {
+  try {
+      const response = await fetch('js/components/customApp/disclaimer.txt')
+      let text = await response.text()
+      text = text.replace(/\n/g, '<br>')
+      const disclaimerTextDiv = this.shadowRoot.getElementById('disclaimerText')
+      disclaimerTextDiv.innerHTML = text
+  } catch (error) {
+      console.error('Failed to load disclaimer:', error)
+  }
+}
 
-// Call this function when your app initializes
-/* this.getLocation(); */
-
-
-  
-    
-    /* async fetchWeatherForecast (city) {
-      console.log('fetching weatherForcast')
-
-      const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
-
-      
-
-      if (!city) {
-        console.error('No city provided for forecast.')
-        return
-      }
-
-      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${APIkey}`
-
-      try {
-        const response = await fetch(url)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const forecastData = await response.json()
-
-
-        
-        console.log(forecastData) 
-      } catch (error) {
-        console.error('Error fetching weather forecast:', error)
-      }
-    } */
-
-    /**
-     *
-     * @param forecastData
-     */
-    /* async processForecastData (forecastData) {
-
-      console.log('Processing forecast data:', forecastData)
-      
-      const dailyForecasts = forecastData.list.filter(forecast =>
-        new Date(forecast.dt * 1000).getHours() === 12
-      ).slice(0, 5)
-
-      let forecastHtml = '<div class="forecast-row">'
-      dailyForecasts.forEach(forecast => {
-        const date = new Date(forecast.dt * 1000).toLocaleDateString()
-        const temp = forecast.main.temp
-        const weatherMain = forecast.weather[0].main.toLowerCase()
-        const weatherIconSrc = this.weatherStateImages[weatherMain] || 'default-icon-path'
-
-        forecastHtml += `
-              <div class="forecast-card">
-                  <div class="forecast-date">${date}</div>
-                  <img src="${weatherIconSrc}" alt="${weatherMain}" class="forecast-icon">
-                  <div class="forecast-temp">${temp}°C</div>
-                  <div class="forecast-desc">${forecast.weather[0].description}</div>
-              </div>
-          `
-      })
-      forecastHtml += '</div>'
-
-      const forecastContainer = this.shadowRoot.getElementById('forecastContainer')
-      forecastContainer.append(forecastHtml)
-    } */
   })
