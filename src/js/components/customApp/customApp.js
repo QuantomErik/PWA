@@ -313,12 +313,18 @@ template.innerHTML = `
     height: 8px;
 }
 
+#welcomeContainer {
+  color: white;
+  text-align: left;
+}
+
 #welcomeText {
   margin-top: 10px;
 }
 
 #disclaimerText {
   text-align: left;
+  color: white;
 }
 
 .modal {
@@ -382,8 +388,8 @@ template.innerHTML = `
    </div>
 
    <div id="welcomeContainer">
-   <div id="welcomeText">Please do one of the following</div>
-   <h2>Enter city name</h2>
+   <div id="welcomeText">What's the weather like?</div>
+   <h2>Enter city name or</h2>
    <h2>Press the location button</h2>
    <button id="disclaimerButton">Disclaimer</button>
 
@@ -747,15 +753,34 @@ async getLocation() {
 async fetchWeatherByCoordinates(lat, lon) {
   this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
   const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
-  const city = 'Stockholm'
-      const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
+  /* const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}` */
+  /* const city = 'Stockholm' */
+      /* const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay') */
 
   try {
+
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${APIkey}`
+    const geoResponse = await fetch(geoUrl)
+    const geoData = await geoResponse.json()
+
+    let city = 'Unknown Location'
+    if (geoData && geoData.length > 0) {
+        city = geoData[0].name
+    }
+
+    const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
+    cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
+
+
+
+
     const data = await response.json()
 
     const roundedTemp = Math.round(data.main.temp)
@@ -771,7 +796,7 @@ async fetchWeatherByCoordinates(lat, lon) {
     /* searchBox.value = '' */
 
     cityNameDisplay.textContent = `${city}`
-    cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+    /* cityNameDisplay.textContent = this.capitalizeFirstLetter(city) */
     this.shadowRoot.getElementById('Window').classList.add('expanded')
     await this.fetchWeatherForecast(city)
 
