@@ -247,7 +247,6 @@ customElements.define('message-app',
       this.checkAndSetUsername()
       this.initializeWebSocket()
       this.sendMessageButton.addEventListener('click', () => {
-        event.preventDefault()
         this.sendChatMessage()
     })
 
