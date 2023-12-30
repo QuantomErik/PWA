@@ -1,7 +1,7 @@
 const version = '1.0.0'
 
 
-if ('serviceWorker' in navigator) {
+/* if ('serviceWorker' in navigator) {
     window.addEventListener('load', async function () {
         try {
             const registration = await this.navigator.serviceWorker.register('/service-worker.js')
@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
             console.log('ServiceWorker: Registration failed: ', error)
         }
     })
-}
+} */
 
 self.addEventListener('install', event => {
     console.log('ServiceWorker: Installed version ', version)
@@ -28,22 +28,6 @@ self.addEventListener('install', event => {
     }
     event.waitUntil(cacheAssets())
 
-    /* const cachedFetch = async request => {
-        try {
-
-            const response = await fetch(request)
-
-            const cache = await caches.open(version)
-            cache.put(request, response.clone())
-
-            return response
-        } catch (error) {
-            console.info('ServiceWorker: Serving cached result')
-            return caches.match(request)
-        }
-    } */
-
-    
 })
 
 
@@ -52,6 +36,23 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
     console.log('ServiceWorker: Installed version ', version)
+
+    const removeCachedAssets = async () => {
+        const cacheKeys = await caches.keys()
+
+        return Promise.all(
+            cacheKeys.map(cache => {
+                if (cache !== version) {
+                    console.info('ServiceWorker: Clearing Cache', cache)
+                    return caches.delete(cache)
+                }
+
+                return undefined
+            })
+        )
+    }
+
+    event.waitUntil(removeCachedAssets())
 })
 
 
