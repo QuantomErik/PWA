@@ -1,4 +1,4 @@
-import '../messageApp/index.js'
+/* import '../messageApp/index.js' */
 
 const template = document.createElement('template')
 
@@ -30,22 +30,37 @@ template.innerHTML = `
     height: 50px;
     border-radius: 10px;
   }
+
+  .loading-indicator {
+      
+      
+      display: none;
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
 </style>
+
+<div class="loading-indicator"></div>
 <div id="app-dock">
   <img id="memoryGameIcon" src="js/components/dock/images/memory-game.png" class="app-icon">
   <img id="messagesAppIcon" src="js/components/dock/images/chat-box.png" class="app-icon">
   <img id="customAppIcon" src="js/components/dock/images/weather-app.png" class="app-icon">
+
+  
 </div>
 `
 
-/* `
-  <div id="app-dock" style="display: flex; justify-content: left; align-items: center; position: fixed; bottom: 0; width: 60%; background-color: #333; padding: 10px 0;">
-    <button id="memoryGameIcon" style="background: none; border: none; margin: 0 10px; color: white; font-size: 16px; cursor: pointer;">Memory Game</button>
-    <button id="messagesAppIcon" style="background: none; border: none; margin: 0 10px; color: white; font-size: 16px; cursor: pointer;">Message App</button>
-    <button id="customAppIcon" style="background: none; border: none; margin: 0 10px; color: white; font-size: 16px; cursor: pointer;">Custom App</button>
 
-  </div>
-` */
 
 window.customElements.define('app-dock',
 
@@ -75,7 +90,90 @@ window.customElements.define('app-dock',
      *
      * @param appName
      */
+
     openApp (appName) {
+      console.log(`Opening ${appName}`)
+
+      let loadingTimeout
+
+      const showLoadingIndicatorAfterDelay = () => {
+        loadingTimeout = setTimeout(() => {
+          if (!this.appLoaded) {
+            this.showLoadingIndicator()
+          }
+        }, 100) // Delay in milliseconds
+      }
+  
+      this.appLoaded = false;
+      showLoadingIndicatorAfterDelay()
+
+      /* this.showLoadingIndicator() */
+
+      switch (appName) {
+        case 'messagesApp':
+         
+        import('../messageApp/index.js').then(module => {
+          this.appLoaded = true
+          clearTimeout(loadingTimeout)
+          this.hideLoadingIndicator()
+          this.dispatchEvent(new CustomEvent('start-message-app', {bubbles:true}))
+        }).catch(err => {
+          console.error('Failed to load the Message App', err)
+          clearTimeout(loadingTimeout)
+          this.hideLoadingIndicator()
+        })
+        break
+       
+        
+        case 'memoryGame':
+          import('../memoryGame/index.js').then(module => {
+            this.appLoaded = true
+          clearTimeout(loadingTimeout)
+          this.hideLoadingIndicator()
+            this.dispatchEvent(new CustomEvent('start-memory-game', {bubbles:true}))
+            /* this.hideLoadingIndicator() */
+          }).catch(err => {
+            console.error('Failed to load the Memory Game', err)
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+          })
+          break
+
+
+          case 'customApp':
+          import('../customApp/index.js').then(module => {
+            this.appLoaded = true
+          clearTimeout(loadingTimeout)
+          this.hideLoadingIndicator()
+            this.dispatchEvent(new CustomEvent('start-custom-app', {bubbles:true}))
+            /* this.hideLoadingIndicator() */
+          }).catch(err => {
+            console.error('Failed to load the Custom App', err)
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+          })
+          break
+
+          default:
+            console.error('Unknown app:', appName)
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+
+      }
+
+      
+    }
+
+    showLoadingIndicator() {
+      this.shadowRoot.querySelector('.loading-indicator').style.display = 'block'
+    }
+
+    hideLoadingIndicator() {
+      this.shadowRoot.querySelector('.loading-indicator').style.display = 'none'
+    }
+
+
+    /* openApp (appName) {
       console.log(`Opening ${appName}`)
 
       if (appName === 'messagesApp') {
@@ -83,17 +181,7 @@ window.customElements.define('app-dock',
           bubbles: true
 
         }))
-        // Create a new instance of messageApp
-        /* const messageApp = document.createElement('message-app'); */
-        // Assign a unique identifier
-        /* const instanceId = 'message-app-instance-' + new Date().getTime(); // Using timestamp for uniqueness
-          messageApp.id = instanceId; */
-        // Add custom styling or attributes if needed
-
-        // Append the new instance to the body or a specific container
-        /* document.body.appendChild(messageApp); */
-
-        // Optionally, focus the newly created instance or bring it to the front
+        
       }
 
       if (appName === 'memoryGame') {
@@ -110,8 +198,7 @@ window.customElements.define('app-dock',
         }))
       }
 
-      // Handle other apps similarly
-    }
+    } */
   }
 
 )

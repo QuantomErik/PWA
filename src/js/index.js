@@ -1,8 +1,8 @@
 import './components/dock/index.js'
-import './components/messageApp/index.js'
+/* import './components/messageApp/index.js'
 import './components/memoryGame/index.js'
-import './components/customApp/index.js'
-/* import '../../serviceworker.js' */
+import './components/customApp/index.js' */
+
 
 /**
  * The main script file of the application.
