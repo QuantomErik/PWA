@@ -34,7 +34,7 @@ template.innerHTML = `
 <div id="app-dock">
   <img id="memoryGameIcon" src="js/components/dock/images/memory-game.png" class="app-icon">
   <img id="messagesAppIcon" src="js/components/dock/images/chat-box.png" class="app-icon">
-  <img id="customAppIcon" src="js/components/dock/images/custom.png" class="app-icon">
+  <img id="customAppIcon" src="js/components/dock/images/weather-app.png" class="app-icon">
 </div>
 `
 

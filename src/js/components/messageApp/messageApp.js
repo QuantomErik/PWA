@@ -19,12 +19,14 @@ template.innerHTML = `
     max-width: none;
     max-height: none;
     width: 380px;
-    height: 440px;
+    height: 417px;
     overflow: hidden;
     /* margin: 20px; */
     background-color: #f9f9f9;
     z-index: 1;
     resize: both;
+    
+    
   
   /* border: 1px solid black; */
     }
@@ -37,6 +39,7 @@ template.innerHTML = `
     height: 300px;
     /* background-color: #b0bbe7; */
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
+    /* display: none; */
     }
 
      /* Styles for individual messages */
@@ -113,6 +116,7 @@ template.innerHTML = `
         /* background-color: #f9f9f9; */
         height: 40px;
         background: #2a2b2b;
+        /* display: none; */
     }
 
     /* #resizer {
@@ -181,6 +185,14 @@ template.innerHTML = `
   } */
 
   </style>
+
+<!-- <div id="nicknameSection" style="display: none;">
+    <form id="nicknameForm">
+      <input type="text" id="nicknameInput" placeholder="Enter your nickname" required>
+      <button type="submit" id="nicknameSubmit">Enter Chat</button>
+    </form>
+  </div> -->
+
   <div id="chatWindow">
 
   
@@ -194,6 +206,7 @@ template.innerHTML = `
   
     <div id="messageContainer"></div>
 
+    
     <div id="chatInputContainer">
 
     <!-- <label for="encryptionToggle">Encrypt Messages:</label>
@@ -204,6 +217,8 @@ template.innerHTML = `
     <textarea id="messageInput" placeholder="Type your message..."></textarea>
     <button id="sendMessageButton">Send</button>
   </div>
+  
+
   </div>
 `
 
@@ -226,8 +241,13 @@ customElements.define('message-app',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.messageContainer = this.shadowRoot.getElementById('messageContainer')
+      this.chatInputContainer = this.shadowRoot.getElementById('chatInputContainer')
       this.messageInput = this.shadowRoot.getElementById('messageInput')
       this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
+      /* this.nicknameSection = this.shadowRoot.getElementById('nicknameSection') */
+      this.chatWindow = this.shadowRoot.getElementById('chatWindow')
+      this.nicknameForm = this.shadowRoot.getElementById('nicknameForm')
+      /* this.nicknameInput = this.shadowRoot.getElementById('nicknameInput') */
 
       this.isDragging = false
       this.offsetX = 0
@@ -259,9 +279,7 @@ customElements.define('message-app',
       })
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
 
-      // Add drag event listeners
-      /* const chatWindow = this.shadowRoot.getElementById('chatWindow') */
-      /* chatWindow.addEventListener('mousedown', (event) => this.handleDragStart(event)) */
+      
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
       window.addEventListener('mouseup', () => this.handleDragEnd())
 
@@ -286,44 +304,11 @@ customElements.define('message-app',
         console.log('Going dark..')
       })
 
-      /* const encryptionToggleLabel = this.shadowRoot.getElementById('encryptionToggleLabel');
-    if (encryptionToggleLabel) {
-        encryptionToggleLabel.style.backgroundImage = "url('js/components/messageApp/images/open-data.png')";
-    } */
-
-      /* const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle');
-    encryptionToggle.addEventListener('change', () => {
-        this.encryptionEnabled = encryptionToggle.checked;
-    }) */
-
-      /* this.resizer = this.shadowRoot.getElementById('resizer')
-        this.resizer.addEventListener('click', (event) => this.quarter(event)) */
-
-      /* if (clicked) {
-        window.focus();
-      } */
-
-      /* this.addEventListener('click', (event) => {
-        // Check if the clicked element is not the exit button
-        if (event.target.id !== 'exitButton') {
-            this.makeActive()
-        }
-    }); */
-
-      /*  this.messageInput.addEventListener('focus', () => this.makeActive())
-    this.messageInput.addEventListener('blur', () => this.makeInactive()) */
-
-      /* this.wsService = WebSocketService.getInstance('wss://your-websocket-url');
-    this.wsService.subscribe(this); */
     }
 
-    /* quarter() {
+    
 
-        const screenAvailWidth = window.screen.availWidth
-        console.log(screenAvailWidth)
-        window.outerHeight = window.screen.availHeight
-        window.resizeTo(window.screen.availWidth / 2, window.screen.availHeight / 2);
-      } */
+    
 
     /**
      *
@@ -331,7 +316,7 @@ customElements.define('message-app',
     disconnectedCallback () {
       // Remove event listeners to prevent memory leaks
       this.sendMessageButton.removeEventListener('click', this.sendChatMessage)
-      // If you have a WebSocket connection, close it here
+      
       /* if (this.wsService) {
         this.wsService.close()
     } */
@@ -341,7 +326,7 @@ customElements.define('message-app',
       window.removeEventListener('mousemove', this.handleDragMove)
       window.removeEventListener('mouseup', this.handleDragEnd)
 
-      /* this.wsService.unsubscribe(this) */
+      
     }
 
     /**
@@ -351,30 +336,7 @@ customElements.define('message-app',
       this.remove() // Removes the element from the DOM
     }
 
-    /* handleDragMove(event) {
-        if (!this.isDragging) return;
-
-        // Calculate new position
-        let newX = event.clientX - this.offsetX
-        let newY = event.clientY - this.offsetY
-
-        // Get window dimensions
-        const windowWidth = window.innerWidth
-        const windowHeight = window.innerHeight
-
-        // Get dimensions of the element
-        const elementWidth = this.offsetWidth
-        const elementHeight = this.offsetHeight
-
-        // Boundary checks
-        newX = Math.min(windowWidth - elementWidth, Math.max(0, newX))
-        newY = Math.min(windowHeight - elementHeight, Math.max(0, newY))
-
-        // Set new position
-        this.style.position = 'absolute'
-        this.style.left = `${newX}px`
-        this.style.top = `${newY}px`
-    } */
+  
 
     /**
      *
@@ -528,69 +490,8 @@ customElements.define('message-app',
       return bytes.toString(CryptoJS.enc.Utf8)
     }
 
-    /*  makeActive() {
-        MessageApp.activeInstance = this
-        console.log('Active instance set', this)
-        this.style.zIndex = 100
-    } */
-
-    /*  makeInactive() {
-            if (!this.shadowRoot.activeElement) {
-                MessageApp.activeInstance = null
-                console.log('Active instance unset', this)
-                this.style.zIndex = 1
-            }
-
-    } */
+    
   }
 
 )
 
-/* const wsService = new WebSocketService('wss://courselab.lnu.se/message-app/socket')
-const apiKey = 'your-api-key'
-wsService.connect(apiKey)
-
-wsService.sendMessage('Hello!', 'MyUsername', 'myChannel') */
-
-// Add logic to handle incoming messages
-// For example, you could subscribe to certain events emitted by the WebSocketService
-
-/* const socket = new WebSocket('wss://courselab.lnu.se/message-app/socket')
-
-socket.onopen = function(event) {
-    console.log('Connected to the WebSocket server')
-    // You might want to enable the message input here
-}
-
-socket.onmessage = function(event) {
-    const message = JSON.parse(event.data)
-    if (message.type === 'message') {
-        // Handle the incoming message
-    } else if (message.type === 'heartbeat') {
-        // Handle heartbeat messages
-    }
-}
-
-socket.onerror = function(event) {
-    console.error('WebSocket error:', event)
-}
-
-socket.onclose = function(event) {
-    console.log('WebSocket connection closed')
-    // You might want to disable the message input here
-}
-
-function sendMessage(messageText) {
-    const username = localStorage.getItem('username') // Assuming you've stored the username in localStorage
-    const apiKey = 'your-api-key' // Replace with your actual API key
-
-    const message = {
-        type: 'message',
-        data: messageText,
-        username: username,
-        channel: 'my, not so secret, channel', // You can make this dynamic if needed
-        key: apiKey
-    }
-
-    socket.send(JSON.stringify(message))
-} */
