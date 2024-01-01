@@ -25,12 +25,7 @@ self.addEventListener('install', event => {
             'index.html',
             'css/styles.css',
             'js/index.js',
-            'js/components/customApp/images',
-            'js/components/memoryGame/images',
-            'js/components/messageApp/images',
-            'js/components/dock/images/weather-app.png',
-            'js/components/dock/images/memory-game.png',
-            'js/components/dock/images/chat-box.png',
+            
             
         ])
     }
