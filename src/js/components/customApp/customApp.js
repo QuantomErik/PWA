@@ -495,6 +495,7 @@ customElements.define('custom-app',
       this.positionButton = this.shadowRoot.querySelector('#positionButton')
       this.disclaimerButton = this.shadowRoot.querySelector('#disclaimerButton')
       this.disclaimerAcknowledgeButton = this.shadowRoot.querySelector('#disclaimerAcknowledgeButton')
+      this.closeDisclaimer = this.shadowRoot.querySelector('.close')
     }
 
     /**
@@ -572,7 +573,14 @@ customElements.define('custom-app',
       })
 
       this.positionButton.addEventListener('click', () => {
-        this.getLocation()
+        if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
+          // User has acknowledged the disclaimer, proceed to get location
+          this.getLocation()
+      } else {
+          // User has not acknowledged the disclaimer, show the disclaimer modal
+          this.showDisclaimerModal()
+      }
+        
         
       })
 
@@ -582,6 +590,8 @@ customElements.define('custom-app',
           
         }
       })
+
+      this.closeDisclaimer.addEventListener('click', () => this.hideDisclaimerModal())
 
       /* this.disclaimerButton.addEventListener('click', () => {
         this.showDisclaimerModal()
