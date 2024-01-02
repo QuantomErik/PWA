@@ -31,62 +31,37 @@ template.innerHTML = `
         position: relative; 
         display: flex;
     flex-direction: column;
-    /* border: 1px solid #ddd; */
     
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    /* max-width: 400px;
-    max-height: 600px; */
     overflow: hidden;
     width: 390px;
     height: 600px;
-    /* transition: width 0.5s ease, height 0.5s ease; */
     border: 1px solid rgba(255, 255, 255, 0.5);
-    /* background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7)); */
-
-    
-
     margin: 20px;
-    /* background-color: #f9f9f9; */
-    /* background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%); */
-    /* background: radial-gradient(circle, #b0bbe7, #1f2e5c); */
-    /* background: radial-gradient(circle, #c94dd4, #4b134f); */
-    /* background: linear-gradient(to right, #c94dd4 0%, #4b134f 100%); */
     background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7));
-
-    
-    
     text-align: center;
     align-items: center; 
     max-width: none;
     max-height: none;
     resize: both;
-    
 }
 
-/* #Window.expanded {
-    width: 390px;  
-    height: 600px; 
-} */
+
 
 #dragHandle {
     margin-bottom: 5px;
-    /* background-color: orange; */
     color: transparent;
     width: 100%;
     height: 30px;
     align-items: center; 
     display: flex; 
     justify-content: center;
-    /* background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7)); */
-    
   }
 
   #exitButton {
       position: absolute;
       right: 1px;
-      /* margin-top: 1px;
-      margin-bottom: 10px; */
       cursor: pointer;
       border: none;
       background: none;
@@ -106,8 +81,6 @@ template.innerHTML = `
         flex-grow: 0;
         border: none;
     padding: 0px;
-    /* background: linear-gradient(to right, #5a5b5b 0%, #2a2b2b 100%); */
-    /* color: #23b82a; */
     color: white;
     font-weight: bold;
     resize: none;
@@ -116,11 +89,7 @@ template.innerHTML = `
     border-radius: 8px;
     padding-left: 40px;
     background: transparent;
-    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); */
-    /* border: 1px solid #DDD; */
-    /* border: 1px solid rgba(255, 255, 255, 0.5); */
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-
     
     }
 
@@ -143,10 +112,6 @@ template.innerHTML = `
     background-size: 60%;
 }
 
-/* #searchButton img {
-    width: 100%;
-    height: auto;
-} */
 
     #searchBox:focus {
     outline: none;
@@ -165,10 +130,7 @@ template.innerHTML = `
     
 }
 
-/* #weatherImageContainer {
-    height: 50px;
-    width: 50px;
-} */
+
 
 #weatherImage {
     height: 200px;
@@ -180,7 +142,6 @@ template.innerHTML = `
     display: flex;
     align-items: center;
     font-weight: bold;
-    /* color: #58D8F8; */
     color: white;
 }
 
@@ -235,45 +196,12 @@ template.innerHTML = `
     font-size: 20px; 
 }
 
-/* .forecast-row {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 20px;
-}
 
-.forecast-card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 5px;
-    text-align: center;
-    width: 18%; 
-    height: 100px;
-}
-
-.forecast-icon {
-    width: 50px;
-    height: 50px;
-    margin: 5px 0;
-}
-
-.forecast-date, .forecast-temp, .forecast-desc {
-    margin: 5px 0;
-}
-
-#forecastContainer {
-  display: flex;
-    justify-content: space-around; 
-    align-items: center;
-    flex-wrap: nowrap;
-} */
 
 #hourlyContainer {
     display: flex;
     overflow-x: auto;
     white-space: nowrap;
-    /* padding: 10px; */
-    /* background-color: blue; */
     width: 340px;
     margin-top: 10px;
     justify-content: center;
@@ -284,9 +212,7 @@ template.innerHTML = `
 .weatherSlot {
     flex: none;
     margin-right: 5px;
-    /* padding: 5px; */
-    /* border: 1px solid #ccc; */
-    /* background-color: blue; */
+   
     border-radius: 5px;
     width: 50px;
     height: 120px;
@@ -352,7 +278,6 @@ template.innerHTML = `
 
 .modal-content {
   position: relative;
-    /* background-color: #fefefe; */
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -378,13 +303,6 @@ template.innerHTML = `
 }
 
 
-/* #welcomeContainer {
-
-} */
-
-
-
-
 </style>
 
 <div id="Window">
@@ -398,13 +316,7 @@ template.innerHTML = `
    <button id="searchButton"></button>
    </div>
 
-   <!-- <div id="welcomeContainer">
-        <div id="welcomeText">What's the weather like?</div>
-        <h2>Enter city name or</h2>
-        <h2>Press the location button</h2>
-       -->
-
-       <!-- <button id="disclaimerButton">Disclaimer</button> -->
+   
       <div id="disclaimerModal" class="modal">
       <div class="modal-content">
       <button id="disclaimerAcknowledgeButton">Allow</button>
@@ -470,9 +382,8 @@ customElements.define('custom-app',
    *
    */
   class extends HTMLElement {
-
-    weatherStateImages = {
-      snow: IMG_SNOW ,
+    #weatherStateImages = {
+      snow: IMG_SNOW,
       clouds: IMG_CLOUDS,
       mist: IMG_MIST,
       haze: IMG_HAZE,
@@ -482,6 +393,11 @@ customElements.define('custom-app',
       drizzle: IMG_MIST,
       fog: IMG_CLOUDS
     }
+
+    #searchButton
+    #searchBox
+    #positionButton
+
     /**
      *
      */
@@ -490,9 +406,9 @@ customElements.define('custom-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.searchButton = this.shadowRoot.querySelector('#searchButton')
-      this.searchBox = this.shadowRoot.querySelector('#searchBox')
-      this.positionButton = this.shadowRoot.querySelector('#positionButton')
+      this.#searchButton = this.shadowRoot.querySelector('#searchButton')
+      this.#searchBox = this.shadowRoot.querySelector('#searchBox')
+      this.#positionButton = this.shadowRoot.querySelector('#positionButton')
       this.disclaimerButton = this.shadowRoot.querySelector('#disclaimerButton')
       this.disclaimerAcknowledgeButton = this.shadowRoot.querySelector('#disclaimerAcknowledgeButton')
       this.closeDisclaimer = this.shadowRoot.querySelector('.close')
@@ -535,30 +451,29 @@ customElements.define('custom-app',
      *
      */
     closeMessageApp () {
-      this.remove() 
+      this.remove()
     }
 
-    hideWelcomeContainer() {
+    /**
+     *
+     */
+    hideWelcomeContainer () {
       const welcomeContainer = this.shadowRoot.getElementById('welcomeContainer')
       if (welcomeContainer) {
-          welcomeContainer.style.display = 'none'
+        welcomeContainer.style.display = 'none'
       }
-  }
+    }
 
     /**
      *
      */
     connectedCallback () {
-
       if (localStorage.getItem('disclaimerAcknowledged') !== 'true') {
-        this.showDisclaimerModal(),
+        this.showDisclaimerModal()
         this.loadDisclaimer()
       } else {
-        
         this.requestLocationAccess()
       }
-      /* this.showDisclaimerModal()
-      this.loadDisclaimer() */
 
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
@@ -567,83 +482,78 @@ customElements.define('custom-app',
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
       dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-      this.searchButton.addEventListener('click', () =>  {
+      this.#searchButton.addEventListener('click', () => {
         this.fetchWeather()
-        
       })
 
-      this.positionButton.addEventListener('click', () => {
+      this.#positionButton.addEventListener('click', () => {
         if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
           // User has acknowledged the disclaimer, proceed to get location
           this.getLocation()
-      } else {
+        } else {
           // User has not acknowledged the disclaimer, show the disclaimer modal
           this.showDisclaimerModal()
-      }
-        
-        
+        }
       })
 
-      this.searchBox.addEventListener('keypress', (event) => {
+      this.#searchBox.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           this.fetchWeather()
-          
         }
       })
 
       this.closeDisclaimer.addEventListener('click', () => this.hideDisclaimerModal())
 
-      /* this.disclaimerButton.addEventListener('click', () => {
-        this.showDisclaimerModal()
-        this.loadDisclaimer()
-    }) */
-    
-    
-
-    this.disclaimerAcknowledgeButton.addEventListener('click', () => this.disclaimerAcknowledged())
-      
-      /* const closeModal = this.shadowRoot.querySelector('.close')
-    closeModal.addEventListener('click', () => this.hideDisclaimerModal()) */
-
-    /* this.getLocation() */
-      
+      this.disclaimerAcknowledgeButton.addEventListener('click', () => this.disclaimerAcknowledged())
     }
 
-    disclaimerAcknowledged() {
+    /**
+     *
+     */
+    disclaimerAcknowledged () {
       localStorage.setItem('disclaimerAcknowledged', 'true')
       this.hideDisclaimerModal()
       this.requestLocationAccess()
     }
 
-    showDisclaimerModal() {
+    /**
+     *
+     */
+    showDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
       if (modal) {
-          modal.style.display = 'block'
+        modal.style.display = 'block'
       }
-  }
-    
-  hideDisclaimerModal() {
-    const modal = this.shadowRoot.getElementById('disclaimerModal')
-    if (modal) {
-        modal.style.display = 'none'
     }
-}
 
-requestLocationAccess() {
-  if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
+    /**
+     *
+     */
+    hideDisclaimerModal () {
+      const modal = this.shadowRoot.getElementById('disclaimerModal')
+      if (modal) {
+        modal.style.display = 'none'
+      }
+    }
+
+    /**
+     *
+     */
+    requestLocationAccess () {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
           (position) => {
-              // Location access granted, fetch weather
-              this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
+            // Location access granted, fetch weather
+            this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
           },
           (error) => {
-              console.error("Error Code = " + error.code + " - " + error.message)
+            console.error('Error Code = ' + error.code + ' - ' + error.message)
           }
-      )
-  } else {
-      console.error("Geolocation is not supported by this browser.")
-  }
-}
+        )
+      } else {
+        console.error('Geolocation is not supported by this browser.')
+      }
+    }
 
     /**
      *
@@ -651,7 +561,7 @@ requestLocationAccess() {
     async fetchWeather () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
       weatherPageContainer.style.display = 'block'
-      
+
       this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
       console.log('fetching weather')
 
@@ -660,8 +570,6 @@ requestLocationAccess() {
       const city = searchBox.value
       const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
       const weatherImage = this.shadowRoot.getElementById('weatherImage')
-     
-      
 
       if (!city) {
         console.error('No city provided.')
@@ -690,7 +598,6 @@ requestLocationAccess() {
 
         this.shadowRoot.getElementById('windSpeedContainer').style.visibility = 'visible'
         this.shadowRoot.getElementById('humidityContainer').style.visibility = 'visible'
-        /* (${data.weather[0].description}) */
         searchBox.value = ''
 
         cityNameDisplay.textContent = `${city}`
@@ -699,7 +606,7 @@ requestLocationAccess() {
         await this.fetchWeatherForecast(city)
 
         const weatherStateImages = {
-          snow: IMG_SNOW ,
+          snow: IMG_SNOW,
           clouds: IMG_CLOUDS,
           mist: IMG_MIST,
           haze: IMG_HAZE,
@@ -718,7 +625,6 @@ requestLocationAccess() {
         } else {
           console.error('No image found for this weather state:', weatherState)
         }
-        
 
         console.log(data)
       } catch (error) {
@@ -729,62 +635,71 @@ requestLocationAccess() {
       }
     }
 
-    capitalizeFirstLetter(string) {
+    /**
+     *
+     * @param string
+     */
+    capitalizeFirstLetter (string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
     }
 
-
-    async fetchWeatherForecast(city) {
+    /**
+     *
+     * @param city
+     */
+    async fetchWeatherForecast (city) {
       console.log('fetching weather forecast')
-  
+
       const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
       const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&units=metric&appid=${APIkey}`
-  
+
       try {
-          const response = await fetch(url)
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`)
-          }
-          const forecastData = await response.json()
-  
-          
-          this.displayHourlyForecast(forecastData)
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const forecastData = await response.json()
+
+        this.displayHourlyForecast(forecastData)
       } catch (error) {
-          console.error('Error fetching weather forecast:', error)
+        console.error('Error fetching weather forecast:', error)
       }
-  }
-
-  displayHourlyForecast(forecastData) {
-    const hourlyContainer = this.shadowRoot.getElementById('hourlyContainer')
-    hourlyContainer.innerHTML = ''
-
-    const weatherStateImages = {
-      snow: IMG_SNOW ,
-      clouds: IMG_CLOUDS,
-      mist: IMG_MIST,
-      haze: IMG_HAZE,
-      clear: IMG_CLEAR,
-      rain: IMG_RAIN,
-      sunny: IMG_SUNNY,
-      drizzle: IMG_MIST,
-      fog: IMG_CLOUDS
     }
 
-    const currentTime = new Date()
-    const next24Hours = forecastData.list.filter(item => {
+    /**
+     *
+     * @param forecastData
+     */
+    displayHourlyForecast (forecastData) {
+      const hourlyContainer = this.shadowRoot.getElementById('hourlyContainer')
+      hourlyContainer.innerHTML = ''
+
+      const weatherStateImages = {
+        snow: IMG_SNOW,
+        clouds: IMG_CLOUDS,
+        mist: IMG_MIST,
+        haze: IMG_HAZE,
+        clear: IMG_CLEAR,
+        rain: IMG_RAIN,
+        sunny: IMG_SUNNY,
+        drizzle: IMG_MIST,
+        fog: IMG_CLOUDS
+      }
+
+      const currentTime = new Date()
+      const next24Hours = forecastData.list.filter(item => {
         const itemTime = new Date(item.dt * 1000)
         return itemTime > currentTime && itemTime < new Date(currentTime.getTime() + 24 * 60 * 60 * 1000)
-    })
+      })
 
-    next24Hours.forEach(item => {
+      next24Hours.forEach(item => {
+        const itemTime = new Date(item.dt * 1000)
+        const hours = itemTime.getHours()
+        const formattedHour = hours < 10 ? `0${hours}` : `${hours}`
 
-      const itemTime = new Date(item.dt * 1000)
-      const hours = itemTime.getHours() 
-      const formattedHour = hours < 10 ? `0${hours}` : `${hours}`
+        const roundedTemp = Math.round(item.main.temp)
 
-      const roundedTemp = Math.round(item.main.temp)
-
-      const weatherState = item.weather[0].main.toLowerCase()
+        const weatherState = item.weather[0].main.toLowerCase()
         const weatherIconSrc = weatherStateImages[weatherState] || 'default-icon-path'
 
         const weatherDiv = document.createElement('div')
@@ -794,114 +709,113 @@ requestLocationAccess() {
             <img src="${weatherIconSrc}" alt="${item.weather[0].main}"  style="width: 30px; height: 30px;">
             <p>${roundedTemp}°C</p>`
         hourlyContainer.appendChild(weatherDiv)
-    })
-}
+      })
+    }
 
-async getLocation() {
-  const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
+    /**
+     *
+     */
+    async getLocation () {
+      const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
       weatherPageContainer.style.display = 'block'
-  if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-          console.log("Latitude: " + position.coords.latitude)
-          console.log("Longitude: " + position.coords.longitude)
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log('Latitude: ' + position.coords.latitude)
+          console.log('Longitude: ' + position.coords.longitude)
 
           this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
-      }, (error) => {
-          console.error("Error Code = " + error.code + " - " + error.message)
-      })
-  } else {
-      console.error("Geolocation is not supported by this browser.")
-  }
-}
-
-async fetchWeatherByCoordinates(lat, lon) {
-  this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
-  const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
-  /* const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}` */
-  /* const city = 'Stockholm' */
-      /* const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay') */
-
-  try {
-
-    const geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${APIkey}`
-    const geoResponse = await fetch(geoUrl)
-    const geoData = await geoResponse.json()
-
-    let city = 'Unknown Location'
-    if (geoData && geoData.length > 0) {
-        city = geoData[0].name
+        }, (error) => {
+          console.error('Error Code = ' + error.code + ' - ' + error.message)
+        })
+      } else {
+        console.error('Geolocation is not supported by this browser.')
+      }
     }
 
-    const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
-    cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+    /**
+     *
+     * @param lat
+     * @param lon
+     */
+    async fetchWeatherByCoordinates (lat, lon) {
+      this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
+      const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
 
+      try {
+        const geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${APIkey}`
+        const geoResponse = await fetch(geoUrl)
+        const geoData = await geoResponse.json()
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+        let city = 'Unknown Location'
+        if (geoData && geoData.length > 0) {
+          city = geoData[0].name
+        }
+
+        const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
+        cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        const roundedTemp = Math.round(data.main.temp)
+
+        this.shadowRoot.getElementById('temperature').textContent = `${roundedTemp}°C`
+        this.shadowRoot.getElementById('windSpeedValue').textContent = `${data.wind.speed} m/s`
+        this.shadowRoot.getElementById('humidityValue').textContent = `${data.main.humidity}%`
+        this.shadowRoot.getElementById('weatherState').textContent = `${data.weather[0].main}`
+
+        this.shadowRoot.getElementById('windSpeedContainer').style.visibility = 'visible'
+        this.shadowRoot.getElementById('humidityContainer').style.visibility = 'visible'
+
+        cityNameDisplay.textContent = `${city}`
+
+        this.shadowRoot.getElementById('Window').classList.add('expanded')
+        await this.fetchWeatherForecast(city)
+
+        const weatherStateImages = {
+          snow: IMG_SNOW,
+          clouds: IMG_CLOUDS,
+          mist: IMG_MIST,
+          haze: IMG_HAZE,
+          clear: IMG_CLEAR,
+          rain: IMG_RAIN,
+          sunny: IMG_SUNNY,
+          drizzle: IMG_MIST,
+          fog: IMG_CLOUDS
+        }
+
+        const weatherState = data.weather[0].main.toLowerCase()
+        const weatherImageSrc = weatherStateImages[weatherState]
+        if (weatherImageSrc) {
+          this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
+          this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
+        } else {
+          console.error('No image found for this weather state:', weatherState)
+        }
+
+        console.log(data)
+      } catch (error) {
+        console.error('Error fetching weather data:', error)
+      }
     }
 
-
-
-
-    const data = await response.json()
-
-    const roundedTemp = Math.round(data.main.temp)
-
-    this.shadowRoot.getElementById('temperature').textContent = `${roundedTemp}°C`
-    this.shadowRoot.getElementById('windSpeedValue').textContent = `${data.wind.speed} m/s`
-    this.shadowRoot.getElementById('humidityValue').textContent = `${data.main.humidity}%`
-    this.shadowRoot.getElementById('weatherState').textContent = `${data.weather[0].main}`
-
-    this.shadowRoot.getElementById('windSpeedContainer').style.visibility = 'visible'
-    this.shadowRoot.getElementById('humidityContainer').style.visibility = 'visible'
-    /* (${data.weather[0].description}) */
-    /* searchBox.value = '' */
-
-    cityNameDisplay.textContent = `${city}`
-    /* cityNameDisplay.textContent = this.capitalizeFirstLetter(city) */
-    this.shadowRoot.getElementById('Window').classList.add('expanded')
-    await this.fetchWeatherForecast(city)
-
-    const weatherStateImages = {
-      snow: IMG_SNOW ,
-      clouds: IMG_CLOUDS,
-      mist: IMG_MIST,
-      haze: IMG_HAZE,
-      clear: IMG_CLEAR,
-      rain: IMG_RAIN,
-      sunny: IMG_SUNNY,
-      drizzle: IMG_MIST,
-      fog: IMG_CLOUDS
+    /**
+     *
+     */
+    async loadDisclaimer () {
+      try {
+        const response = await fetch('js/components/customApp/disclaimer.txt')
+        let text = await response.text()
+        text = text.replace(/\n/g, '<br>')
+        const disclaimerTextDiv = this.shadowRoot.getElementById('disclaimerText')
+        disclaimerTextDiv.innerHTML = text
+      } catch (error) {
+        console.error('Failed to load disclaimer:', error)
+      }
     }
-
-    const weatherState = data.weather[0].main.toLowerCase()
-    const weatherImageSrc = weatherStateImages[weatherState]
-    if (weatherImageSrc) {
-      this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
-      this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
-    } else {
-      console.error('No image found for this weather state:', weatherState)
-    }
-    
-
-    console.log(data)
-  } catch (error) {
-    console.error('Error fetching weather data:', error)
-  }
-}
-
-async loadDisclaimer() {
-  try {
-      const response = await fetch('js/components/customApp/disclaimer.txt')
-      let text = await response.text()
-      text = text.replace(/\n/g, '<br>')
-      const disclaimerTextDiv = this.shadowRoot.getElementById('disclaimerText')
-      disclaimerTextDiv.innerHTML = text
-  } catch (error) {
-      console.error('Failed to load disclaimer:', error)
-  }
-}
-
   })

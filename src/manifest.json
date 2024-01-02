@@ -4,7 +4,7 @@
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffe001",
-    "description": "PWA including a dock, memory game and a weather app.",
+    "description": "PWA including a dock, a chat, a memory game and a weather app.",
     "icons": [
       {
         "src": "images/egg192.png",

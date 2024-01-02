@@ -1,94 +1,78 @@
 const version = '1.0.0'
 
-
-/* if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async function () {
-        try {
-            const registration = await this.navigator.serviceWorker.register('/service-worker.js')
-
-            console.log('ServiceWorker: Registration successful with scope: ', registration.scope)
-        } catch (error) {
-            console.log('ServiceWorker: Registration failed: ', error)
-        }
-    })
-} */
-
 self.addEventListener('install', event => {
-    console.log('ServiceWorker: Installed version ', version)
+  console.log('ServiceWorker: Installed version ', version)
 
-    const cacheAssets = async () => {
-        const cache = await self.caches.open(version)
+  /**
+   *
+   */
+  const cacheAssets = async () => {
+    const cache = await self.caches.open(version)
 
-        console.log('ServiceWorker: Caching Files')
+    console.log('ServiceWorker: Caching Files')
 
-        return cache.addAll([
-            'index.html',
-            'css/styles.css',
-            'js/index.js',
-            
-            
-        ])
-    }
-    event.waitUntil(cacheAssets())
+    return cache.addAll([
+      'index.html',
+      'css/styles.css',
+      'js/index.js'
 
+    ])
+  }
+  event.waitUntil(cacheAssets())
 })
-
-
-
-
 
 self.addEventListener('activate', event => {
-    console.log('ServiceWorker: Installed version ', version)
+  console.log('ServiceWorker: Installed version ', version)
 
-    const removeCachedAssets = async () => {
-        const cacheKeys = await caches.keys()
+  /**
+   *
+   */
+  const removeCachedAssets = async () => {
+    const cacheKeys = await caches.keys()
 
-        return Promise.all(
-            cacheKeys.map(cache => {
-                if (cache !== version) {
-                    console.info('ServiceWorker: Clearing Cache', cache)
-                    return caches.delete(cache)
-                }
+    return Promise.all(
+      cacheKeys.map(cache => {
+        if (cache !== version) {
+          console.info('ServiceWorker: Clearing Cache', cache)
+          return caches.delete(cache)
+        }
 
-                return undefined
-            })
-        )
-    }
+        return undefined
+      })
+    )
+  }
 
-    event.waitUntil(removeCachedAssets())
+  event.waitUntil(removeCachedAssets())
 })
-
-
 
 self.addEventListener('fetch', event => {
-    console.log('ServiceWorker: Fetching')
+  console.log('ServiceWorker: Fetching')
 
-    const cachedFetch = async request => {
-        try {
+  /**
+   *
+   * @param request
+   */
+  const cachedFetch = async request => {
+    try {
+      const response = await fetch(request)
 
-            const response = await fetch(request)
+      const cache = await self.caches.open(version)
+      cache.put(request, response.clone())
 
-            const cache = await self.caches.open(version)
-            cache.put(request, response.clone())
-
-            return response
-        } catch (error) {
-            console.info('ServiceWorker: Serving cached result')
-            return self.caches.match(request)
-        }
+      return response
+    } catch (error) {
+      console.info('ServiceWorker: Serving cached result')
+      return self.caches.match(request)
     }
+  }
 
-    event.respondWith(cachedFetch(event.request))
+  event.respondWith(cachedFetch(event.request))
 })
-
-
 
 self.addEventListener('message', event => {
-    console.log('ServiceWorker: Got a message')
+  console.log('ServiceWorker: Got a message')
 })
 
-
-
 self.addEventListener('push', event => {
-    console.log('ServiceWorker: Got a push message from the server')  // Kan kolla på notification Api för push notiser
+  console.log('ServiceWorker: Got a push message from the server') // Kan kolla på notification Api för push notiser
 })

@@ -1,5 +1,3 @@
-const IMG_URL = (new URL('images/lnu-symbol.png', import.meta.url)).href
-
 const template = document.createElement('template')
 template.innerHTML = `
    <style>
@@ -23,7 +21,7 @@ template.innerHTML = `
          visibility: hidden;
      }
  
-     /* flipping */
+     
      :host([face-up]) #tile {
        transform: rotateY(180deg);
      }
@@ -39,7 +37,7 @@ template.innerHTML = `
        background-color: #fff;
        cursor: pointer;
        box-shadow: 0px 0 10px #ccc;
-       /* flipping */
+      
        transform-style: preserve-3d;
        transition: 1s;
      }
@@ -63,7 +61,7 @@ template.innerHTML = `
        height: calc(100% - 4px);
        border-radius: 8px;
        margin:2px;
-       /* flipping */
+       
        position: absolute;
        top:0;
        left:0;
@@ -72,13 +70,11 @@ template.innerHTML = `
  
      #front {
        background-color:#fff;
-       /* flipping */
+       
        transform: rotateY(180deg);
      }
  
-     #back {
-       background:#ffe001 url("${IMG_URL}") no-repeat center/50%;
-     }
+    
  
      slot {
          width: 100%;

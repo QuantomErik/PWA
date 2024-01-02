@@ -5,10 +5,6 @@ const IMG_WEATHER = (new URL('images/weather-app.png', import.meta.url)).href
 
 const template = document.createElement('template')
 
-/* const imageUrl = './images/aurora.jpg' */
-
-/* background-image: url('${imageUrl}');  */
-
 template.innerHTML = `
 <style>
   #app-dock {
@@ -17,12 +13,9 @@ template.innerHTML = `
     justify-content: start;
     align-items: center;
     position: fixed;
-    right: 0; /* Position to the right */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust for exact centering */
-    /* bottom: 0; */
-    /* width: 100%; */
-    /* background-color: #333; */
+    right: 0; 
+    top: 50%; 
+    transform: translateY(-50%);
     padding: 10px 0;
   }
   .app-icon {
@@ -38,8 +31,8 @@ template.innerHTML = `
       
       
       display: none;
-    border: 5px solid #f3f3f3; /* Light grey */
-    border-top: 5px solid #3498db; /* Blue */
+    border: 5px solid #f3f3f3; 
+    border-top: 5px solid #3498db; 
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -63,8 +56,6 @@ template.innerHTML = `
 </div>
 `
 
-
-
 window.customElements.define('app-dock',
 
   /**
@@ -84,7 +75,6 @@ window.customElements.define('app-dock',
      *
      */
     connectedCallback () {
-
       this.shadowRoot.getElementById('app-dock').addEventListener('click', (event) => {
         this.handleIconClick(event)
       })
@@ -94,9 +84,13 @@ window.customElements.define('app-dock',
       this.shadowRoot.getElementById('customAppIcon').addEventListener('click', () => this.openApp('customApp')) */
     }
 
-    handleIconClick(event) {
+    /**
+     *
+     * @param event
+     */
+    handleIconClick (event) {
       const clickedElement = event.target
-    
+
       // Check if the clicked element or its parent is an app icon
       if (clickedElement.id === 'memoryGameIcon' || clickedElement.closest('#memoryGameIcon')) {
         this.openApp('memoryGame')
@@ -106,18 +100,24 @@ window.customElements.define('app-dock',
         this.openApp('customApp')
       }
     }
-    
 
     /**
      *
      * @param appName
      */
 
+    /**
+     *
+     * @param appName
+     */
     openApp (appName) {
       console.log(`Opening ${appName}`)
 
       let loadingTimeout
 
+      /**
+       *
+       */
       const showLoadingIndicatorAfterDelay = () => {
         loadingTimeout = setTimeout(() => {
           if (!this.appLoaded) {
@@ -125,35 +125,31 @@ window.customElements.define('app-dock',
           }
         }, 100) // Delay in milliseconds
       }
-  
-      this.appLoaded = false;
-      showLoadingIndicatorAfterDelay()
 
-      /* this.showLoadingIndicator() */
+      this.appLoaded = false
+      showLoadingIndicatorAfterDelay()
 
       switch (appName) {
         case 'messagesApp':
-         
-        import('../messageApp/index.js').then(module => {
-          this.appLoaded = true
-          clearTimeout(loadingTimeout)
-          this.hideLoadingIndicator()
-          this.dispatchEvent(new CustomEvent('start-message-app', {bubbles:true}))
-        }).catch(err => {
-          console.error('Failed to load the Message App', err)
-          clearTimeout(loadingTimeout)
-          this.hideLoadingIndicator()
-        })
-        break
-       
-        
+
+          import('../messageApp/index.js').then(module => {
+            this.appLoaded = true
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+            this.dispatchEvent(new CustomEvent('start-message-app', { bubbles: true }))
+          }).catch(err => {
+            console.error('Failed to load the Message App', err)
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+          })
+          break
+
         case 'memoryGame':
           import('../memoryGame/index.js').then(module => {
             this.appLoaded = true
-          clearTimeout(loadingTimeout)
-          this.hideLoadingIndicator()
-            this.dispatchEvent(new CustomEvent('start-memory-game', {bubbles:true}))
-            /* this.hideLoadingIndicator() */
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+            this.dispatchEvent(new CustomEvent('start-memory-game', { bubbles: true }))
           }).catch(err => {
             console.error('Failed to load the Memory Game', err)
             clearTimeout(loadingTimeout)
@@ -161,14 +157,12 @@ window.customElements.define('app-dock',
           })
           break
 
-
-          case 'customApp':
+        case 'customApp':
           import('../customApp/index.js').then(module => {
             this.appLoaded = true
-          clearTimeout(loadingTimeout)
-          this.hideLoadingIndicator()
-            this.dispatchEvent(new CustomEvent('start-custom-app', {bubbles:true}))
-            /* this.hideLoadingIndicator() */
+            clearTimeout(loadingTimeout)
+            this.hideLoadingIndicator()
+            this.dispatchEvent(new CustomEvent('start-custom-app', { bubbles: true }))
           }).catch(err => {
             console.error('Failed to load the Custom App', err)
             clearTimeout(loadingTimeout)
@@ -176,51 +170,26 @@ window.customElements.define('app-dock',
           })
           break
 
-          default:
-            console.error('Unknown app:', appName)
-            clearTimeout(loadingTimeout)
-            this.hideLoadingIndicator()
-
+        default:
+          console.error('Unknown app:', appName)
+          clearTimeout(loadingTimeout)
+          this.hideLoadingIndicator()
       }
-
-      
     }
 
-    showLoadingIndicator() {
+    /**
+     *
+     */
+    showLoadingIndicator () {
       this.shadowRoot.querySelector('.loading-indicator').style.display = 'block'
     }
 
-    hideLoadingIndicator() {
+    /**
+     *
+     */
+    hideLoadingIndicator () {
       this.shadowRoot.querySelector('.loading-indicator').style.display = 'none'
     }
-
-
-    /* openApp (appName) {
-      console.log(`Opening ${appName}`)
-
-      if (appName === 'messagesApp') {
-        this.dispatchEvent(new CustomEvent('start-message-app', {
-          bubbles: true
-
-        }))
-        
-      }
-
-      if (appName === 'memoryGame') {
-        this.dispatchEvent(new CustomEvent('start-memory-game', {
-          bubbles: true
-
-        }))
-      }
-
-      if (appName === 'customApp') {
-        this.dispatchEvent(new CustomEvent('start-custom-app', {
-          bubbles: true
-
-        }))
-      }
-
-    } */
   }
 
 )

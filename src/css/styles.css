@@ -1,9 +1,7 @@
 body {
-	/* background: white; */
-	overflow: hidden; /* This prevents scrolling */
-	/* background: rgba(231, 230, 229, 0.87); */
-	/* color: white; */
-	/* font-weight: bold; */
+	
+	overflow: hidden; 
+	
 }
 
 html {

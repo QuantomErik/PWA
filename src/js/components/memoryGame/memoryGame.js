@@ -29,7 +29,7 @@ template.innerHTML = `
   <style>
 
 #Window {
-        position: relative; /* Needed for absolute positioning of the exit button */
+        position: relative;
         display: flex;
     flex-direction: column;
     border: 1px solid #ddd;
@@ -39,25 +39,10 @@ template.innerHTML = `
     max-height: 600px;
     overflow: hidden;
     margin: 20px;
-    /* background-color: #f9f9f9; */
+    
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
 
-   /*  max-width: none;
-    max-height: none; */
-    /* width: 400px; */
-   /*  height: 400px; */
-    /* overflow: hidden; */
-    /* margin: 20px; */
-    /* background-color: #f9f9f9; */
-   /*  z-index: 1; */
-    /* resize: both; */
-    /* padding: 10px; */
-   /*  padding-right: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px; */
-    /* justify-content: center;
-      align-items: center; */
     }
 
     :host {
@@ -79,8 +64,7 @@ template.innerHTML = `
     #exitButton {
       position: absolute;
       right: 1px;
-      /* margin-top: 1px;
-      margin-bottom: 10px; */
+      
       cursor: pointer;
       border: none;
       background: none;
@@ -102,15 +86,14 @@ template.innerHTML = `
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 10px;
-    /* other styles for the button */
+    
   }
 
   #completionMessage {
     text-align: center;
       color: black;
       font-size: 20px;
-      /* justify-content: center;
-      align-items: center; */
+      
 
   }
 
@@ -134,14 +117,7 @@ template.innerHTML = `
   
   }
 
- /*  #boardSizeSelect {
-    display: none;
-  } */
-  
 
-  /* .hidden {
-  display: none;
-} */
 
     my-flipping-tile {
       width: var(--tile-size);
@@ -156,11 +132,11 @@ template.innerHTML = `
   <div id="dragHandle">
   <button id="exitButton">&times;</button>
   </div>
-   <!-- <button id="exitButton">&times;</button> -->
+   
    <button id="resetButton">New Game</button>
    
    <div id="menu">
-  <!-- <label for="boardSizeSelect"></label> -->
+  
   <select id="boardSizeSelect" class="hidden">
     <option value="4x4">4x4</option>
     <option value="4x2">4x2</option>
@@ -219,8 +195,6 @@ customElements.define('memory-game',
     constructor () {
       super()
 
-      // Attach a shadow DOM tree to this element and
-      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
 
@@ -233,6 +207,8 @@ customElements.define('memory-game',
       this.attempts = 0
       this.#init()
     }
+
+   
 
     /**
      * Gets the board size.
@@ -314,7 +290,6 @@ customElements.define('memory-game',
 
       this.#gameBoard.addEventListener('my-flipping-tile:flip', () => this.#onTileFlip())
       this.addEventListener('dragstart', (event) => {
-        // Disable element dragging.
         event.preventDefault()
         event.stopPropagation()
       })
@@ -325,7 +300,7 @@ customElements.define('memory-game',
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
       dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp()) // change the name
+      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
 
       this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
         const selectedSize = event.target.value
@@ -450,17 +425,7 @@ customElements.define('memory-game',
           if (col < width - 1) nextIndex += 1
           break
         case 'Enter':
-          /*  const currentTile = this.#tiles.all[currentIndex]
-          if (currentTile.hasAttribute('face-up')) {
-            currentTile.removeAttribute('face-up')
-          } else {
-            currentTile.setAttribute('face-up', '')
-          } */
 
-          /*  const currentTile = this.#tiles.all[currentIndex];
-          if (currentTile.flip) {  // Ensure the flip method exists
-            currentTile.flip();   // Call the flip method
-          } */
           break
       }
 
@@ -552,9 +517,6 @@ customElements.define('memory-game',
       if (resetButton) {
         resetButton.style.display = 'block'
       }
-
-      /* const gameIsCompleted = document.createElement('game-completed')
-  this.shadowRoot.append(gameIsCompleted) */
     }
 
     /**
@@ -565,15 +527,6 @@ customElements.define('memory-game',
     #displayCompletionMessage (attempts, elapsedTime) {
       const message = `Total attempts: ${attempts}<br> Total time: ${elapsedTime} seconds.`
 
-      // Create a new element to display the message or use an existing element
-
-      /*  const newMessageElement = document.createElement('div')
-        newMessageElement.id = 'completionMessage'
-        newMessageElement.textContent = message
-
-        const windowDiv = this.shadowRoot.querySelector('#Window')
-        windowDiv.appendChild(newMessageElement)
- */
       let completionMessage = this.shadowRoot.querySelector('#completionMessage')
       if (!completionMessage) {
         completionMessage = document.createElement('div')
@@ -599,21 +552,6 @@ customElements.define('memory-game',
         completionMessage.remove()
       }
 
-      /* document.querySelector('#completionMessage').remove() */
-
-      /*    const welcomePage = this.shadowRoot.getElementById('welcomePage') */
-      /* const gameBoard = this.shadowRoot.getElementById('game-board') */
-
-      /* if (gameBoard) {
-    gameBoard.style.display = 'grid'
-  } */
-
-      /* if (welcomePage) {
-    welcomePage.style.display = 'block'
-  } */
-
-      /* this.setBoardSize() */
-
       const tiles = this.#tiles.all
       tiles.forEach(tile => {
         tile.removeAttribute('face-up')
@@ -638,14 +576,6 @@ customElements.define('memory-game',
         tilesToDisable.push(...tiles.faceDown)
         this.attempts++
       }
-
-      /* if (tiles.all.every(tile => tile.hidden)) {
-        console.log('game completed')
-        // existing code...
-        alert(`Game Completed! Total Attempts: ${this.attempts}`);
-        this.#init();
-        console.log('game completed')
-      } */
 
       tilesToDisable.forEach(tile => (tile.setAttribute('disabled', '')))
 
