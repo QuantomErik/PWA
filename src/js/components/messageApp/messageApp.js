@@ -39,6 +39,8 @@ template.innerHTML = `
     height: 300px;
     /* background-color: #b0bbe7; */
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
+    
+        text-align: center;
     /* display: none; */
     }
 
@@ -117,6 +119,7 @@ template.innerHTML = `
         height: 40px;
         background: #2a2b2b;
         /* display: none; */
+       
     }
 
     /* #resizer {
@@ -177,6 +180,37 @@ template.innerHTML = `
     height: 40px;
 }
 
+
+
+
+
+.modal {
+  display: none;
+  position: absolute; 
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); 
+  width: 80%;  
+  max-width: 300px; 
+  
+}
+
+.modal-content {
+  /* background-color: #fefefe; */
+  padding: 20px;
+  /* border: 1px solid #888 */
+}
+
+
+
+/* .close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+} */
+
    /*  #dragHandle {
     background-color: #f0f0f0;
     padding: 5px;
@@ -195,6 +229,15 @@ template.innerHTML = `
 
   <div id="chatWindow">
 
+  <!-- <div id="usernamePrompt" class="modal">
+  <div class="modal-content">
+    
+    <p>Please enter your username:</p>
+    <input type="text" id="usernameInput">
+    <button id="usernameSubmit">Submit</button>
+  </div>
+</div> -->
+
   
 
   <div id="dragHandle">
@@ -204,7 +247,24 @@ template.innerHTML = `
   <!-- <div id="resizer"></div> -->
   </div>
   
-    <div id="messageContainer"></div>
+    <div id="messageContainer">
+
+    <div id="usernameModal" class="modal">
+  <div class="modal-content">
+  <form id="usernameForm">
+    <p>Please enter your username:</p>
+    <input type="text" id="usernameInput">
+    <button id="usernameSubmit">Submit</button>
+    </form>
+  </div>
+
+
+</div>
+
+
+    </div>
+
+    
 
     
     <div id="chatInputContainer">
@@ -246,7 +306,10 @@ customElements.define('message-app',
       this.sendMessageButton = this.shadowRoot.getElementById('sendMessageButton')
       /* this.nicknameSection = this.shadowRoot.getElementById('nicknameSection') */
       this.chatWindow = this.shadowRoot.getElementById('chatWindow')
-      this.nicknameForm = this.shadowRoot.getElementById('nicknameForm')
+      this.usernameModal = this.shadowRoot.getElementById('usernameModal')
+      this.submitButton = this.shadowRoot.getElementById('usernameSubmit')
+      this.input = this.shadowRoot.getElementById('usernameInput')
+      this.usernameForm = this.shadowRoot.getElementById('usernameForm')
       /* this.nicknameInput = this.shadowRoot.getElementById('nicknameInput') */
 
       this.isDragging = false
@@ -307,7 +370,27 @@ customElements.define('message-app',
     }
 
     
+    showUsernamePrompt() {
+      this.usernameModal.style.display = 'block'
 
+      this.usernameForm.addEventListener('submit', (event) => {
+        event.preventDefault()
+
+        const username = this.input.value.trim()
+        if (username) {
+          localStorage.setItem('username', username)
+          this.username = username
+          this.usernameModal.style.display = 'none'
+          this.showChatInputContainer()
+        }
+      
+      })
+    
+     
+     
+        
+      
+    }
     
 
     /**
@@ -371,10 +454,22 @@ customElements.define('message-app',
       this.isDragging = false
     }
 
+
+
+    checkAndSetUsername() {
+      let username = localStorage.getItem('username')
+      if (!username) {
+        this.showUsernamePrompt()
+        this.hideChatInputContainer()
+      } else {
+        this.username = username
+        this.showChatInputContainer()
+      }
+    }
     /**
      *
      */
-    checkAndSetUsername () {
+    /* checkAndSetUsername () {
       let username = localStorage.getItem('username')
       if (!username) {
         username = prompt('Please enter your username:')
@@ -383,6 +478,20 @@ customElements.define('message-app',
         }
       }
       this.username = username
+    } */
+
+    hideChatInputContainer() {
+      
+      if (this.chatInputContainer) {
+        this.chatInputContainer.style.display = 'none'
+      }
+    }
+
+    showChatInputContainer() {
+      
+      if (this.chatInputContainer) {
+        this.chatInputContainer.style.display = 'flex'
+      }
     }
 
     /**
