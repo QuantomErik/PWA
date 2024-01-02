@@ -252,8 +252,8 @@ template.innerHTML = `
     <div id="usernameModal" class="modal">
   <div class="modal-content">
   <form id="usernameForm">
-    <p>Please enter your username:</p>
-    <input type="text" id="usernameInput">
+    <!-- <p>Please enter your username:</p> -->
+    <input type="text" id="usernameInput" placeholder="Choose your username...">
     <button id="usernameSubmit">Submit</button>
     </form>
   </div>

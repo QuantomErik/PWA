@@ -84,10 +84,29 @@ window.customElements.define('app-dock',
      *
      */
     connectedCallback () {
-      this.shadowRoot.getElementById('memoryGameIcon').addEventListener('click', () => this.openApp('memoryGame'))
+
+      this.shadowRoot.getElementById('app-dock').addEventListener('click', (event) => {
+        this.handleIconClick(event)
+      })
+
+      /* this.shadowRoot.getElementById('memoryGameIcon').addEventListener('click', () => this.openApp('memoryGame'))
       this.shadowRoot.getElementById('messagesAppIcon').addEventListener('click', () => this.openApp('messagesApp'))
-      this.shadowRoot.getElementById('customAppIcon').addEventListener('click', () => this.openApp('customApp'))
+      this.shadowRoot.getElementById('customAppIcon').addEventListener('click', () => this.openApp('customApp')) */
     }
+
+    handleIconClick(event) {
+      const clickedElement = event.target
+    
+      // Check if the clicked element or its parent is an app icon
+      if (clickedElement.id === 'memoryGameIcon' || clickedElement.closest('#memoryGameIcon')) {
+        this.openApp('memoryGame')
+      } else if (clickedElement.id === 'messagesAppIcon' || clickedElement.closest('#messagesAppIcon')) {
+        this.openApp('messagesApp')
+      } else if (clickedElement.id === 'customAppIcon' || clickedElement.closest('#customAppIcon')) {
+        this.openApp('customApp')
+      }
+    }
+    
 
     /**
      *
