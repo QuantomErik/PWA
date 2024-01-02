@@ -1,4 +1,7 @@
 /* import '../messageApp/index.js' */
+const IMG_MEMORY = (new URL('images/memory-game.png', import.meta.url)).href
+const IMG_CHAT = (new URL('images/chat-box.png', import.meta.url)).href
+const IMG_WEATHER = (new URL('images/weather-app.png', import.meta.url)).href
 
 const template = document.createElement('template')
 
@@ -52,9 +55,9 @@ template.innerHTML = `
 
 <div class="loading-indicator"></div>
 <div id="app-dock">
-  <img id="memoryGameIcon" src="js/components/dock/images/memory-game.png" class="app-icon">
-  <img id="messagesAppIcon" src="js/components/dock/images/chat-box.png" class="app-icon">
-  <img id="customAppIcon" src="js/components/dock/images/weather-app.png" class="app-icon">
+  <img id="memoryGameIcon" src="${IMG_MEMORY}" class="app-icon">
+  <img id="messagesAppIcon" src="${IMG_CHAT}" class="app-icon">
+  <img id="customAppIcon" src="${IMG_WEATHER}" class="app-icon">
 
   
 </div>

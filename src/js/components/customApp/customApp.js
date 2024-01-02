@@ -1,5 +1,16 @@
 const IMG_URL = (new URL('images/magnifying-glass.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/position.png', import.meta.url)).href
+const IMG_ERROR = (new URL('images/error.png', import.meta.url)).href
+
+const IMG_SNOW = (new URL('images/snowing.png', import.meta.url)).href
+const IMG_CLOUDS = (new URL('images/cloud.png', import.meta.url)).href
+const IMG_MIST = (new URL('images/rain-drops.png', import.meta.url)).href
+const IMG_HAZE = (new URL('images/cloudy-day.png', import.meta.url)).href
+const IMG_CLEAR = (new URL('images/sun.png', import.meta.url)).href
+const IMG_RAIN = (new URL('images/raining.png', import.meta.url)).href
+const IMG_SUNNY = (new URL('images/sun.png', import.meta.url)).href
+const IMG_WINDICON = (new URL('images/wind.png', import.meta.url)).href
+const IMG_HUMIDITYICON = (new URL('images/droplet.png', import.meta.url)).href
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -424,7 +435,7 @@ template.innerHTML = `
 
 
     <div id="windSpeedContainer">
-        <img id="windIcon" src="js/components/customApp/images/wind.png" alt="Wind Icon">
+        <img id="windIcon" src="${IMG_WINDICON}" alt="Wind Icon">
         <div>
             <div id="windSpeedValue"></div>
             <div>Windspeed</div>
@@ -432,7 +443,7 @@ template.innerHTML = `
     </div>
 
     <div id="humidityContainer">
-        <img id="humidityIcon" src="js/components/customApp/images/droplet.png" alt="Humidity Icon">
+        <img id="humidityIcon" src="${IMG_HUMIDITYICON}" alt="Humidity Icon">
         <div>
         <div id="humidityValue"></div>
             <div>Humidity</div>
@@ -461,13 +472,15 @@ customElements.define('custom-app',
   class extends HTMLElement {
 
     weatherStateImages = {
-      snow: 'js/components/customApp/images/snowing.png',
-      clouds: 'js/components/customApp/images/cloud.png',
-      mist: 'js/components/customApp/images/rain-drops.png',
-      haze: 'js/components/customApp/images/cloudy-day.png',
-      clear: 'js/components/customApp/images/sun.png',
-      rain: 'js/components/customApp/images/raining.png',
-      sunny: 'js/components/customApp/images/sun.png'
+      snow: IMG_SNOW ,
+      clouds: IMG_CLOUDS,
+      mist: IMG_MIST,
+      haze: IMG_HAZE,
+      clear: IMG_CLEAR,
+      rain: IMG_RAIN,
+      sunny: IMG_SUNNY,
+      drizzle: IMG_MIST,
+      fog: IMG_CLOUDS
     }
     /**
      *
@@ -642,7 +655,7 @@ requestLocationAccess() {
 
       if (!city) {
         console.error('No city provided.')
-        weatherImage.src = 'js/components/customApp/images/error.png'
+        weatherImage.src = `${IMG_ERROR}`
         cityNameDisplay.textContent = 'No city provided'
         weatherPageContainer.style.display = 'none'
 
@@ -676,15 +689,15 @@ requestLocationAccess() {
         await this.fetchWeatherForecast(city)
 
         const weatherStateImages = {
-          snow: 'js/components/customApp/images/snowing.png',
-          clouds: 'js/components/customApp/images/cloud.png',
-          mist: 'js/components/customApp/images/rain-drops.png',
-          haze: 'js/components/customApp/images/cloudy-day.png',
-          clear: 'js/components/customApp/images/sun.png',
-          rain: 'js/components/customApp/images/raining.png',
-          sunny: 'js/components/customApp/images/sun.png',
-          drizzle: 'js/components/customApp/images/rain-drops.png',
-          fog: 'js/components/customApp/images/cloud.png'
+          snow: IMG_SNOW ,
+          clouds: IMG_CLOUDS,
+          mist: IMG_MIST,
+          haze: IMG_HAZE,
+          clear: IMG_CLEAR,
+          rain: IMG_RAIN,
+          sunny: IMG_SUNNY,
+          drizzle: IMG_MIST,
+          fog: IMG_CLOUDS
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
@@ -700,7 +713,7 @@ requestLocationAccess() {
         console.log(data)
       } catch (error) {
         console.error('Error fetching weather data:', error)
-        weatherImage.src = 'js/components/customApp/images/error.png'
+        weatherImage.src = `${IMG_ERROR}`
         cityNameDisplay.textContent = 'No city provided'
         weatherPageContainer.style.display = 'none'
       }
@@ -736,16 +749,16 @@ requestLocationAccess() {
     hourlyContainer.innerHTML = ''
 
     const weatherStateImages = {
-      snow: 'js/components/customApp/images/snowing.png',
-      clouds: 'js/components/customApp/images/cloud.png',
-      mist: 'js/components/customApp/images/rain-drops.png',
-      haze: 'js/components/customApp/images/cloudy-day.png',
-      clear: 'js/components/customApp/images/sun.png',
-      rain: 'js/components/customApp/images/raining.png',
-      sunny: 'js/components/customApp/images/sun.png',
-      drizzle: 'js/components/customApp/images/rain-drops.png',
-      fog: 'js/components/customApp/images/cloud.png'
-  }
+      snow: IMG_SNOW ,
+      clouds: IMG_CLOUDS,
+      mist: IMG_MIST,
+      haze: IMG_HAZE,
+      clear: IMG_CLEAR,
+      rain: IMG_RAIN,
+      sunny: IMG_SUNNY,
+      drizzle: IMG_MIST,
+      fog: IMG_CLOUDS
+    }
 
     const currentTime = new Date()
     const next24Hours = forecastData.list.filter(item => {
@@ -842,15 +855,15 @@ async fetchWeatherByCoordinates(lat, lon) {
     await this.fetchWeatherForecast(city)
 
     const weatherStateImages = {
-      snow: 'js/components/customApp/images/snowing.png',
-      clouds: 'js/components/customApp/images/cloud.png',
-      mist: 'js/components/customApp/images/rain-drops.png',
-      haze: 'js/components/customApp/images/cloudy-day.png',
-      clear: 'js/components/customApp/images/sun.png',
-      rain: 'js/components/customApp/images/raining.png',
-      sunny: 'js/components/customApp/images/sun.png',
-      drizzle: 'js/components/customApp/images/rain-drops.png',
-      fog: 'js/components/customApp/images/cloud.png'
+      snow: IMG_SNOW ,
+      clouds: IMG_CLOUDS,
+      mist: IMG_MIST,
+      haze: IMG_HAZE,
+      clear: IMG_CLEAR,
+      rain: IMG_RAIN,
+      sunny: IMG_SUNNY,
+      drizzle: IMG_MIST,
+      fog: IMG_CLOUDS
     }
 
     const weatherState = data.weather[0].main.toLowerCase()
