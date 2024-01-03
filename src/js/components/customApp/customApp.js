@@ -28,10 +28,9 @@ template.innerHTML = `
 }
 
 #Window {
-        position: relative; 
-        display: flex;
+    position: relative; 
+    display: flex;
     flex-direction: column;
-    
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -376,7 +375,8 @@ template.innerHTML = `
 customElements.define('custom-app',
 
   /**
-   *
+   * Represents a custom web component for a weather application.
+   * This component includes functionality to search weather by city, display weather information, and handle user interaction.
    */
   class extends HTMLElement {
     #weatherStateImages = {
@@ -400,7 +400,7 @@ customElements.define('custom-app',
     #dragHandle
 
     /**
-     *
+     * Initializes the custom web component, sets up the shadow DOM, and queries necessary DOM elements.
      */
     constructor () {
       super()
@@ -417,8 +417,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Handles the start of a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag start.
      */
     handleDragStart (event) {
       this.isDragging = true
@@ -432,8 +433,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Handles the movement during a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag movement.
      */
     handleDragMove (event) {
       if (!this.isDragging) return
@@ -443,16 +445,16 @@ customElements.define('custom-app',
     }
 
     /**
-     *
+     * Handles the end of a drag event.
      */
     handleDragEnd () {
       this.isDragging = false
     }
 
     /**
-     *
+     * Closes and removes the custom weather app component.
      */
-    closeMessageApp () {
+    closeCustomApp () {
       this.remove()
     }
 
@@ -460,9 +462,8 @@ customElements.define('custom-app',
      *
      */
 
-
     /**
-     *
+     * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
       if (localStorage.getItem('disclaimerAcknowledged') !== 'true') {
@@ -472,7 +473,7 @@ customElements.define('custom-app',
         this.#requestLocationAccess()
       }
 
-      this.#exitButton.addEventListener('click', () => this.closeMessageApp())
+      this.#exitButton.addEventListener('click', () => this.closeCustomApp())
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
       window.addEventListener('mouseup', () => this.handleDragEnd())
 
@@ -504,7 +505,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Acknowledges the disclaimer, stores the acknowledgment in localStorage, hides the disclaimer modal, and requests location access.
      *
+     * @private
      */
     #disclaimerAcknowledged () {
       localStorage.setItem('disclaimerAcknowledged', 'true')
@@ -513,7 +516,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Shows the disclaimer modal.
      *
+     * @private
      */
     #showDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
@@ -523,7 +528,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Hides the disclaimer modal.
      *
+     * @private
      */
     #hideDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
@@ -533,7 +540,9 @@ customElements.define('custom-app',
     }
 
     /**
+     * Requests access to the user's geographical location.
      *
+     * @private
      */
     #requestLocationAccess () {
       if ('geolocation' in navigator) {
@@ -552,7 +561,10 @@ customElements.define('custom-app',
     }
 
     /**
+     * Fetches weather data from OpenWeather API for a specified city.
      *
+     * @private
+     * @async
      */
     async #fetchWeather () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
@@ -632,16 +644,22 @@ customElements.define('custom-app',
     }
 
     /**
+     * Capitalizes the first letter of a string.
      *
-     * @param string
+     * @private
+     * @param {string} string - The string to capitalize.
+     * @returns {string} The capitalized string.
      */
     #capitalizeFirstLetter (string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
     }
 
     /**
+     * Fetches the weather forecast for a given city.
      *
-     * @param city
+     * @private
+     * @async
+     * @param {string} city - The city for which to fetch the forecast.
      */
     async #fetchWeatherForecast (city) {
       console.log('fetching weather forecast')
@@ -663,8 +681,10 @@ customElements.define('custom-app',
     }
 
     /**
+     * Displays the hourly weather forecast.
      *
-     * @param forecastData
+     * @private
+     * @param {object} forecastData - Data containing weather forecast information.
      */
     #displayHourlyForecast (forecastData) {
       const hourlyContainer = this.shadowRoot.getElementById('hourlyContainer')
@@ -709,7 +729,10 @@ customElements.define('custom-app',
     }
 
     /**
+     * Gets the user's current geographical location.
      *
+     * @private
+     * @async
      */
     async #getLocation () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
@@ -729,9 +752,12 @@ customElements.define('custom-app',
     }
 
     /**
+     * Fetches weather information based on latitude and longitude.
      *
-     * @param lat
-     * @param lon
+     * @private
+     * @async
+     * @param {number} lat - The latitude.
+     * @param {number} lon - The longitude.
      */
     async #fetchWeatherByCoordinates (lat, lon) {
       this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
@@ -801,7 +827,10 @@ customElements.define('custom-app',
     }
 
     /**
+     * Loads the disclaimer text.
      *
+     * @private
+     * @async
      */
     async #loadDisclaimer () {
       try {
