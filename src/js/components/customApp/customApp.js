@@ -605,7 +605,7 @@ customElements.define('custom-app',
         this.shadowRoot.getElementById('Window').classList.add('expanded')
         await this.fetchWeatherForecast(city)
 
-        const weatherStateImages = {
+        this.#weatherStateImages = {
           snow: IMG_SNOW,
           clouds: IMG_CLOUDS,
           mist: IMG_MIST,
@@ -618,7 +618,7 @@ customElements.define('custom-app',
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
-        const weatherImageSrc = weatherStateImages[weatherState]
+        const weatherImageSrc = this.#weatherStateImages[weatherState]
         if (weatherImageSrc) {
           this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
           this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
@@ -674,7 +674,7 @@ customElements.define('custom-app',
       const hourlyContainer = this.shadowRoot.getElementById('hourlyContainer')
       hourlyContainer.innerHTML = ''
 
-      const weatherStateImages = {
+      this.#weatherStateImages = {
         snow: IMG_SNOW,
         clouds: IMG_CLOUDS,
         mist: IMG_MIST,
@@ -700,7 +700,7 @@ customElements.define('custom-app',
         const roundedTemp = Math.round(item.main.temp)
 
         const weatherState = item.weather[0].main.toLowerCase()
-        const weatherIconSrc = weatherStateImages[weatherState] || 'default-icon-path'
+        const weatherIconSrc = this.#weatherStateImages[weatherState] || 'default-icon-path'
 
         const weatherDiv = document.createElement('div')
         weatherDiv.className = 'weatherSlot'
@@ -777,7 +777,7 @@ customElements.define('custom-app',
         this.shadowRoot.getElementById('Window').classList.add('expanded')
         await this.fetchWeatherForecast(city)
 
-        const weatherStateImages = {
+        this.#weatherStateImages = {
           snow: IMG_SNOW,
           clouds: IMG_CLOUDS,
           mist: IMG_MIST,
@@ -790,7 +790,7 @@ customElements.define('custom-app',
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
-        const weatherImageSrc = weatherStateImages[weatherState]
+        const weatherImageSrc = this.#weatherStateImages[weatherState]
         if (weatherImageSrc) {
           this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
           this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
