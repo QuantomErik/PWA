@@ -2,6 +2,9 @@ const IMG_MEMORY = (new URL('images/memory-game.png', import.meta.url)).href
 const IMG_CHAT = (new URL('images/chat-box.png', import.meta.url)).href
 const IMG_WEATHER = (new URL('images/weather-app.png', import.meta.url)).href
 
+/*
+ * Define template.
+ */
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
@@ -48,7 +51,9 @@ template.innerHTML = `
   <img id="customAppIcon" src="${IMG_WEATHER}" class="app-icon" tabindex="0" alt="Weather App">
 </div>
 `
-
+/*
+ * Define custom element.
+ */
 window.customElements.define('app-dock',
 
   /**

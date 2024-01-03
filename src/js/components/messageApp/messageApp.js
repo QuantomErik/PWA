@@ -233,7 +233,9 @@ template.innerHTML = `
 
   </div>
 `
-
+/*
+ * Define custom element.
+ */
 customElements.define('message-app',
 
   /**

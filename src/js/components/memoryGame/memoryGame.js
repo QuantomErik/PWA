@@ -1,26 +1,19 @@
+/**
+ * @file Represents a memory game custom element.
+ */
+
 import '../my-flipping-tile'
 
 /*
  * Get image URLs.
  */
-/* const NUMBER_OF_IMAGES = 9
+const NUMBER_OF_IMAGES = 9
+const IMG_URLS = []
 
-const IMG_URLS = new Array(NUMBER_OF_IMAGES)
 for (let i = 0; i < NUMBER_OF_IMAGES; i++) {
-  IMG_URLS[i] = (new URL(`images/${i}.png`, import.meta.url)).href
-} */
-const IMG_URLS = [
-  new URL('./images/0.png', import.meta.url).href,
-  new URL('./images/1.png', import.meta.url).href,
-  new URL('./images/2.png', import.meta.url).href,
-  new URL('./images/3.png', import.meta.url).href,
-  new URL('./images/4.png', import.meta.url).href,
-  new URL('./images/5.png', import.meta.url).href,
-  new URL('./images/6.png', import.meta.url).href,
-  new URL('./images/7.png', import.meta.url).href,
-  new URL('./images/8.png', import.meta.url).href
-  // ... repeat for all images
-]
+  IMG_URLS.push(new URL(`./images/${i}.png`, import.meta.url).href)
+}
+
 /*
  * Define template.
  */
@@ -49,7 +42,6 @@ template.innerHTML = `
       --tile-size: 80px;
     }
 
-    
     #game-board {
       display: grid;
       grid-template-columns: repeat(4, var(--tile-size));
@@ -64,15 +56,11 @@ template.innerHTML = `
     #exitButton {
       position: absolute;
       right: 1px;
-      
       cursor: pointer;
       border: none;
       background: none;
       font-size: 30px;
       color: white;
-
-
-      
     }
 
     #resetButton {
@@ -82,19 +70,16 @@ template.innerHTML = `
     background-color: green;
     color: white;
     cursor: pointer;
-	width: 150px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 10px;
-    
+    width: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
   }
 
   #completionMessage {
     text-align: center;
       color: black;
       font-size: 20px;
-      
-
   }
 
   #dragHandle {
@@ -106,18 +91,14 @@ template.innerHTML = `
     align-items: center; 
     display: flex; 
     justify-content: center;
-    
   }
 
   #menu {
     margin-bottom: 5px;
     position: absolute;
-  top: 5px;
-  left: 5px;
-  
+    top: 5px;
+    left: 5px;
   }
-
-
 
     my-flipping-tile {
       width: var(--tile-size);
@@ -145,8 +126,6 @@ template.innerHTML = `
   </div>
   
 
-  
-
   <template id="tile-template">
     <my-flipping-tile>
       <img />
@@ -160,8 +139,10 @@ template.innerHTML = `
      
 `
 
-/*
- * Define custom element.
+/**
+ * @class MemoryGame
+ * @augments HTMLElement
+ * Represents a memory game with a configurable board size and interactive tiles.
  */
 customElements.define('memory-game',
 
@@ -184,13 +165,13 @@ customElements.define('memory-game',
     #tileTemplate
 
     /**
-     * Creates an instance of the current type.
+     *
      */
 
     #startTime
 
     /**
-     *
+     * Creates an instance of the current type.
      */
     constructor () {
       super()
@@ -294,12 +275,9 @@ customElements.define('memory-game',
 
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
       window.addEventListener('mouseup', () => this.handleDragEnd())
-
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
       dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
-
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
-
+      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMemoryApp())
       this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
         const selectedSize = event.target.value
         this.setBoardSize(selectedSize)
@@ -310,8 +288,9 @@ customElements.define('memory-game',
     }
 
     /**
+     * Sets the size of the game board based on the provided size string.
      *
-     * @param size
+     * @param {string} size - The size of the game board (e.g., '4x4', '4x2', '2x2').
      */
     setBoardSize (size) {
       switch (size) {
@@ -330,17 +309,18 @@ customElements.define('memory-game',
     }
 
     /**
-     *
+     * Closes and removes the memory app component.
      */
-    closeMessageApp () {
+    closeMemoryApp () {
       this.remove() // Removes the element from the DOM
 
       this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.resetGame)
     }
 
     /**
+     * Handles the movement during a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag movement.
      */
     handleDragMove (event) {
       if (!this.isDragging) return
@@ -350,15 +330,16 @@ customElements.define('memory-game',
     }
 
     /**
-     *
+     * Handles the end of a drag event.
      */
     handleDragEnd () {
       this.isDragging = false
     }
 
     /**
+     * Handles the start of a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag start.
      */
     handleDragStart (event) {
       this.isDragging = true
@@ -398,11 +379,13 @@ customElements.define('memory-game',
     }
 
     /**
+     * Handles arrow key navigation on the game board.
      *
-     * @param event
-     * @param currentIndex
-     * @param width
-     * @param height
+     * @param {KeyboardEvent} event - The keyboard event triggered by key press.
+     * @param {number} currentIndex - The current index of the focused tile.
+     * @param {number} width - The width of the game board.
+     * @param {number} height - The height of the game board.
+     * @private
      */
     #handleArrowKey (event, currentIndex, width, height) {
       let nextIndex = currentIndex
@@ -422,9 +405,9 @@ customElements.define('memory-game',
         case 'ArrowRight':
           if (col < width - 1) nextIndex += 1
           break
-        case 'Enter':
+            /* case 'Enter':
 
-          break
+              break */
       }
 
       if (nextIndex !== currentIndex) {
@@ -491,17 +474,20 @@ customElements.define('memory-game',
     }
 
     /**
+     * Calculates the total board width based on the number of tiles in a row.
      *
-     * @param tilesInRow
+     * @param {number} tilesInRow - Number of tiles in a row.
+     * @returns {number} Calculated board width.
+     * @private
      */
     #calculateBoardWidth (tilesInRow) {
       const tileSize = parseInt(getComputedStyle(this).getPropertyValue('--tile-size'), 10)
-      const gapSize = 20 // Assuming a gap of 20px, adjust as necessary
+      const gapSize = 20
       return (tilesInRow * tileSize) + ((tilesInRow - 1) * gapSize)
     }
 
     /**
-     *
+     * Called when the game is completed. It calculates and displays the total attempts and elapsed time, and shows the reset button.
      */
     gameCompleted () {
       console.log('gameover')
@@ -518,9 +504,11 @@ customElements.define('memory-game',
     }
 
     /**
+     * Displays a completion message when the game is completed.
      *
-     * @param attempts
-     * @param elapsedTime
+     * @param {number} attempts - Number of attempts made by the player.
+     * @param {number} elapsedTime - Total time taken by the player.
+     * @private
      */
     #displayCompletionMessage (attempts, elapsedTime) {
       const message = `Total attempts: ${attempts}<br> Total time: ${elapsedTime} seconds.`
@@ -536,7 +524,7 @@ customElements.define('memory-game',
     }
 
     /**
-     *
+     * Resets the game to its initial state.
      */
     resetGame () {
       this.#gameBoard.style.display = ''
@@ -614,14 +602,16 @@ customElements.define('memory-game',
     }
 
     /**
-     *
+     * Starts the timer for the game.
      */
     startTimer () {
       this.#startTime = Date.now()
     }
 
     /**
+     * Calculates the elapsed time since the timer was started.
      *
+     * @returns {number} Elapsed time in seconds.
      */
     getElapsedTime () {
       const endTime = Date.now()

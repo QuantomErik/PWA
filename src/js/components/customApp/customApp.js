@@ -12,6 +12,9 @@ const IMG_SUNNY = (new URL('images/sun.png', import.meta.url)).href
 const IMG_WINDICON = (new URL('images/wind.png', import.meta.url)).href
 const IMG_HUMIDITYICON = (new URL('images/droplet.png', import.meta.url)).href
 
+/*
+ * Define template.
+ */
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
@@ -371,7 +374,9 @@ template.innerHTML = `
 
 
 `
-
+/*
+ * Define custom element.
+ */
 customElements.define('custom-app',
 
   /**
