@@ -312,7 +312,7 @@ customElements.define('memory-game',
      * Closes and removes the memory app component.
      */
     closeMemoryApp () {
-      this.remove() // Removes the element from the DOM
+      this.remove()
 
       this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.resetGame)
     }

@@ -1,7 +1,5 @@
-// websocketService.js
-/**
- *
- */
+import { config } from "./config.js"
+
 export class WebSocketService {
   static instance = null
 
@@ -10,27 +8,26 @@ export class WebSocketService {
    * @param url
    */
   constructor (url) {
-    if (WebSocketService.instance) { // Singleton
+    if (WebSocketService.instance) {
       return WebSocketService.instance
     }
-
+    this.messageHistory = []
     this.url = url
+    this.apiKey = config.apiKey
     /* this.apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
     /* this.socket = null */
     /* this.socket = new WebSocket(this.url) */
-    this.connect('eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
-    WebSocketService.instance = this // SIngleton
+    this.connect(/* 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */)
+    WebSocketService.instance = this
   }
-
-  messageHistory = []
 
   /**
    *
    * @param url
    */
-  static getInstance (url) { // Singleton
+  static getInstance (url, apiKey) {
     if (!WebSocketService.instance) {
-      WebSocketService.instance = new WebSocketService(url)
+      WebSocketService.instance = new WebSocketService(url, apiKey)
     }
     return WebSocketService.instance
   }
@@ -47,12 +44,9 @@ export class WebSocketService {
    *
    * @param apiKey
    */
-  connect (apiKey) {
+  connect () {
     this.socket = new WebSocket(this.url)
 
-    /**
-     *
-     */
     this.socket.onopen = () => {
       console.log('WebSocket connection established')
     }
@@ -77,11 +71,13 @@ export class WebSocketService {
      *
      */
     this.socket.onclose = () => {
-      console.log('WebSocket connection closed')
-      // Optional: Implement reconnection logic here
+      console.log('WebSocket connection closed. Attempting to reconnect... ')
+      setTimeout(() => {
+        this.connect()
+      }, 5000)
     }
 
-    this.apiKey = apiKey
+    /* this.apiKey = apiKey */
   }
 
   /**
@@ -144,22 +140,6 @@ export class WebSocketService {
       console.error('WebSocket is not connected.')
     }
   }
-  /*
-    subscribers = [];
-
-subscribe(subscriber) {
-    this.subscribers.push(subscriber);
 }
 
-unsubscribe(subscriber) {
-    this.subscribers = this.subscribers.filter(sub => sub !== subscriber);
-}
-
-broadcastMessage(message) {
-    this.subscribers.forEach(sub => sub.receiveMessage(message));
-} */
-
-  // Additional methods for handling specific tasks can be added here
-}
-
-export default WebSocketService
+/* export default WebSocketService */

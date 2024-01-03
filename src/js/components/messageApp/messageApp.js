@@ -1,4 +1,4 @@
-import WebSocketService from '../websocketService/webSocket.js'
+import { WebSocketService } from '../websocketService/webSocket.js'
 import CryptoJS from 'crypto-js'
 const IMG_URL = (new URL('images/open-data.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/encrypted-data.png', import.meta.url)).href
@@ -7,11 +7,10 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     
-    #chatWindow {
-        position: relative; 
-        display: flex;
+  #chatWindow {
+    position: relative; 
+    display: flex;
     flex-direction: column;
-   
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-width: none;
@@ -19,30 +18,21 @@ template.innerHTML = `
     width: 380px;
     height: 417px;
     overflow: hidden;
-   
     background-color: #f9f9f9;
     z-index: 1;
     resize: both;
-    
-    
-  
-  
     }
-    #messageContainer {
-        flex-grow: 1;
+
+  #messageContainer {
+    flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
     background-color: #fff;
-    
     height: 300px;
-    
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
-    
-        text-align: center;
-    
+    text-align: center;
     }
 
-    
   .message {
     background-color: #e7f5ff;
     padding: 5px 10px;
@@ -50,10 +40,10 @@ template.innerHTML = `
     border-radius: 4px;
     max-width: 70%;
     word-wrap: break-word;
-  }
-    #messageInput {
-        flex-grow: 1;
-        border: none;
+    }
+  #messageInput {
+    flex-grow: 1;
+    border: none;
     padding: 10px;
     background: linear-gradient(to right, #5a5b5b 0%, #2a2b2b 100%);
     color: #23b82a;
@@ -61,112 +51,88 @@ template.innerHTML = `
     resize: none;
     }
 
-    #messageInput:focus {
+  #messageInput:focus {
     outline: none;
-}
+    }
 
-    #sendMessageButton {
-        background-color: #4CAF50;
+  #sendMessageButton {
+    background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
-    
     }
 
-    #sendMessageButton:hover {
+  #sendMessageButton:hover {
     background-color: #45a049;
-  }
+    }
 
   #exitButton {
-      position: absolute;
-      right: 1px;
-      
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-size: 30px;
-      color: white;
-
-
-      
+    position: absolute;
+    right: 1px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 30px;
+    color: white;
     }
 
-    #dragHandle {
-    
+  #dragHandle {
     background-color: orange;
-    
     color: transparent;
     width: 100%;
     height: 30px;
-    align-items: center; 
-    display: flex; 
-   
+    align-items: center;
+    display: flex;
     justify-content: space-between;
-    
-  }
+    }
 
   #chatInputContainer {
     display: flex;
-      
-        height: 40px;
-        background: #2a2b2b;
-        
-       
+    height: 40px;
+    background: #2a2b2b;
     }
 
-    
-
-    .message-sent {
-    background-color: #95f08d; 
+  .message-sent {
+    background-color: #95f08d;
     text-align: right;
-    float: left; 
-}
+    float: left;
+    }
 
 .message-received {
-    background-color: #89d6f5; 
+    background-color: #89d6f5;
     text-align: left;
-    float: right; 
-}
+    float: right;
+    }
 
 .clearfix::after {
     content: "";
     clear: both;
     display: table;
-}
+    }
 
 #encryptionToggle {
-   
     left: 1px;
     font-size: 30px;
     display: none
-   
-}
+    }
 
 #encryptionToggleLabel {
     display: inline-block;
     width: 40px;
     height: 40px;
-    
     background: url("${IMG_URL}") no-repeat center/50%;
-   
     cursor: pointer;
-    
-}
+    }
 
 #encryptionToggle:checked + #encryptionToggleLabel {
     display: inline-block;
-    
     background: url("${IMG_URL2}") no-repeat center/50%;
     width: 40px;
     height: 40px;
-}
-
-
-
-
+    }
 
 .modal {
   display: none;
@@ -177,36 +143,22 @@ template.innerHTML = `
   transform: translate(-50%, -50%); 
   width: 80%;  
   max-width: 300px; 
-  
-}
+  }
 
 .modal-content {
-  
   padding: 20px;
- 
-}
-
-
-
-
+  }
 
   </style>
 
-
-
   <div id="chatWindow">
-
-
-
   <div id="dragHandle">
   <input type="checkbox" id="encryptionToggle">
   <label for="encryptionToggle" id="encryptionToggleLabel"></label>
   <button id="exitButton">&times;</button>
 
   </div>
-  
     <div id="messageContainer">
-
     <div id="usernameModal" class="modal">
   <div class="modal-content">
   <form id="usernameForm">
@@ -215,22 +167,12 @@ template.innerHTML = `
     <button id="usernameSubmit">Submit</button>
     </form>
   </div>
-
-
 </div>
-
-
     </div>
-
-   
     <div id="chatInputContainer">
-
-  
     <textarea id="messageInput" placeholder="Type your message..."></textarea>
     <button id="sendMessageButton">Send</button>
   </div>
-  
-
   </div>
 `
 /*
@@ -241,11 +183,11 @@ customElements.define('message-app',
   /**
    *
    */
-  class MessageApp extends HTMLElement {
+  class extends HTMLElement {
     encryptionEnabled = false
 
     /**
-     *
+     * Initializes the message app component, sets up the shadow DOM, and queries necessary DOM elements.
      */
     constructor () {
       super()
@@ -273,7 +215,7 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
       this.checkAndSetUsername()
@@ -314,7 +256,7 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Displays a prompt to set the user's username.
      */
     showUsernamePrompt () {
       this.usernameModal.style.display = 'block'
@@ -333,7 +275,7 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Lifecycle method called when the component is removed from the DOM.
      */
     disconnectedCallback () {
       // Remove event listeners to prevent memory leaks
@@ -349,15 +291,16 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Closes and removes the message app component.
      */
     closeMessageApp () {
-      this.remove() // Removes the element from the DOM
+      this.remove()
     }
 
     /**
+     * Handles the start of a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag start.
      */
     handleDragStart (event) {
       this.isDragging = true
@@ -371,8 +314,9 @@ customElements.define('message-app',
     }
 
     /**
+     * Handles the movement during a drag event.
      *
-     * @param event
+     * @param {Event} event - The event object associated with the drag movement.
      */
     handleDragMove (event) {
       if (!this.isDragging) return
@@ -382,14 +326,14 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Handles the end of a drag event.
      */
     handleDragEnd () {
       this.isDragging = false
     }
 
     /**
-     *
+     * Checks and sets the username from local storage or prompts for it.
      */
     checkAndSetUsername () {
       const username = localStorage.getItem('username')
@@ -403,7 +347,7 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Hides the chat input box.
      */
     hideChatInputContainer () {
       if (this.chatInputContainer) {
@@ -412,7 +356,7 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Shows the chat input box.
      */
     showChatInputContainer () {
       if (this.chatInputContainer) {
@@ -421,14 +365,14 @@ customElements.define('message-app',
     }
 
     /**
-     *
+     * Initializes the WebSocket connection.
      */
     initializeWebSocket () {
-      this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket') // SIngleton
+      this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket')
     }
 
     /**
-     *
+     * Sends a chat message through the WebSocket.
      */
     sendChatMessage () {
       const messageText = this.messageInput.value.trim()
@@ -449,8 +393,9 @@ customElements.define('message-app',
     }
 
     /**
+     * Displays a chat message in the message container.
      *
-     * @param message
+     * @param {object} message - The message object.
      */
     displayMessage (message) {
       if (message.type === 'message') {
@@ -484,24 +429,30 @@ customElements.define('message-app',
     }
 
     /**
+     * Checks if a message was sent by the current user.
      *
-     * @param message
+     * @param {object} message - The message object.
+     * @returns {boolean} True if the message was sent by the user.
      */
     isMessageSentByUser (message) {
       return message.username === this.username
     }
 
     /**
+     * Encrypts a message using AES encryption.
      *
-     * @param message
+     * @param {string} message - The message to encrypt.
+     * @returns {string} The encrypted message.
      */
     encryptMessage (message) {
       return CryptoJS.AES.encrypt(message, this.secretKey).toString()
     }
 
     /**
+     * Decrypts a message using AES encryption.
      *
-     * @param ciphertext
+     * @param {string} ciphertext - The encrypted message.
+     * @returns {string} The decrypted message.
      */
     decryptMessage (ciphertext) {
       const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey)

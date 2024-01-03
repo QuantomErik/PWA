@@ -367,11 +367,7 @@ template.innerHTML = `
 
 </div>
 
-   
   </div>
-  
-
-
 
 `
 /*
@@ -462,10 +458,6 @@ customElements.define('custom-app',
     closeCustomApp () {
       this.remove()
     }
-
-    /**
-     *
-     */
 
     /**
      * Called after the element is inserted into the DOM.
