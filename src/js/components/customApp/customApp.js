@@ -250,10 +250,7 @@ template.innerHTML = `
     height: 8px;
 }
 
-#welcomeContainer {
-  color: white;
-  text-align: left;
-}
+
 
 #welcomeText {
   margin-top: 10px;
@@ -397,6 +394,10 @@ customElements.define('custom-app',
     #searchButton
     #searchBox
     #positionButton
+    #disclaimerAcknowledgeButton
+    #closeDisclaimer
+    #exitButton
+    #dragHandle
 
     /**
      *
@@ -409,9 +410,10 @@ customElements.define('custom-app',
       this.#searchButton = this.shadowRoot.querySelector('#searchButton')
       this.#searchBox = this.shadowRoot.querySelector('#searchBox')
       this.#positionButton = this.shadowRoot.querySelector('#positionButton')
-      this.disclaimerButton = this.shadowRoot.querySelector('#disclaimerButton')
-      this.disclaimerAcknowledgeButton = this.shadowRoot.querySelector('#disclaimerAcknowledgeButton')
-      this.closeDisclaimer = this.shadowRoot.querySelector('.close')
+      this.#disclaimerAcknowledgeButton = this.shadowRoot.querySelector('#disclaimerAcknowledgeButton')
+      this.#closeDisclaimer = this.shadowRoot.querySelector('.close')
+      this.#exitButton = this.shadowRoot.querySelector('#exitButton')
+      this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
     }
 
     /**
@@ -457,69 +459,63 @@ customElements.define('custom-app',
     /**
      *
      */
-    hideWelcomeContainer () {
-      const welcomeContainer = this.shadowRoot.getElementById('welcomeContainer')
-      if (welcomeContainer) {
-        welcomeContainer.style.display = 'none'
-      }
-    }
+
 
     /**
      *
      */
     connectedCallback () {
       if (localStorage.getItem('disclaimerAcknowledged') !== 'true') {
-        this.showDisclaimerModal()
-        this.loadDisclaimer()
+        this.#showDisclaimerModal()
+        this.#loadDisclaimer()
       } else {
-        this.requestLocationAccess()
+        this.#requestLocationAccess()
       }
 
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
+      this.#exitButton.addEventListener('click', () => this.closeMessageApp())
       window.addEventListener('mousemove', (event) => this.handleDragMove(event))
       window.addEventListener('mouseup', () => this.handleDragEnd())
 
-      const dragHandle = this.shadowRoot.getElementById('dragHandle')
-      dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
+      this.#dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
 
       this.#searchButton.addEventListener('click', () => {
-        this.fetchWeather()
+        this.#fetchWeather()
       })
 
       this.#positionButton.addEventListener('click', () => {
         if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
           // User has acknowledged the disclaimer, proceed to get location
-          this.getLocation()
+          this.#getLocation()
         } else {
           // User has not acknowledged the disclaimer, show the disclaimer modal
-          this.showDisclaimerModal()
+          this.#showDisclaimerModal()
         }
       })
 
       this.#searchBox.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-          this.fetchWeather()
+          this.#fetchWeather()
         }
       })
 
-      this.closeDisclaimer.addEventListener('click', () => this.hideDisclaimerModal())
+      this.#closeDisclaimer.addEventListener('click', () => this.#hideDisclaimerModal())
 
-      this.disclaimerAcknowledgeButton.addEventListener('click', () => this.disclaimerAcknowledged())
+      this.#disclaimerAcknowledgeButton.addEventListener('click', () => this.#disclaimerAcknowledged())
     }
 
     /**
      *
      */
-    disclaimerAcknowledged () {
+    #disclaimerAcknowledged () {
       localStorage.setItem('disclaimerAcknowledged', 'true')
-      this.hideDisclaimerModal()
-      this.requestLocationAccess()
+      this.#hideDisclaimerModal()
+      this.#requestLocationAccess()
     }
 
     /**
      *
      */
-    showDisclaimerModal () {
+    #showDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
       if (modal) {
         modal.style.display = 'block'
@@ -529,7 +525,7 @@ customElements.define('custom-app',
     /**
      *
      */
-    hideDisclaimerModal () {
+    #hideDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
       if (modal) {
         modal.style.display = 'none'
@@ -539,12 +535,12 @@ customElements.define('custom-app',
     /**
      *
      */
-    requestLocationAccess () {
+    #requestLocationAccess () {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             // Location access granted, fetch weather
-            this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
+            this.#fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
           },
           (error) => {
             console.error('Error Code = ' + error.code + ' - ' + error.message)
@@ -558,7 +554,7 @@ customElements.define('custom-app',
     /**
      *
      */
-    async fetchWeather () {
+    async #fetchWeather () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
       weatherPageContainer.style.display = 'block'
 
@@ -601,11 +597,11 @@ customElements.define('custom-app',
         searchBox.value = ''
 
         cityNameDisplay.textContent = `${city}`
-        cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+        cityNameDisplay.textContent = this.#capitalizeFirstLetter(city)
         this.shadowRoot.getElementById('Window').classList.add('expanded')
-        await this.fetchWeatherForecast(city)
+        await this.#fetchWeatherForecast(city)
 
-        const weatherStateImages = {
+        this.#weatherStateImages = {
           snow: IMG_SNOW,
           clouds: IMG_CLOUDS,
           mist: IMG_MIST,
@@ -618,7 +614,7 @@ customElements.define('custom-app',
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
-        const weatherImageSrc = weatherStateImages[weatherState]
+        const weatherImageSrc = this.#weatherStateImages[weatherState]
         if (weatherImageSrc) {
           this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
           this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
@@ -639,7 +635,7 @@ customElements.define('custom-app',
      *
      * @param string
      */
-    capitalizeFirstLetter (string) {
+    #capitalizeFirstLetter (string) {
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
     }
 
@@ -647,7 +643,7 @@ customElements.define('custom-app',
      *
      * @param city
      */
-    async fetchWeatherForecast (city) {
+    async #fetchWeatherForecast (city) {
       console.log('fetching weather forecast')
 
       const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
@@ -660,7 +656,7 @@ customElements.define('custom-app',
         }
         const forecastData = await response.json()
 
-        this.displayHourlyForecast(forecastData)
+        this.#displayHourlyForecast(forecastData)
       } catch (error) {
         console.error('Error fetching weather forecast:', error)
       }
@@ -670,11 +666,11 @@ customElements.define('custom-app',
      *
      * @param forecastData
      */
-    displayHourlyForecast (forecastData) {
+    #displayHourlyForecast (forecastData) {
       const hourlyContainer = this.shadowRoot.getElementById('hourlyContainer')
       hourlyContainer.innerHTML = ''
 
-      const weatherStateImages = {
+      this.#weatherStateImages = {
         snow: IMG_SNOW,
         clouds: IMG_CLOUDS,
         mist: IMG_MIST,
@@ -700,7 +696,7 @@ customElements.define('custom-app',
         const roundedTemp = Math.round(item.main.temp)
 
         const weatherState = item.weather[0].main.toLowerCase()
-        const weatherIconSrc = weatherStateImages[weatherState] || 'default-icon-path'
+        const weatherIconSrc = this.#weatherStateImages[weatherState] || 'default-icon-path'
 
         const weatherDiv = document.createElement('div')
         weatherDiv.className = 'weatherSlot'
@@ -715,7 +711,7 @@ customElements.define('custom-app',
     /**
      *
      */
-    async getLocation () {
+    async #getLocation () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
       weatherPageContainer.style.display = 'block'
       if ('geolocation' in navigator) {
@@ -723,7 +719,7 @@ customElements.define('custom-app',
           console.log('Latitude: ' + position.coords.latitude)
           console.log('Longitude: ' + position.coords.longitude)
 
-          this.fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
+          this.#fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude)
         }, (error) => {
           console.error('Error Code = ' + error.code + ' - ' + error.message)
         })
@@ -737,7 +733,7 @@ customElements.define('custom-app',
      * @param lat
      * @param lon
      */
-    async fetchWeatherByCoordinates (lat, lon) {
+    async #fetchWeatherByCoordinates (lat, lon) {
       this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
       const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
 
@@ -752,7 +748,7 @@ customElements.define('custom-app',
         }
 
         const cityNameDisplay = this.shadowRoot.getElementById('cityNameDisplay')
-        cityNameDisplay.textContent = this.capitalizeFirstLetter(city)
+        cityNameDisplay.textContent = this.#capitalizeFirstLetter(city)
 
         const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`
         const response = await fetch(url)
@@ -775,9 +771,9 @@ customElements.define('custom-app',
         cityNameDisplay.textContent = `${city}`
 
         this.shadowRoot.getElementById('Window').classList.add('expanded')
-        await this.fetchWeatherForecast(city)
+        await this.#fetchWeatherForecast(city)
 
-        const weatherStateImages = {
+        this.#weatherStateImages = {
           snow: IMG_SNOW,
           clouds: IMG_CLOUDS,
           mist: IMG_MIST,
@@ -790,7 +786,7 @@ customElements.define('custom-app',
         }
 
         const weatherState = data.weather[0].main.toLowerCase()
-        const weatherImageSrc = weatherStateImages[weatherState]
+        const weatherImageSrc = this.#weatherStateImages[weatherState]
         if (weatherImageSrc) {
           this.shadowRoot.getElementById('weatherImage').src = weatherImageSrc
           this.shadowRoot.getElementById('weatherImage').alt = `Weather Image - ${weatherState}`
@@ -807,7 +803,7 @@ customElements.define('custom-app',
     /**
      *
      */
-    async loadDisclaimer () {
+    async #loadDisclaimer () {
       try {
         const response = await fetch('js/components/customApp/disclaimer.txt')
         let text = await response.text()

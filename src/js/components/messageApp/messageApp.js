@@ -268,10 +268,7 @@ customElements.define('message-app',
       this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
 
       this.secretKey = 'ey222ci'
-
     }
-
-
 
     /**
      *

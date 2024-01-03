@@ -208,8 +208,6 @@ customElements.define('memory-game',
       this.#init()
     }
 
-   
-
     /**
      * Gets the board size.
      *
