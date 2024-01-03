@@ -1,5 +1,6 @@
 import './components/dock/index.js'
 
+
 /**
  * The main script file of the application.
  *
@@ -65,7 +66,7 @@ createDock()
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register('/serviceworker.js')
+      const registration = await navigator.serviceWorker.register('/src/serviceworker.js')
 
       console.log('ServiceWorker: Registration successful with scope: ', registration.scope)
     } catch (error) {
