@@ -1,14 +1,18 @@
 import { WebSocketService } from '../websocketService/webSocket.js'
 import CryptoJS from 'crypto-js'
+import { config } from './config.js'
+import { escapeInput, isValidInput } from '../utils/utils.js'
+
+
 const IMG_URL = (new URL('images/open-data.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/encrypted-data.png', import.meta.url)).href
 
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
-    
+
   #chatWindow {
-    position: relative; 
+    position: relative;
     display: flex;
     flex-direction: column;
     border-radius: 8px;
@@ -31,6 +35,12 @@ template.innerHTML = `
     height: 300px;
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
+    }
+
+    #messageContainer::after {
+    content: "";
+    display: table;
+    clear: both;
     }
 
   .message {
@@ -107,11 +117,6 @@ template.innerHTML = `
     float: right;
     }
 
-.clearfix::after {
-    content: "";
-    clear: both;
-    display: table;
-    }
 
 #encryptionToggle {
     left: 1px;
@@ -211,7 +216,7 @@ customElements.define('message-app',
 
       this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
 
-      this.secretKey = 'ey222ci'
+      this.secretKey = config.secretKey
     }
 
     /**
@@ -376,19 +381,23 @@ customElements.define('message-app',
      */
     sendChatMessage () {
       const messageText = this.messageInput.value.trim()
-      if (messageText) {
+
+      if (isValidInput(messageText)) {
+        const finalMessage = this.encryptionEnabled ? messageText : escapeInput(messageText)
         if (this.encryptionEnabled) {
-          const encryptedMessage = this.encryptMessage(messageText)
+          const encryptedMessage = this.encryptMessage(finalMessage)
           this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
         } else {
-          this.wsService.sendMessage(messageText, this.username, 'myChannel', this.userId)
+          this.wsService.sendMessage(finalMessage, this.username, 'myChannel', this.userId)
         }
 
         console.log(messageText)
-        console.log(this.encryptMessage)
+        console.log(finalMessage)
 
         this.messageInput.value = ''
         console.log('SendChatMessage')
+      } else {
+        console.error('Invalid input or input too long')
       }
     }
 
@@ -412,16 +421,11 @@ customElements.define('message-app',
           const decryptedMessage = this.decryptMessage(message.data)
           messageElement.textContent = `${message.username}: ${decryptedMessage}`
         } else {
-          messageElement.textContent = `${message.username}: ${message.data}`
+          messageElement.textContent = `${message.username}: ${escapeInput(message.data)}`
         }
 
         this.messageContainer.appendChild(messageElement)
         console.log('Sending message')
-
-        // Add clearfix
-        const clearfix = document.createElement('div')
-        clearfix.classList.add('clearfix')
-        this.messageContainer.appendChild(clearfix)
 
         // Auto-scroll to the bottom
         this.messageContainer.scrollTop = this.messageContainer.scrollHeight

@@ -1,5 +1,8 @@
-import { config } from "./config.js"
+import { config } from './config.js'
 
+/**
+ *
+ */
 export class WebSocketService {
   static instance = null
 
@@ -21,6 +24,7 @@ export class WebSocketService {
   /**
    *
    * @param url
+   * @param apiKey
    */
   static getInstance (url, apiKey) {
     if (!WebSocketService.instance) {
@@ -44,6 +48,9 @@ export class WebSocketService {
   connect () {
     this.socket = new WebSocket(this.url)
 
+    /**
+     *
+     */
     this.socket.onopen = () => {
       console.log('WebSocket connection established')
     }
@@ -73,7 +80,6 @@ export class WebSocketService {
         this.connect()
       }, 5000)
     }
-
   }
 
   /**
@@ -124,7 +130,7 @@ export class WebSocketService {
       data: messageText,
       username,
       channel,
-      key: this.apiKey,
+      key: this.apiKey
     }
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
@@ -135,4 +141,3 @@ export class WebSocketService {
     }
   }
 }
-
