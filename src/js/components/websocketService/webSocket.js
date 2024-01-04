@@ -14,10 +14,7 @@ export class WebSocketService {
     this.messageHistory = []
     this.url = url
     this.apiKey = config.apiKey
-    /* this.apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
-    /* this.socket = null */
-    /* this.socket = new WebSocket(this.url) */
-    this.connect(/* 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */)
+    this.connect()
     WebSocketService.instance = this
   }
 
@@ -77,7 +74,6 @@ export class WebSocketService {
       }, 5000)
     }
 
-    /* this.apiKey = apiKey */
   }
 
   /**
@@ -96,7 +92,6 @@ export class WebSocketService {
     if (this.messageReceivedCallback) {
       this.messageReceivedCallback(message)
     }
-    /* console.log(message) */
     console.log('handlemessage')
   }
 
@@ -123,14 +118,13 @@ export class WebSocketService {
    * @param channel
    * @param senderId
    */
-  sendMessage (messageText, username, channel, senderId) {
+  sendMessage (messageText, username, channel) {
     const message = {
       type: 'message',
       data: messageText,
       username,
       channel,
       key: this.apiKey,
-      senderId/* 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd' */
     }
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
@@ -142,4 +136,3 @@ export class WebSocketService {
   }
 }
 
-/* export default WebSocketService */

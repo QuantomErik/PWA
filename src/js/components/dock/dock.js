@@ -93,7 +93,13 @@ window.customElements.define('app-dock',
       })
 
       this.#icons.forEach(icon => {
-        icon.addEventListener('keydown', (event) => this.handleArrowKeyPress(event, this.#icons))
+        icon.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            this.#handleIconClick(event)
+          } else {
+            this.handleArrowKeyPress(event, this.#icons)
+          }
+        })
       })
     }
 
