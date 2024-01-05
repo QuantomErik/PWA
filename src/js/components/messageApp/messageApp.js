@@ -37,12 +37,6 @@ template.innerHTML = `
     text-align: center;
     }
 
-    #messageContainer::after {
-    content: "";
-    display: table;
-    clear: both;
-    }
-
   .message {
     background-color: #e7f5ff;
     padding: 5px 10px;
@@ -117,6 +111,12 @@ template.innerHTML = `
     float: right;
     }
 
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+    }
+
 
 #encryptionToggle {
     left: 1px;
@@ -153,6 +153,7 @@ template.innerHTML = `
 .modal-content {
   padding: 20px;
   }
+
 
   </style>
 
@@ -377,17 +378,24 @@ customElements.define('message-app',
     }
 
     /**
-     * Sends a chat message through the WebSocket.
+     * Sends a chat message through the WebSocket. The message is first validated for length,
+     * then either encrypted or escaped to prevent XSS attacks, depending on whether encryption
+     * is enabled or not.
+     *
+     * @function sendChatMessage
      */
     sendChatMessage () {
       const messageText = this.messageInput.value.trim()
 
       if (isValidInput(messageText)) {
+        // Escapes HTML special characters in the message if encryption is not enabled
+      // If encryption is enabled, the original message text is used
         const finalMessage = this.encryptionEnabled ? messageText : escapeInput(messageText)
         if (this.encryptionEnabled) {
           const encryptedMessage = this.encryptMessage(finalMessage)
           this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
         } else {
+          // Sends the escaped (or original, if encrypted) message
           this.wsService.sendMessage(finalMessage, this.username, 'myChannel', this.userId)
         }
 
@@ -426,6 +434,10 @@ customElements.define('message-app',
 
         this.messageContainer.appendChild(messageElement)
         console.log('Sending message')
+
+        const clearfix = document.createElement('div')
+        clearfix.classList.add('clearfix')
+        this.messageContainer.appendChild(clearfix)
 
         // Auto-scroll to the bottom
         this.messageContainer.scrollTop = this.messageContainer.scrollHeight
