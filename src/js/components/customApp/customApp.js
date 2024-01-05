@@ -422,7 +422,7 @@ customElements.define('custom-app',
      *
      * @param {Event} event - The event object associated with the drag start.
      */
-    handleDragStart (event) {
+    #handleDragStart (event) {
       this.isDragging = true
       this.offsetX = event.clientX - this.getBoundingClientRect().left
       this.offsetY = event.clientY - this.getBoundingClientRect().top
@@ -438,7 +438,7 @@ customElements.define('custom-app',
      *
      * @param {Event} event - The event object associated with the drag movement.
      */
-    handleDragMove (event) {
+    #handleDragMove (event) {
       if (!this.isDragging) return
       this.style.position = 'absolute'
       this.style.left = `${event.clientX - this.offsetX}px`
@@ -448,7 +448,7 @@ customElements.define('custom-app',
     /**
      * Handles the end of a drag event.
      */
-    handleDragEnd () {
+    #handleDragEnd () {
       this.isDragging = false
     }
 
@@ -471,10 +471,10 @@ customElements.define('custom-app',
       }
 
       this.#exitButton.addEventListener('click', () => this.closeCustomApp())
-      window.addEventListener('mousemove', (event) => this.handleDragMove(event))
-      window.addEventListener('mouseup', () => this.handleDragEnd())
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
+      window.addEventListener('mouseup', () => this.#handleDragEnd())
 
-      this.#dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
+      this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
 
       this.#searchButton.addEventListener('click', () => {
         this.#fetchWeather()

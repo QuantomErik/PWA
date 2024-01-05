@@ -171,6 +171,11 @@ customElements.define('memory-game',
     #startTime
 
     /**
+     *
+     */
+
+    #attempts
+    /**
      * Creates an instance of the current type.
      */
     constructor () {
@@ -185,7 +190,7 @@ customElements.define('memory-game',
       // Get the tile template element in the shadow root.
       this.#tileTemplate = this.shadowRoot.querySelector('#tile-template')
 
-      this.attempts = 0
+      this.#attempts = 0
       this.#init()
     }
 
@@ -273,18 +278,18 @@ customElements.define('memory-game',
         event.stopPropagation()
       })
 
-      window.addEventListener('mousemove', (event) => this.handleDragMove(event))
-      window.addEventListener('mouseup', () => this.handleDragEnd())
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
+      window.addEventListener('mouseup', () => this.#handleDragEnd())
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
-      dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
+      dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMemoryApp())
       this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
         const selectedSize = event.target.value
-        this.setBoardSize(selectedSize)
-        this.resetGame()
+        this.#setBoardSize(selectedSize)
+        this.#resetGame()
       })
 
-      this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.resetGame())
+      this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.#resetGame())
     }
 
     /**
@@ -292,7 +297,7 @@ customElements.define('memory-game',
      *
      * @param {string} size - The size of the game board (e.g., '4x4', '4x2', '2x2').
      */
-    setBoardSize (size) {
+    #setBoardSize (size) {
       switch (size) {
         case '4x4':
           this.boardSize = 'large'
@@ -314,7 +319,7 @@ customElements.define('memory-game',
     closeMemoryApp () {
       this.remove()
 
-      this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.resetGame)
+      this.shadowRoot.getElementById('resetButton').removeEventListener('click', this.#resetGame)
     }
 
     /**
@@ -322,7 +327,7 @@ customElements.define('memory-game',
      *
      * @param {Event} event - The event object associated with the drag movement.
      */
-    handleDragMove (event) {
+    #handleDragMove (event) {
       if (!this.isDragging) return
       this.style.position = 'absolute'
       this.style.left = `${event.clientX - this.offsetX}px`
@@ -332,7 +337,7 @@ customElements.define('memory-game',
     /**
      * Handles the end of a drag event.
      */
-    handleDragEnd () {
+    #handleDragEnd () {
       this.isDragging = false
     }
 
@@ -341,7 +346,7 @@ customElements.define('memory-game',
      *
      * @param {Event} event - The event object associated with the drag start.
      */
-    handleDragStart (event) {
+    #handleDragStart (event) {
       this.isDragging = true
       this.offsetX = event.clientX - this.getBoundingClientRect().left
       this.offsetY = event.clientY - this.getBoundingClientRect().top
@@ -425,7 +430,7 @@ customElements.define('memory-game',
         tile.addEventListener('keydown', (event) => this.#handleArrowKey(event, index, width, height))
       })
 
-      this.startTimer()
+      this.#startTimer()
       const { width, height } = this.#gameBoardSize
 
       const tilesCount = width * height
@@ -491,11 +496,11 @@ customElements.define('memory-game',
      */
     gameCompleted () {
       console.log('gameover')
-      console.log(this.attempts)
+      console.log(this.#attempts)
 
-      const elapsedTime = this.getElapsedTime()
+      const elapsedTime = this.#getElapsedTime()
 
-      this.#displayCompletionMessage(this.attempts, elapsedTime)
+      this.#displayCompletionMessage(this.#attempts, elapsedTime)
       this.#gameBoard.style.display = 'none'
       const resetButton = this.shadowRoot.getElementById('resetButton')
       if (resetButton) {
@@ -526,11 +531,11 @@ customElements.define('memory-game',
     /**
      * Resets the game to its initial state.
      */
-    resetGame () {
+    #resetGame () {
       this.#gameBoard.style.display = ''
 
       this.#init()
-      this.attempts = 0
+      this.#attempts = 0
       console.log('restart')
 
       const completionMessage = this.shadowRoot.querySelector('#completionMessage')
@@ -560,7 +565,7 @@ customElements.define('memory-game',
 
       if (tiles.faceUp.length > 1) {
         tilesToDisable.push(...tiles.faceDown)
-        this.attempts++
+        this.#attempts++
       }
 
       tilesToDisable.forEach(tile => (tile.setAttribute('disabled', '')))
@@ -604,7 +609,7 @@ customElements.define('memory-game',
     /**
      * Starts the timer for the game.
      */
-    startTimer () {
+    #startTimer () {
       this.#startTime = Date.now()
     }
 
@@ -613,7 +618,7 @@ customElements.define('memory-game',
      *
      * @returns {number} Elapsed time in seconds.
      */
-    getElapsedTime () {
+    #getElapsedTime () {
       const endTime = Date.now()
       return ((endTime - this.#startTime) / 1000).toFixed(2) // Elapsed time in seconds
     }

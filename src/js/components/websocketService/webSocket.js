@@ -4,6 +4,10 @@ import { config } from './config.js'
  * Class representing a singleton WebSocket service for managing WebSocket connections.
  */
 export class WebSocketService {
+  #messageHistory
+  #url
+  #apiKey
+  #messageReceivedCallback
   static instance = null
 
   /**
@@ -16,9 +20,9 @@ export class WebSocketService {
     if (WebSocketService.instance) {
       return WebSocketService.instance
     }
-    this.messageHistory = []
-    this.url = url
-    this.apiKey = config.apiKey
+    this.#messageHistory = []
+    this.#url = url
+    this.#apiKey = config.apiKey
     this.connect()
     WebSocketService.instance = this
   }
@@ -43,14 +47,14 @@ export class WebSocketService {
    * @param {Function} callback - The callback function to handle messages.
    */
   addMessageListener (callback) {
-    this.messageReceivedCallback = callback
+    this.#messageReceivedCallback = callback
   }
 
   /**
    * Establishes a WebSocket connection with the server.
    */
   connect () {
-    this.socket = new WebSocket(this.url)
+    this.socket = new WebSocket(this.#url)
 
     /**
      * Event handler for when the WebSocket connection is successfully established.
@@ -67,7 +71,7 @@ export class WebSocketService {
      * @param {MessageEvent} event - The message event containing the received message.
      */
     this.socket.onmessage = (event) => {
-      this.handleMessage(event)
+      this.#handleMessage(event)
     }
 
     /**
@@ -97,17 +101,17 @@ export class WebSocketService {
    *
    * @param {MessageEvent} event - The message event containing the received message.
    */
-  handleMessage (event) {
+  #handleMessage (event) {
     const message = JSON.parse(event.data)
 
-    this.messageHistory.push(message)
-    if (this.messageHistory.length > 30) {
-      this.messageHistory.shift()
+    this.#messageHistory.push(message)
+    if (this.#messageHistory.length > 30) {
+      this.#messageHistory.shift()
     }
 
     window.dispatchEvent(new CustomEvent('message-received', { detail: message }))
-    if (this.messageReceivedCallback) {
-      this.messageReceivedCallback(message)
+    if (this.#messageReceivedCallback) {
+      this.#messageReceivedCallback(message)
     }
     console.log('handlemessage')
   }
@@ -118,7 +122,7 @@ export class WebSocketService {
    * @returns {Array} An array of received messages.
    */
   getMessagesHistory () {
-    return this.messageHistory
+    return this.#messageHistory
   }
 
   /**
@@ -127,7 +131,7 @@ export class WebSocketService {
    * @param {Function} callback - The callback function to handle messages.
    */
   onMessageReceived (callback) {
-    this.messageReceivedCallback = callback
+    this.#messageReceivedCallback = callback
     console.log('MessageReceived')
   }
 
@@ -145,7 +149,7 @@ export class WebSocketService {
       data: messageText,
       username,
       channel,
-      key: this.apiKey,
+      key: this.#apiKey,
       senderId
     }
 

@@ -190,6 +190,19 @@ customElements.define('message-app',
    *
    */
   class extends HTMLElement {
+    #wsService
+    #messageContainer
+    #chatInputContainer
+    #messageInput
+    #sendMessageButton
+    #chatWindow
+    #usernameModal
+    #submitButton
+    #input
+    #usernameForm
+    #userId
+    #secretKey
+
     encryptionEnabled = false
 
     /**
@@ -200,58 +213,53 @@ customElements.define('message-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.messageContainer = this.shadowRoot.querySelector('#messageContainer')
-      this.chatInputContainer = this.shadowRoot.querySelector('#chatInputContainer')
-      this.messageInput = this.shadowRoot.querySelector('#messageInput')
-      this.sendMessageButton = this.shadowRoot.querySelector('#sendMessageButton')
+      this.#messageContainer = this.shadowRoot.querySelector('#messageContainer')
+      this.#chatInputContainer = this.shadowRoot.querySelector('#chatInputContainer')
+      this.#messageInput = this.shadowRoot.querySelector('#messageInput')
+      this.#sendMessageButton = this.shadowRoot.querySelector('#sendMessageButton')
 
-      this.chatWindow = this.shadowRoot.querySelector('#chatWindow')
-      this.usernameModal = this.shadowRoot.querySelector('#usernameModal')
-      this.submitButton = this.shadowRoot.querySelector('#usernameSubmit')
-      this.input = this.shadowRoot.querySelector('#usernameInput')
-      this.usernameForm = this.shadowRoot.querySelector('#usernameForm')
+      this.#chatWindow = this.shadowRoot.querySelector('#chatWindow')
+      this.#usernameModal = this.shadowRoot.querySelector('#usernameModal')
+      this.#submitButton = this.shadowRoot.querySelector('#usernameSubmit')
+      this.#input = this.shadowRoot.querySelector('#usernameInput')
+      this.#usernameForm = this.shadowRoot.querySelector('#usernameForm')
+      this.#userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
 
-      this.isDragging = false
-      this.offsetX = 0
-      this.offsetY = 0
-
-      this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-
-      this.secretKey = config.secretKey
+      this.#secretKey = config.secretKey
     }
 
     /**
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
-      this.checkAndSetUsername()
-      this.initializeWebSocket()
-      this.sendMessageButton.addEventListener('click', () => {
-        this.sendChatMessage()
+      this.#checkAndSetUsername()
+      this.#initializeWebSocket()
+      this.#sendMessageButton.addEventListener('click', () => {
+        this.#sendChatMessage()
       })
 
-      this.messageInput.addEventListener('keypress', (event) => {
+      this.#messageInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           event.preventDefault()
-          this.sendChatMessage()
+          this.#sendChatMessage()
         }
       })
       this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
 
-      window.addEventListener('mousemove', (event) => this.handleDragMove(event))
-      window.addEventListener('mouseup', () => this.handleDragEnd())
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
+      window.addEventListener('mouseup', () => this.#handleDragEnd())
 
       const dragHandle = this.shadowRoot.getElementById('dragHandle')
-      dragHandle.addEventListener('mousedown', (event) => this.handleDragStart(event))
+      dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
 
       window.addEventListener('message-received', (event) => {
-        this.displayMessage(event.detail)
+        this.#displayMessage(event.detail)
         console.log('Answering from server..')
         console.log(event.detail)
       })
 
-      const lastMessages = this.wsService.getMessagesHistory()
-      lastMessages.forEach(message => this.displayMessage(message))
+      const lastMessages = this.#wsService.getMessagesHistory()
+      lastMessages.forEach(message => this.#displayMessage(message))
 
       const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
 
@@ -264,18 +272,18 @@ customElements.define('message-app',
     /**
      * Displays a prompt to set the user's username.
      */
-    showUsernamePrompt () {
-      this.usernameModal.style.display = 'block'
+    #showUsernamePrompt () {
+      this.#usernameModal.style.display = 'block'
 
-      this.usernameForm.addEventListener('submit', (event) => {
+      this.#usernameForm.addEventListener('submit', (event) => {
         event.preventDefault()
 
-        const username = this.input.value.trim()
+        const username = this.#input.value.trim()
         if (username) {
           localStorage.setItem('username', username)
           this.username = username
-          this.usernameModal.style.display = 'none'
-          this.showChatInputContainer()
+          this.#usernameModal.style.display = 'none'
+          this.#showChatInputContainer()
         }
       })
     }
@@ -285,15 +293,15 @@ customElements.define('message-app',
      */
     disconnectedCallback () {
       // Remove event listeners to prevent memory leaks
-      this.sendMessageButton.removeEventListener('click', this.sendChatMessage)
+      this.#sendMessageButton.removeEventListener('click', this.#sendChatMessage)
 
       /* if (this.wsService) {
         this.wsService.close()
     } */
       this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.closeMessageApp)
 
-      window.removeEventListener('mousemove', this.handleDragMove)
-      window.removeEventListener('mouseup', this.handleDragEnd)
+      window.removeEventListener('mousemove', this.#handleDragMove)
+      window.removeEventListener('mouseup', this.#handleDragEnd)
     }
 
     /**
@@ -308,7 +316,7 @@ customElements.define('message-app',
      *
      * @param {Event} event - The event object associated with the drag start.
      */
-    handleDragStart (event) {
+    #handleDragStart (event) {
       this.isDragging = true
       this.offsetX = event.clientX - this.getBoundingClientRect().left
       this.offsetY = event.clientY - this.getBoundingClientRect().top
@@ -324,7 +332,7 @@ customElements.define('message-app',
      *
      * @param {Event} event - The event object associated with the drag movement.
      */
-    handleDragMove (event) {
+    #handleDragMove (event) {
       if (!this.isDragging) return
       this.style.position = 'absolute'
       this.style.left = `${event.clientX - this.offsetX}px`
@@ -334,47 +342,47 @@ customElements.define('message-app',
     /**
      * Handles the end of a drag event.
      */
-    handleDragEnd () {
+    #handleDragEnd () {
       this.isDragging = false
     }
 
     /**
      * Checks and sets the username from local storage or prompts for it.
      */
-    checkAndSetUsername () {
+    #checkAndSetUsername () {
       const username = localStorage.getItem('username')
       if (!username) {
-        this.showUsernamePrompt()
-        this.hideChatInputContainer()
+        this.#showUsernamePrompt()
+        this.#hideChatInputContainer()
       } else {
         this.username = username
-        this.showChatInputContainer()
+        this.#showChatInputContainer()
       }
     }
 
     /**
      * Hides the chat input box.
      */
-    hideChatInputContainer () {
-      if (this.chatInputContainer) {
-        this.chatInputContainer.style.display = 'none'
+    #hideChatInputContainer () {
+      if (this.#chatInputContainer) {
+        this.#chatInputContainer.style.display = 'none'
       }
     }
 
     /**
      * Shows the chat input box.
      */
-    showChatInputContainer () {
-      if (this.chatInputContainer) {
-        this.chatInputContainer.style.display = 'flex'
+    #showChatInputContainer () {
+      if (this.#chatInputContainer) {
+        this.#chatInputContainer.style.display = 'flex'
       }
     }
 
     /**
      * Initializes the WebSocket connection.
      */
-    initializeWebSocket () {
-      this.wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket')
+    #initializeWebSocket () {
+      this.#wsService = WebSocketService.getInstance('wss://courselab.lnu.se/message-app/socket')
     }
 
     /**
@@ -384,25 +392,25 @@ customElements.define('message-app',
      *
      * @function sendChatMessage
      */
-    sendChatMessage () {
-      const messageText = this.messageInput.value.trim()
+    #sendChatMessage () {
+      const messageText = this.#messageInput.value.trim()
 
       if (isValidInput(messageText)) {
         // Escapes HTML special characters in the message if encryption is not enabled
       // If encryption is enabled, the original message text is used
         const finalMessage = this.encryptionEnabled ? messageText : escapeInput(messageText)
         if (this.encryptionEnabled) {
-          const encryptedMessage = this.encryptMessage(finalMessage)
-          this.wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.userId)
+          const encryptedMessage = this.#encryptMessage(finalMessage)
+          this.#wsService.sendMessage(encryptedMessage, this.username, 'myChannel', this.#userId)
         } else {
           // Sends the escaped (or original, if encrypted) message
-          this.wsService.sendMessage(finalMessage, this.username, 'myChannel', this.userId)
+          this.#wsService.sendMessage(finalMessage, this.username, 'myChannel', this.#userId)
         }
 
         console.log(messageText)
         console.log(finalMessage)
 
-        this.messageInput.value = ''
+        this.#messageInput.value = ''
         console.log('SendChatMessage')
       } else {
         console.error('Invalid input or input too long')
@@ -414,33 +422,33 @@ customElements.define('message-app',
      *
      * @param {object} message - The message object.
      */
-    displayMessage (message) {
+    #displayMessage (message) {
       if (message.type === 'message') {
         const messageElement = document.createElement('div')
         messageElement.classList.add('message')
 
-        if (message.senderId === this.userId) {
+        if (message.senderId === this.#userId) {
           messageElement.classList.add('message-sent')
         } else {
           messageElement.classList.add('message-received')
         }
 
         if (this.encryptionEnabled) {
-          const decryptedMessage = this.decryptMessage(message.data)
+          const decryptedMessage = this.#decryptMessage(message.data)
           messageElement.textContent = `${message.username}: ${decryptedMessage}`
         } else {
           messageElement.textContent = `${message.username}: ${escapeInput(message.data)}`
         }
 
-        this.messageContainer.appendChild(messageElement)
+        this.#messageContainer.appendChild(messageElement)
         console.log('Sending message')
 
         const clearfix = document.createElement('div')
         clearfix.classList.add('clearfix')
-        this.messageContainer.appendChild(clearfix)
+        this.#messageContainer.appendChild(clearfix)
 
         // Auto-scroll to the bottom
-        this.messageContainer.scrollTop = this.messageContainer.scrollHeight
+        this.#messageContainer.scrollTop = this.#messageContainer.scrollHeight
       }
     }
 
@@ -460,8 +468,8 @@ customElements.define('message-app',
      * @param {string} message - The message to encrypt.
      * @returns {string} The encrypted message.
      */
-    encryptMessage (message) {
-      return CryptoJS.AES.encrypt(message, this.secretKey).toString()
+    #encryptMessage (message) {
+      return CryptoJS.AES.encrypt(message, this.#secretKey).toString()
     }
 
     /**
@@ -470,8 +478,8 @@ customElements.define('message-app',
      * @param {string} ciphertext - The encrypted message.
      * @returns {string} The decrypted message.
      */
-    decryptMessage (ciphertext) {
-      const bytes = CryptoJS.AES.decrypt(ciphertext, this.secretKey)
+    #decryptMessage (ciphertext) {
+      const bytes = CryptoJS.AES.decrypt(ciphertext, this.#secretKey)
       return bytes.toString(CryptoJS.enc.Utf8)
     }
   }
