@@ -3,7 +3,6 @@ import CryptoJS from 'crypto-js'
 import { config } from './config.js'
 import { escapeInput, isValidInput } from '../utils/utils.js'
 
-
 const IMG_URL = (new URL('images/open-data.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/encrypted-data.png', import.meta.url)).href
 
@@ -232,6 +231,7 @@ customElements.define('message-app',
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
+      this.#requestNotificationPermission()
       this.#checkAndSetUsername()
       this.#initializeWebSocket()
       this.#sendMessageButton.addEventListener('click', () => {
@@ -253,9 +253,13 @@ customElements.define('message-app',
       dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
 
       window.addEventListener('message-received', (event) => {
-        this.#displayMessage(event.detail)
-        console.log('Answering from server..')
-        console.log(event.detail)
+        const message = event.detail
+        if (message.type === 'message') {
+          this.#displayMessage(event.detail)
+          this.#showNotification(message)
+          console.log('Answering from server..')
+          console.log(event.detail)
+        }
       })
 
       const lastMessages = this.#wsService.getMessagesHistory()
@@ -481,6 +485,51 @@ customElements.define('message-app',
     #decryptMessage (ciphertext) {
       const bytes = CryptoJS.AES.decrypt(ciphertext, this.#secretKey)
       return bytes.toString(CryptoJS.enc.Utf8)
+    }
+
+    /**
+     * Requests permission from the user to display notifications.
+     * If granted, it displays a sample notification.
+     */
+    #requestNotificationPermission () {
+      Notification.requestPermission().then((result) => {
+        if (result === 'granted') {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification('Vibration Sample', {
+              body: 'Buzz! Buzz!',
+              icon: '../images/egg.png',
+              vibrate: [200, 100, 200, 100, 200, 100, 200],
+              tag: 'vibration-sample'
+            })
+          })
+        }
+      })
+    }
+
+    /**
+     * Displays a notification with the specified message content.
+     * The notification will display the sender's username and the message data.
+     * If the user clicks on the notification, it will focus on the window where the notification was generated.
+     *
+     * @param {object} message - The message object containing data to be shown in the notification.
+     */
+    #showNotification (message) {
+      if (Notification.permission === 'granted') {
+        const notificationOptions = {
+          body: message.data,
+          icon: '../images/egg.png',
+          badge: '../images/egg.png'
+        }
+        const notification = new Notification(message.username, notificationOptions)
+
+        /**
+         * Handles the click event on the notification.
+         * When the notification is clicked, this function brings the window to focus.
+         */
+        notification.onclick = () => {
+          window.focus()
+        }
+      }
     }
   }
 

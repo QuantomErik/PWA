@@ -504,7 +504,6 @@ customElements.define('custom-app',
     /**
      * Acknowledges the disclaimer, stores the acknowledgment in localStorage, hides the disclaimer modal, and requests location access.
      *
-     * @private
      */
     #disclaimerAcknowledged () {
       localStorage.setItem('disclaimerAcknowledged', 'true')
@@ -515,7 +514,6 @@ customElements.define('custom-app',
     /**
      * Shows the disclaimer modal.
      *
-     * @private
      */
     #showDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
@@ -527,7 +525,6 @@ customElements.define('custom-app',
     /**
      * Hides the disclaimer modal.
      *
-     * @private
      */
     #hideDisclaimerModal () {
       const modal = this.shadowRoot.getElementById('disclaimerModal')
@@ -539,7 +536,6 @@ customElements.define('custom-app',
     /**
      * Requests access to the user's geographical location.
      *
-     * @private
      */
     #requestLocationAccess () {
       if ('geolocation' in navigator) {
@@ -560,8 +556,6 @@ customElements.define('custom-app',
     /**
      * Fetches weather data from OpenWeather API for a specified city.
      *
-     * @private
-     * @async
      */
     async #fetchWeather () {
       const weatherPageContainer = this.shadowRoot.getElementById('weatherPageContainer')
@@ -643,7 +637,6 @@ customElements.define('custom-app',
     /**
      * Capitalizes the first letter of a string.
      *
-     * @private
      * @param {string} string - The string to capitalize.
      * @returns {string} The capitalized string.
      */
@@ -654,7 +647,6 @@ customElements.define('custom-app',
     /**
      * Fetches the weather forecast for a given city.
      *
-     * @private
      * @async
      * @param {string} city - The city for which to fetch the forecast.
      */
@@ -680,7 +672,6 @@ customElements.define('custom-app',
     /**
      * Displays the hourly weather forecast.
      *
-     * @private
      * @param {object} forecastData - Data containing weather forecast information.
      */
     #displayHourlyForecast (forecastData) {
@@ -728,7 +719,6 @@ customElements.define('custom-app',
     /**
      * Gets the user's current geographical location.
      *
-     * @private
      * @async
      */
     async #getLocation () {
@@ -751,8 +741,6 @@ customElements.define('custom-app',
     /**
      * Fetches weather information based on latitude and longitude.
      *
-     * @private
-     * @async
      * @param {number} lat - The latitude.
      * @param {number} lon - The longitude.
      */
@@ -826,8 +814,6 @@ customElements.define('custom-app',
     /**
      * Loads the disclaimer text.
      *
-     * @private
-     * @async
      */
     async #loadDisclaimer () {
       try {
