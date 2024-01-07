@@ -113,7 +113,38 @@ export class WebSocketService {
     if (this.#messageReceivedCallback) {
       this.#messageReceivedCallback(message)
     }
+
+    if (message.type === 'message' && Notification.permission === 'granted') {
+      this.#showNotification(message)
+    }
     console.log('handlemessage')
+  }
+
+  /**
+   * Displays a notification with the specified message content.
+   * The notification will display the sender's username and the message data.
+   * If the user clicks on the notification, it will focus on the window where the notification was generated.
+   *
+   * @param {object} message - The message object containing data to be shown in the notification.
+   */
+  #showNotification (message) {
+    if (Notification.permission === 'granted') {
+      const notificationOptions = {
+        body: message.data,
+        icon: '../images/egg.png',
+        badge: '../images/egg.png'
+      }
+      const notification = new Notification(message.username, notificationOptions)
+
+      /**
+       * Handles the click event on the notification.
+       * When the notification is clicked, this function brings the window to focus.
+       */
+      notification.onclick = () => {
+        window.focus()
+        console.log('CLicking notification..')
+      }
+    }
   }
 
   /**
