@@ -450,9 +450,6 @@ customElements.define('message-app',
         // Auto-scroll to the bottom
         this.#messageContainer.scrollTop = this.#messageContainer.scrollHeight
       }
-      /* if (message.type === 'message' && Notification.permission === 'granted') {
-        this.#showNotification(message)
-      } */
     }
 
     /**
