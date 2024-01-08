@@ -392,6 +392,7 @@ customElements.define('custom-app',
       fog: IMG_CLOUDS
     }
 
+    #controller
     #searchButton
     #searchBox
     #positionButton
@@ -408,6 +409,32 @@ customElements.define('custom-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+      this.#controller = new AbortController()
+    }
+
+    /**
+     * Called after the element is inserted into the DOM.
+     */
+    connectedCallback () {
+      this.#initializeElements()
+      this.#initializeEventListeners()
+
+      this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true'
+      this.#handleDisclaimerAcknowledgment()
+    }
+
+    /**
+     * Lifecycle method called when the component is removed from the DOM.
+     */
+    disconnectedCallback () {
+      this.controller.abort()
+    }
+
+    /**
+     * Initializes and assigns DOM elements to class properties.
+     * This method queries the component's shadow DOM and assigns references to various elements required for the component's functionality.
+     */
+    #initializeElements () {
       this.#searchButton = this.shadowRoot.querySelector('#searchButton')
       this.#searchBox = this.shadowRoot.querySelector('#searchBox')
       this.#positionButton = this.shadowRoot.querySelector('#positionButton')
@@ -415,6 +442,74 @@ customElements.define('custom-app',
       this.#closeDisclaimer = this.shadowRoot.querySelector('.close')
       this.#exitButton = this.shadowRoot.querySelector('#exitButton')
       this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
+    }
+
+    /**
+     * Initializes all event listeners for the custom app component.
+     *
+     * This method sets up various event listeners for different interactive elements within the component.
+     * It utilizes an AbortSignal from an AbortController to manage the cleanup of these listeners
+     * when the component is disconnected, which helps in preventing potential memory leaks.
+     *
+     * The listeners cover functionalities including:
+     * - Closing the custom app when the exit button is clicked.
+     * - Handling drag and drop events for moving the app window.
+     * - Fetching weather data when the search button is clicked or Enter is pressed in the search box.
+     * - Displaying and hiding the disclaimer modal.
+     * - Acknowledging the disclaimer when the disclaimer acknowledgment button is clicked.
+     * - Fetching the user's location when the position button is clicked.
+     */
+    #initializeEventListeners () {
+      const { signal } = this.#controller
+
+      this.#exitButton.addEventListener('click', () => this.closeCustomApp(), { signal })
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event), { signal })
+      window.addEventListener('mouseup', () => this.#handleDragEnd(), { signal })
+      this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event), { signal })
+      this.#searchButton.addEventListener('click', () => this.#fetchWeather(), { signal })
+      this.#closeDisclaimer.addEventListener('click', () => this.#hideDisclaimerModal(), { signal })
+      this.#disclaimerAcknowledgeButton.addEventListener('click', () => this.#disclaimerAcknowledged(), { signal })
+      this.#positionButton.addEventListener('click', () => this.#handlePositionButtonClick(), { signal })
+      this.#searchBox.addEventListener('keypress', (event) => this.#handleSearchBoxKeyPress(event), { signal })
+    }
+
+    /**
+     * Handles the key press event in the search box.
+     *
+     * @param {Event} event - The key press event object.
+     * This function checks if the Enter key was pressed in the search box and triggers a weather data fetch.
+     */
+    #handleSearchBoxKeyPress (event) {
+      if (event.key === 'Enter') {
+        this.#fetchWeather()
+      }
+    }
+
+    /**
+     * Handles the acknowledgment of the disclaimer by the user.
+     * This function checks if the user has previously acknowledged the disclaimer and either shows the disclaimer modal or requests location access based on that.
+     */
+    #handleDisclaimerAcknowledgment () {
+      if (!this.disclaimerAcknowledgment) {
+        this.#showDisclaimerModal()
+        this.#loadDisclaimer()
+      } else {
+        this.#requestLocationAccess()
+      }
+    }
+
+    /**
+     * Handles the position button click event.
+     * This function is triggered when the position button is clicked, typically to fetch the user's current location.
+     */
+    #handlePositionButtonClick () {
+      if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
+        // User has acknowledged the disclaimer, proceed to get location
+        this.#getLocation()
+      } else {
+        // User has not acknowledged the disclaimer, show the disclaimer modal
+        this.#showDisclaimerModal()
+      }
     }
 
     /**
@@ -457,48 +552,6 @@ customElements.define('custom-app',
      */
     closeCustomApp () {
       this.remove()
-    }
-
-    /**
-     * Called after the element is inserted into the DOM.
-     */
-    connectedCallback () {
-      if (localStorage.getItem('disclaimerAcknowledged') !== 'true') {
-        this.#showDisclaimerModal()
-        this.#loadDisclaimer()
-      } else {
-        this.#requestLocationAccess()
-      }
-
-      this.#exitButton.addEventListener('click', () => this.closeCustomApp())
-      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
-      window.addEventListener('mouseup', () => this.#handleDragEnd())
-
-      this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
-
-      this.#searchButton.addEventListener('click', () => {
-        this.#fetchWeather()
-      })
-
-      this.#positionButton.addEventListener('click', () => {
-        if (localStorage.getItem('disclaimerAcknowledged') === 'true') {
-          // User has acknowledged the disclaimer, proceed to get location
-          this.#getLocation()
-        } else {
-          // User has not acknowledged the disclaimer, show the disclaimer modal
-          this.#showDisclaimerModal()
-        }
-      })
-
-      this.#searchBox.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-          this.#fetchWeather()
-        }
-      })
-
-      this.#closeDisclaimer.addEventListener('click', () => this.#hideDisclaimerModal())
-
-      this.#disclaimerAcknowledgeButton.addEventListener('click', () => this.#disclaimerAcknowledged())
     }
 
     /**

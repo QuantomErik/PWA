@@ -189,6 +189,7 @@ customElements.define('message-app',
    *
    */
   class extends HTMLElement {
+    #controller
     #wsService
     #messageContainer
     #chatInputContainer
@@ -201,6 +202,8 @@ customElements.define('message-app',
     #usernameForm
     #userId
     #secretKey
+    #dragHandle
+    #encryptionToggle
 
     encryptionEnabled = false
 
@@ -212,61 +215,85 @@ customElements.define('message-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.#messageContainer = this.shadowRoot.querySelector('#messageContainer')
-      this.#chatInputContainer = this.shadowRoot.querySelector('#chatInputContainer')
-      this.#messageInput = this.shadowRoot.querySelector('#messageInput')
-      this.#sendMessageButton = this.shadowRoot.querySelector('#sendMessageButton')
-
-      this.#chatWindow = this.shadowRoot.querySelector('#chatWindow')
-      this.#usernameModal = this.shadowRoot.querySelector('#usernameModal')
-      this.#submitButton = this.shadowRoot.querySelector('#usernameSubmit')
-      this.#input = this.shadowRoot.querySelector('#usernameInput')
-      this.#usernameForm = this.shadowRoot.querySelector('#usernameForm')
       this.#userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-
       this.#secretKey = config.secretKey
+      this.#controller = new AbortController()
     }
 
     /**
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
+      this.#initializeElements()
       this.#requestNotificationPermission()
       this.#checkAndSetUsername()
       this.#initializeWebSocket()
-      this.#sendMessageButton.addEventListener('click', () => {
-        this.#sendChatMessage()
-      })
+      this.#initializeEventListeners()
+
+      const lastMessages = this.#wsService.getMessagesHistory()
+      lastMessages.forEach(message => this.#displayMessage(message))
+    }
+
+    /**
+     * Lifecycle method called when the component is removed from the DOM.
+     */
+    disconnectedCallback () {
+      this.controller.abort()
+    }
+
+    /**
+     * Initializes and assigns DOM elements to class properties.
+     * This method queries the component's shadow DOM and assigns references to various elements required for the component's functionality.
+     */
+    #initializeElements () {
+      this.#messageContainer = this.shadowRoot.querySelector('#messageContainer')
+      this.#chatInputContainer = this.shadowRoot.querySelector('#chatInputContainer')
+      this.#messageInput = this.shadowRoot.querySelector('#messageInput')
+      this.#sendMessageButton = this.shadowRoot.querySelector('#sendMessageButton')
+      this.#chatWindow = this.shadowRoot.querySelector('#chatWindow')
+      this.#usernameModal = this.shadowRoot.querySelector('#usernameModal')
+      this.#submitButton = this.shadowRoot.querySelector('#usernameSubmit')
+      this.#input = this.shadowRoot.querySelector('#usernameInput')
+      this.#usernameForm = this.shadowRoot.querySelector('#usernameForm')
+      this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
+      this.#encryptionToggle = this.shadowRoot.querySelector('#encryptionToggle')
+    }
+
+    /**
+     * Initializes all event listeners for the component.
+     *
+     * This method sets up various event listeners for different elements within the component.
+     * It utilizes an AbortSignal from an AbortController to manage the cleanup of these listeners
+     * when the component is disconnected. This helps prevent potential memory leaks.
+     *
+     * The listeners cover various functionalities including:
+     * - Sending messages when the send button is clicked or Enter is pressed in the message input.
+     * - Closing the app when the exit button is clicked.
+     * - Dragging functionality for the chat window.
+     * - Displaying messages when they are received through a WebSocket connection.
+     * - Toggling the encryption state when the encryption toggle is changed.
+     */
+    #initializeEventListeners () {
+      const { signal } = this.#controller
+
+      this.#sendMessageButton.addEventListener('click', () => this.#sendChatMessage(), { signal })
+      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp(), { signal })
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event), { signal })
+      window.addEventListener('mouseup', () => this.#handleDragEnd(), { signal })
+      this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event), { signal })
+      window.addEventListener('message-received', (event) => this.#displayMessage(event.detail), { signal })
+
+      this.#encryptionToggle.addEventListener('change', () => {
+        this.encryptionEnabled = this.#encryptionToggle.checked
+        console.log('Going dark..')
+      }, { signal })
 
       this.#messageInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           event.preventDefault()
           this.#sendChatMessage()
         }
-      })
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp())
-
-      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
-      window.addEventListener('mouseup', () => this.#handleDragEnd())
-
-      const dragHandle = this.shadowRoot.getElementById('dragHandle')
-      dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
-
-      window.addEventListener('message-received', (event) => {
-        this.#displayMessage(event.detail)
-        console.log('Answering from server..')
-        console.log(event.detail)
-      })
-
-      const lastMessages = this.#wsService.getMessagesHistory()
-      lastMessages.forEach(message => this.#displayMessage(message))
-
-      const encryptionToggle = this.shadowRoot.getElementById('encryptionToggle')
-
-      encryptionToggle.addEventListener('change', () => {
-        this.encryptionEnabled = encryptionToggle.checked
-        console.log('Going dark..')
-      })
+      }, { signal })
     }
 
     /**
@@ -286,22 +313,6 @@ customElements.define('message-app',
           this.#showChatInputContainer()
         }
       })
-    }
-
-    /**
-     * Lifecycle method called when the component is removed from the DOM.
-     */
-    disconnectedCallback () {
-      // Remove event listeners to prevent memory leaks
-      this.#sendMessageButton.removeEventListener('click', this.#sendChatMessage)
-
-      /* if (this.wsService) {
-        this.wsService.close()
-    } */
-      this.shadowRoot.getElementById('exitButton').removeEventListener('click', this.closeMessageApp)
-
-      window.removeEventListener('mousemove', this.#handleDragMove)
-      window.removeEventListener('mouseup', this.#handleDragEnd)
     }
 
     /**
