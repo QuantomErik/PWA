@@ -1,18 +1,20 @@
 import './components/dock/index.js'
 
 /**
- * The main script file of the application.
+ * The main script file of the application. This script is responsible for creating a dock and managing the creation of different app windows (like
+ * message app, memory game, and custom app) on the screen. It also handles the registration of a service worker for the application.
  *
- * @author // TODO: YOUR NAME <YOUR EMAIL>
+ * @file index.js - Main script for the application.
+ * @author Erik Yang <ey222ci@student.lnu.se>
  * @version 1.0.0
  */
 
-console.log('TODO: Start working on the assignment')
-
 let zIndexCounter = 100
 const offset = 20
+
 /**
- *
+ * Creates the dock element and appends it to the body of the document.
+ * It also sets up event listeners for starting different apps like message app, memory game, and custom app.
  */
 function createDock () {
   const dockElement = document.createElement('app-dock')
@@ -35,8 +37,10 @@ function createDock () {
 }
 
 /**
+ * Creates a new window for the specified app type. Each window is an HTML element that represents an app, styled with absolute positioning.
+ * The function ensures each new window appears above the previous ones and is staggered slightly with each new window.
  *
- * @param appType
+ * @param {string} appType - The type of app for which to create a new window.
  */
 function createWindow (appType) {
   zIndexCounter++
@@ -52,8 +56,10 @@ function createWindow (appType) {
 }
 
 /**
+ * Brings the specified element to the front by increasing its z-index.
+ * This function is typically called in response to a click event on an app window.
  *
- * @param element
+ * @param {HTMLElement} element - The DOM element to bring to the front.
  */
 function bringToFront (element) {
   zIndexCounter++
