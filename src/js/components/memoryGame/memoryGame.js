@@ -557,9 +557,6 @@ customElements.define('memory-game',
      * Called when the game is completed. It calculates and displays the total attempts and elapsed time, and shows the reset button.
      */
     gameCompleted () {
-      console.log('gameover')
-      console.log(this.#attempts)
-
       const elapsedTime = this.#getElapsedTime()
 
       this.#displayCompletionMessage(this.#attempts, elapsedTime)
@@ -598,7 +595,6 @@ customElements.define('memory-game',
 
       this.#init()
       this.#attempts = 0
-      console.log('restart')
 
       const completionMessage = this.shadowRoot.querySelector('#completionMessage')
       if (completionMessage) {

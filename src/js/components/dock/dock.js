@@ -135,7 +135,6 @@ window.customElements.define('app-dock',
      * @param {string} appName - The name of the application to open.
      */
     openApp (appName) {
-      console.log(`Opening ${appName}`)
       let loadingTimeout
 
       this.appLoaded = false

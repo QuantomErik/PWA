@@ -124,7 +124,6 @@ export class WebSocketService {
     if (message.type === 'message' && Notification.permission === 'granted') {
       this.#showNotification(message)
     }
-    console.log('handlemessage')
     console.log(message)
   }
 
@@ -171,7 +170,6 @@ export class WebSocketService {
    */
   onMessageReceived (callback) {
     this.#messageReceivedCallback = callback
-    console.log('MessageReceived')
   }
 
   /**
@@ -194,7 +192,6 @@ export class WebSocketService {
 
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message))
-      console.log('sending message from Socket')
     } else {
       console.error('WebSocket is not connected.')
     }

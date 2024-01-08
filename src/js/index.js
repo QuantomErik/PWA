@@ -21,17 +21,14 @@ function createDock () {
   document.body.append(dockElement)
 
   dockElement.addEventListener('start-message-app', () => {
-    console.log('Starting message app...')
     createWindow('message-app')
   })
 
   dockElement.addEventListener('start-memory-game', () => {
-    console.log('Starting memoryGame...')
     createWindow('memory-game')
   })
 
   dockElement.addEventListener('start-custom-app', () => {
-    console.log('Starting customApp...')
     createWindow('custom-app')
   })
 }

@@ -38,7 +38,7 @@ template.innerHTML = `
 }
 
 #Window {
-    position: relative; 
+    position: relative;
     display: flex;
     flex-direction: column;
     border-radius: 8px;
@@ -50,7 +50,7 @@ template.innerHTML = `
     margin: 20px;
     background: radial-gradient(circle, rgba(201, 77, 212, 0.7), rgba(75, 19, 79, 0.7));
     text-align: center;
-    align-items: center; 
+    align-items: center;
     max-width: none;
     max-height: none;
     resize: both;
@@ -63,8 +63,8 @@ template.innerHTML = `
     color: transparent;
     width: 100%;
     height: 30px;
-    align-items: center; 
-    display: flex; 
+    align-items: center;
+    display: flex;
     justify-content: center;
   }
 
@@ -79,11 +79,9 @@ template.innerHTML = `
     }
 
     #searchInputContainer {
-        position: relative; 
+        position: relative;
     display: flex;
-    align-items: center; 
-    
-
+    align-items: center;
     }
 
     #searchBox {
@@ -99,47 +97,36 @@ template.innerHTML = `
     padding-left: 40px;
     background: transparent;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    
     }
 
     #searchButton {
-    position: absolute; 
-    right: 5px; 
-    height: 30px; 
+    position: absolute;
+    right: 5px;
+    height: 30px;
     width: 30px;
     border: none;
-    
-    color: white; 
-    
+    color: white;
     cursor: pointer;
     border: none;
-    
     cursor: pointer;
-   
-    
     background: url("${IMG_URL}") no-repeat center/50%;
     background-size: 60%;
-}
-
+    }
 
     #searchBox:focus {
     outline: none;
-}
+    }
 
 #positionButton {
     position: absolute;
-    left: 5px; 
-    width: 30px; 
-    height: 30px; 
+    left: 5px;
+    width: 30px;
+    height: 30px;
     background: url("${IMG_URL2}") no-repeat center/50%;
     background-size: 60%;
-    border: none; 
-    cursor: pointer; 
-    
-    
+    border: none;
+    cursor: pointer;
 }
-
-
 
 #weatherImage {
     height: 200px;
@@ -175,16 +162,15 @@ template.innerHTML = `
 }
 
 #windIcon{
-    width: 40px; 
-    height: 40px; 
-    margin-right: 5px; 
-    
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
 }
 
 #humidityIcon {
-    width: 40px; 
-    height: 40px; 
-    margin-right: 5px; 
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
     
 }
 
@@ -201,11 +187,9 @@ template.innerHTML = `
 
 #cityNameDisplay {
     color: white;
-    margin-top: 5px; 
-    font-size: 20px; 
+    margin-top: 5px;
+    font-size: 20px;
 }
-
-
 
 #hourlyContainer {
     display: flex;
@@ -221,7 +205,6 @@ template.innerHTML = `
 .weatherSlot {
     flex: none;
     margin-right: 5px;
-   
     border-radius: 5px;
     width: 50px;
     height: 120px;
@@ -258,8 +241,6 @@ template.innerHTML = `
     width: 8px;
     height: 8px;
 }
-
-
 
 #welcomeText {
   margin-top: 10px;
@@ -310,29 +291,22 @@ template.innerHTML = `
 
 
 </style>
-
 <div id="Window">
   <div id="dragHandle">
   <button id="exitButton">&times;</button>
   </div>
-  
    <div id="searchInputContainer">
     <button id="positionButton"></button>
     <input type="text" id="searchBox" placeholder="Search City..." />
    <button id="searchButton"></button>
    </div>
-
-   
       <div id="disclaimerModal" class="modal">
       <div class="modal-content">
       <button id="disclaimerAcknowledgeButton">Allow</button>
         <span class="close">&times;</span>
         <div id="disclaimerText">Loading disclaimer...</div>
       </div>
-    </div> 
-
-
-   
+    </div>
 
    <div id="cityNameDisplay"></div>
    
@@ -621,7 +595,6 @@ customElements.define('custom-app',
       weatherPageContainer.style.display = 'block'
 
       this.shadowRoot.getElementById('weatherImage').style.visibility = 'visible'
-      console.log('fetching weather')
 
       const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
       const searchBox = this.shadowRoot.getElementById('searchBox')
@@ -683,8 +656,6 @@ customElements.define('custom-app',
         } else {
           console.error('No image found for this weather state:', weatherState)
         }
-
-        console.log(data)
       } catch (error) {
         console.error('Error fetching weather data:', error)
         weatherImage.src = `${IMG_ERROR}`
@@ -710,8 +681,6 @@ customElements.define('custom-app',
      * @param {string} city - The city for which to fetch the forecast.
      */
     async #fetchWeatherForecast (city) {
-      console.log('fetching weather forecast')
-
       const APIkey = '6dc4f57a3bc1d883f18bc90fda0a6973'
       const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&units=metric&appid=${APIkey}`
 
@@ -863,8 +832,6 @@ customElements.define('custom-app',
         } else {
           console.error('No image found for this weather state:', weatherState)
         }
-
-        console.log(data)
       } catch (error) {
         console.error('Error fetching weather data:', error)
       }

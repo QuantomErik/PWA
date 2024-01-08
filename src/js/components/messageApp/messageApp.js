@@ -160,6 +160,14 @@ template.innerHTML = `
   padding: 20px;
   }
 
+#dragHandleText {
+  flex-grow: 1;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-right: 30px;
+}
+
 
   </style>
 
@@ -168,6 +176,7 @@ template.innerHTML = `
   <input type="checkbox" id="encryptionToggle">
   <label for="encryptionToggle" id="encryptionToggleLabel"></label>
   <button id="exitButton">&times;</button>
+  <span id="dragHandleText"></span>
 
   </div>
     <div id="messageContainer">
@@ -266,6 +275,7 @@ customElements.define('message-app',
       this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
       this.#encryptionToggle = this.shadowRoot.querySelector('#encryptionToggle')
       this.#exitButton = this.shadowRoot.querySelector('#exitButton')
+      this.dragHandleText = this.shadowRoot.querySelector('#dragHandleText')
     }
 
     /**
@@ -295,6 +305,11 @@ customElements.define('message-app',
       this.#encryptionToggle.addEventListener('change', () => {
         this.encryptionEnabled = this.#encryptionToggle.checked
         console.log('Going dark..')
+        if (this.encryptionEnabled) {
+          this.#applyEncryptionStyles()
+        } else {
+          this.#revertEncryptionStyles()
+        }
       }, { signal })
 
       this.#messageInput.addEventListener('keypress', (event) => {
@@ -303,6 +318,25 @@ customElements.define('message-app',
           this.#sendChatMessage()
         }
       }, { signal })
+    }
+
+    /**
+     * Applies a set of styles to indicate that encryption mode is active.
+     */
+    #applyEncryptionStyles () {
+      this.#dragHandle.style.backgroundColor = 'black'
+      this.dragHandleText.style.display = 'block'
+      this.dragHandleText.textContent = 'Dark mode activated'
+      this.#messageContainer.style.background = 'linear-gradient(to right, #2c2c2c 0%, #000000 100%)'
+    }
+
+    /**
+     * Reverts the styles applied by #applyEncryptionStyles.
+     */
+    #revertEncryptionStyles () {
+      this.#dragHandle.style.backgroundColor = 'orange'
+      this.dragHandleText.style.display = 'none'
+      this.#messageContainer.style.background = 'linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%)'
     }
 
     /**
@@ -427,11 +461,7 @@ customElements.define('message-app',
           this.#wsService.sendMessage(finalMessage, this.username, 'myChannel', this.#userId)
         }
 
-        console.log(messageText)
-        console.log(finalMessage)
-
         this.#messageInput.value = ''
-        console.log('SendChatMessage')
       } else {
         console.error('Invalid input or input too long')
       }
@@ -461,8 +491,6 @@ customElements.define('message-app',
         }
 
         this.#messageContainer.appendChild(messageElement)
-        console.log('Sending message')
-
         const clearfix = document.createElement('div')
         clearfix.classList.add('clearfix')
         this.#messageContainer.appendChild(clearfix)
