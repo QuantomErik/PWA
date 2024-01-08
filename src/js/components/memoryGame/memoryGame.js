@@ -178,6 +178,16 @@ customElements.define('memory-game',
     /**
      * Creates an instance of the current type.
      */
+
+    #dragHandle
+    #controller
+    #exitButton
+    #resetButton
+    #boardSizeSelect
+
+    /**
+     * Initializes the memory game component, sets up the shadow DOM, and queries necessary DOM elements.
+     */
     constructor () {
       super()
 
@@ -192,6 +202,85 @@ customElements.define('memory-game',
 
       this.#attempts = 0
       this.#init()
+
+      this.#controller = new AbortController()
+    }
+
+    /**
+     * Called after the element is inserted into the DOM.
+     */
+    connectedCallback () {
+      this.#initializeElements()
+      this.#initializeEventListeners()
+      this.#handleGameStart()
+    }
+
+    /**
+     * Lifecycle method called when the component is removed from the DOM.
+     */
+    disconnectedCallback () {
+      this.#controller.abort()
+    }
+
+    /**
+     * Initializes and assigns DOM elements to class properties.
+     * This method queries the component's shadow DOM and assigns references to various elements required for the component's functionality.
+     */
+    #initializeElements () {
+      this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
+      this.#exitButton = this.shadowRoot.querySelector('#exitButton')
+      this.#resetButton = this.shadowRoot.querySelector('#resetButton')
+      this.#boardSizeSelect = this.shadowRoot.querySelector('#boardSizeSelect')
+    }
+
+    /**
+     * Initializes all the event listeners for the memory game component.
+     *
+     * This method attaches various event listeners to different elements within the component
+     * It utilizes an AbortSignal from an AbortController to manage the cleanup of these listeners
+     * when the component is disconnected, which helps in preventing potential memory leaks.
+     *
+     * Event listeners include:
+     * - Mouse movement and release events for drag functionality.
+     * - Click events for the exit button to close the app and the reset button to restart the game.
+     * - Change event on the board size selection to adjust the game's board size.
+     * - Custom tile flip event on the game board to handle tile interactions.
+     */
+    #initializeEventListeners () {
+      const { signal } = this.#controller
+
+      window.addEventListener('mouseup', () => this.#handleDragEnd(), { signal })
+      window.addEventListener('mousemove', (event) => this.#handleDragMove(event), { signal })
+      this.#resetButton.addEventListener('click', () => this.#resetGame(), { signal })
+      this.#exitButton.addEventListener('click', () => this.closeMemoryApp(), { signal })
+      this.#gameBoard.addEventListener('my-flipping-tile:flip', () => this.#onTileFlip(), { signal })
+      this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event), { signal })
+      this.#boardSizeSelect.addEventListener('change', (event) => this.#handleBoardSizeChange(event), { signal })
+    }
+
+    /**
+     * Initializes the game when the component is connected.
+     * It sets the board size to 'large' if no size is specified.
+     * This method also ensures that any property value set before the element was upgraded is correctly reflected.
+     */
+    #handleGameStart () {
+      if (!this.hasAttribute('boardsize')) {
+        this.setAttribute('boardsize', 'large')
+      }
+
+      this.#upgradeProperty('boardsize')
+    }
+
+    /**
+     * Handles changes in the board size based on user selection.
+     * It sets the new board size and resets the game to reflect the change.
+     *
+     * @param {Event} event - The event object, used to determine the selected board size.
+     */
+    #handleBoardSizeChange (event) {
+      const selectedSize = event.target.value
+      this.#setBoardSize(selectedSize)
+      this.#resetGame()
     }
 
     /**
@@ -260,36 +349,6 @@ customElements.define('memory-game',
         faceDown: tiles.filter(tile => !tile.hasAttribute('face-up') && !tile.hasAttribute('hidden')),
         hidden: tiles.filter(tile => tile.hasAttribute('hidden'))
       }
-    }
-
-    /**
-     * Called after the element is inserted into the DOM.
-     */
-    connectedCallback () {
-      if (!this.hasAttribute('boardsize')) {
-        this.setAttribute('boardsize', 'large')
-      }
-
-      this.#upgradeProperty('boardsize')
-
-      this.#gameBoard.addEventListener('my-flipping-tile:flip', () => this.#onTileFlip())
-      this.addEventListener('dragstart', (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-      })
-
-      window.addEventListener('mousemove', (event) => this.#handleDragMove(event))
-      window.addEventListener('mouseup', () => this.#handleDragEnd())
-      const dragHandle = this.shadowRoot.getElementById('dragHandle')
-      dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event))
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMemoryApp())
-      this.shadowRoot.getElementById('boardSizeSelect').addEventListener('change', (event) => {
-        const selectedSize = event.target.value
-        this.#setBoardSize(selectedSize)
-        this.#resetGame()
-      })
-
-      this.shadowRoot.getElementById('resetButton').addEventListener('click', () => this.#resetGame())
     }
 
     /**

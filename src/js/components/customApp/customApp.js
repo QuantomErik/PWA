@@ -418,9 +418,8 @@ customElements.define('custom-app',
     connectedCallback () {
       this.#initializeElements()
       this.#initializeEventListeners()
-
-      this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true'
       this.#handleDisclaimerAcknowledgment()
+      this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true'
     }
 
     /**
@@ -462,7 +461,6 @@ customElements.define('custom-app',
     #initializeEventListeners () {
       const { signal } = this.#controller
 
-      this.#exitButton.addEventListener('click', () => this.closeCustomApp(), { signal })
       window.addEventListener('mousemove', (event) => this.#handleDragMove(event), { signal })
       window.addEventListener('mouseup', () => this.#handleDragEnd(), { signal })
       this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event), { signal })
@@ -471,6 +469,7 @@ customElements.define('custom-app',
       this.#disclaimerAcknowledgeButton.addEventListener('click', () => this.#disclaimerAcknowledged(), { signal })
       this.#positionButton.addEventListener('click', () => this.#handlePositionButtonClick(), { signal })
       this.#searchBox.addEventListener('keypress', (event) => this.#handleSearchBoxKeyPress(event), { signal })
+      this.#exitButton.addEventListener('click', () => this.closeCustomApp(), { signal })
     }
 
     /**
