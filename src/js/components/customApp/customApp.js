@@ -1,3 +1,10 @@
+/**
+ * The custom app web component.
+ *
+ * @author // Erik Yang <ey222ci@student.lnu.se>
+ * @version 1.0.0
+ */
+
 const IMG_URL = (new URL('images/magnifying-glass.png', import.meta.url)).href
 const IMG_URL2 = (new URL('images/position.png', import.meta.url)).href
 const IMG_ERROR = (new URL('images/error.png', import.meta.url)).href
@@ -419,7 +426,6 @@ customElements.define('custom-app',
       this.#initializeElements()
       this.#initializeEventListeners()
       this.#handleDisclaimerAcknowledgment()
-      /* this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true' */
     }
 
     /**

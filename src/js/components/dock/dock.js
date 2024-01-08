@@ -1,3 +1,10 @@
+/**
+ * The dock web component.
+ *
+ * @author // Erik Yang <ey222ci@student.lnu.se>
+ * @version 1.0.0
+ */
+
 const IMG_MEMORY = (new URL('images/memory-game.png', import.meta.url)).href
 const IMG_CHAT = (new URL('images/chat-box.png', import.meta.url)).href
 const IMG_WEATHER = (new URL('images/weather-app.png', import.meta.url)).href

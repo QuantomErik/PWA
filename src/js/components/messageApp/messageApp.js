@@ -1,3 +1,10 @@
+/**
+ * The message app web component.
+ *
+ * @author // Erik Yang <ey222ci@student.lnu.se>
+ * @version 1.0.0
+ */
+
 import { WebSocketService } from '../websocketService/webSocket.js'
 import CryptoJS from 'crypto-js'
 import { config } from './config.js'
