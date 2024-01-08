@@ -419,7 +419,7 @@ customElements.define('custom-app',
       this.#initializeElements()
       this.#initializeEventListeners()
       this.#handleDisclaimerAcknowledgment()
-      this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true'
+      /* this.disclaimerAcknowledgment = localStorage.getItem('disclaimerAcknowledged') === 'true' */
     }
 
     /**
@@ -489,7 +489,8 @@ customElements.define('custom-app',
      * This function checks if the user has previously acknowledged the disclaimer and either shows the disclaimer modal or requests location access based on that.
      */
     #handleDisclaimerAcknowledgment () {
-      if (!this.disclaimerAcknowledgment) {
+      const disclaimerAcknowledged = localStorage.getItem('disclaimerAcknowledged') === 'true'
+      if (!disclaimerAcknowledged) {
         this.#showDisclaimerModal()
         this.#loadDisclaimer()
       } else {
