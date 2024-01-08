@@ -432,7 +432,7 @@ customElements.define('custom-app',
      * Lifecycle method called when the component is removed from the DOM.
      */
     disconnectedCallback () {
-      this.controller.abort()
+      this.#controller.abort()
     }
 
     /**

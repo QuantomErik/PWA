@@ -125,6 +125,7 @@ export class WebSocketService {
       this.#showNotification(message)
     }
     console.log('handlemessage')
+    console.log(message)
   }
 
   /**

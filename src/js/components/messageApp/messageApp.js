@@ -211,6 +211,7 @@ customElements.define('message-app',
     #secretKey
     #dragHandle
     #encryptionToggle
+    #exitButton
 
     encryptionEnabled = false
 
@@ -245,7 +246,7 @@ customElements.define('message-app',
      * Lifecycle method called when the component is removed from the DOM.
      */
     disconnectedCallback () {
-      this.controller.abort()
+      this.#controller.abort()
     }
 
     /**
@@ -264,6 +265,7 @@ customElements.define('message-app',
       this.#usernameForm = this.shadowRoot.querySelector('#usernameForm')
       this.#dragHandle = this.shadowRoot.querySelector('#dragHandle')
       this.#encryptionToggle = this.shadowRoot.querySelector('#encryptionToggle')
+      this.#exitButton = this.shadowRoot.querySelector('#exitButton')
     }
 
     /**
@@ -284,7 +286,7 @@ customElements.define('message-app',
       const { signal } = this.#controller
 
       this.#sendMessageButton.addEventListener('click', () => this.#sendChatMessage(), { signal })
-      this.shadowRoot.getElementById('exitButton').addEventListener('click', () => this.closeMessageApp(), { signal })
+      this.#exitButton.addEventListener('click', () => this.closeMessageApp(), { signal })
       window.addEventListener('mousemove', (event) => this.#handleDragMove(event), { signal })
       window.addEventListener('mouseup', () => this.#handleDragEnd(), { signal })
       this.#dragHandle.addEventListener('mousedown', (event) => this.#handleDragStart(event), { signal })
