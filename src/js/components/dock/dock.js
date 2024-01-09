@@ -15,47 +15,51 @@ const IMG_WEATHER = (new URL('images/weather-app.png', import.meta.url)).href
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
-  #app-dock {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    position: fixed;
-    right: 0; 
-    top: 50%; 
-    transform: translateY(-50%);
-    padding: 10px 0;
-  }
-  .app-icon {
-    margin: 0 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-  }
+   #app-dock {
+     display: flex;
+     flex-direction: column;
+     justify-content: start;
+     align-items: center;
+     position: fixed;
+     right: 0;
+     top: 50%;
+     transform: translateY(-50%);
+     padding: 10px 0;
+ }
+ .app-icon {
+     margin: 0 10px;
+     margin-bottom: 10px;
+     cursor: pointer;
+     width: 50px;
+     height: 50px;
+     border-radius: 10px;
+ }
 
-  .loading-indicator {
-    display: none;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    }
+ .loading-indicator {
+     display: none;
+     border: 5px solid #f3f3f3;
+     border-top: 5px solid #3498db;
+     border-radius: 50%;
+     width: 50px;
+     height: 50px;
+     animation: spin 2s linear infinite;
+ }
 
-    @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+ @keyframes spin {
+     0% {
+         transform: rotate(0deg);
+     }
+     100% {
+         transform: rotate(360deg);
+     }
+ }
 
 </style>
 <div class="loading-indicator"></div>
 <div id="app-dock">
-  <img id="memoryGameIcon" src="${IMG_MEMORY}" class="app-icon" tabindex="0" alt="Memory Game">
-  <img id="messagesAppIcon" src="${IMG_CHAT}" class="app-icon" tabindex="0" alt="Messages App">
-  <img id="customAppIcon" src="${IMG_WEATHER}" class="app-icon" tabindex="0" alt="Weather App">
+   <img id="memoryGameIcon" src="${IMG_MEMORY}" class="app-icon" tabindex="0" alt="Memory Game">
+   <img id="messagesAppIcon" src="${IMG_CHAT}" class="app-icon" tabindex="0" alt="Messages App">
+   <img id="customAppIcon" src="${IMG_WEATHER}" class="app-icon" tabindex="0" alt="Weather App">
 </div>
 `
 /*

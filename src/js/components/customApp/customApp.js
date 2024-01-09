@@ -66,27 +66,27 @@ template.innerHTML = `
     align-items: center;
     display: flex;
     justify-content: center;
-  }
+}
 
-  #exitButton {
-      position: absolute;
-      right: 1px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-size: 30px;
-      color: white;
-    }
+#exitButton {
+    position: absolute;
+    right: 1px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 30px;
+    color: white;
+}
 
-    #searchInputContainer {
-        position: relative;
+#searchInputContainer {
+    position: relative;
     display: flex;
     align-items: center;
-    }
+}
 
-    #searchBox {
-        flex-grow: 0;
-        border: none;
+#searchBox {
+    flex-grow: 0;
+    border: none;
     padding: 0px;
     color: white;
     font-weight: bold;
@@ -97,9 +97,9 @@ template.innerHTML = `
     padding-left: 40px;
     background: transparent;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    }
+}
 
-    #searchButton {
+#searchButton {
     position: absolute;
     right: 5px;
     height: 30px;
@@ -111,11 +111,11 @@ template.innerHTML = `
     cursor: pointer;
     background: url("${IMG_URL}") no-repeat center/50%;
     background-size: 60%;
-    }
+}
 
-    #searchBox:focus {
+#searchBox:focus {
     outline: none;
-    }
+}
 
 #positionButton {
     position: absolute;
@@ -161,7 +161,7 @@ template.innerHTML = `
     visibility: hidden;
 }
 
-#windIcon{
+#windIcon {
     width: 40px;
     height: 40px;
     margin-right: 5px;
@@ -171,7 +171,6 @@ template.innerHTML = `
     width: 40px;
     height: 40px;
     margin-right: 5px;
-    
 }
 
 #temperature {
@@ -181,8 +180,8 @@ template.innerHTML = `
 }
 
 #weatherState {
-  color: white;
-  font-size: 20px;
+    color: white;
+    font-size: 20px;
 }
 
 #cityNameDisplay {
@@ -243,12 +242,12 @@ template.innerHTML = `
 }
 
 #welcomeText {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 #disclaimerText {
-  text-align: left;
-  color: white;
+    text-align: left;
+    color: white;
 }
 
 .modal {
@@ -264,7 +263,7 @@ template.innerHTML = `
 }
 
 .modal-content {
-  position: relative;
+    position: relative;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -273,8 +272,8 @@ template.innerHTML = `
 }
 
 .close {
-  position: absolute;
-  top: 1px;
+    position: absolute;
+    top: 1px;
     right: 7px;
     color: #aaa;
     float: right;
@@ -289,67 +288,52 @@ template.innerHTML = `
     cursor: pointer;
 }
 
-
 </style>
 <div id="Window">
-  <div id="dragHandle">
-  <button id="exitButton">&times;</button>
-  </div>
-   <div id="searchInputContainer">
-    <button id="positionButton"></button>
-    <input type="text" id="searchBox" placeholder="Search City..." />
-   <button id="searchButton"></button>
+   <div id="dragHandle">
+      <button id="exitButton">&times;</button>
    </div>
-      <div id="disclaimerModal" class="modal">
+   <div id="searchInputContainer">
+      <button id="positionButton"></button>
+      <input type="text" id="searchBox" placeholder="Search City..." />
+      <button id="searchButton"></button>
+   </div>
+   <div id="disclaimerModal" class="modal">
       <div class="modal-content">
-      <button id="disclaimerAcknowledgeButton">Allow</button>
-        <span class="close">&times;</span>
-        <div id="disclaimerText">Loading disclaimer...</div>
+         <button id="disclaimerAcknowledgeButton">Allow</button>
+         <span class="close">&times;</span>
+         <div id="disclaimerText">Loading disclaimer...</div>
       </div>
-    </div>
-
+   </div>
    <div id="cityNameDisplay"></div>
-   
    <div id="weatherImageContainer">
-    <img id="weatherImage" src="" alt="Weather Image">
-</div>
-
-
-<div id="weatherPageContainer">
-
-   <div id="weatherInfo">
-    <div id="temperature"></div>
-    <div id="weatherState"></div>
-
-    <div id="hourlyContainer"></div>
-
-    
-
-
-    <div id="windSpeedContainer">
-        <img id="windIcon" src="${IMG_WINDICON}" alt="Wind Icon">
-        <div>
-            <div id="windSpeedValue"></div>
-            <div>Windspeed</div>
-    </div>
-    </div>
-
-    <div id="humidityContainer">
-        <img id="humidityIcon" src="${IMG_HUMIDITYICON}" alt="Humidity Icon">
-        <div>
-        <div id="humidityValue"></div>
-            <div>Humidity</div>
+      <img id="weatherImage" src="" alt="Weather Image">
+   </div>
+   <div id="weatherPageContainer">
+      <div id="weatherInfo">
+         <div id="temperature"></div>
+         <div id="weatherState"></div>
+         <div id="hourlyContainer"></div>
+         <div id="windSpeedContainer">
+            <img id="windIcon" src="${IMG_WINDICON}" alt="Wind Icon">
+            <div>
+               <div id="windSpeedValue"></div>
+               <div>Windspeed</div>
             </div>
-    </div>
+         </div>
+         <div id="humidityContainer">
+            <img id="humidityIcon" src="${IMG_HUMIDITYICON}" alt="Humidity Icon">
+            <div>
+               <div id="humidityValue"></div>
+               <div>Humidity</div>
+            </div>
+         </div>
+      </div>
+      <div id="windSpeed"></div>
+      <div id="humidity"></div>
+   </div>
 </div>
-    <div id="windSpeed"></div>
-    <div id="humidity"></div>
 </div>
-
-</div>
-
-  </div>
-
 `
 /*
  * Define custom element.

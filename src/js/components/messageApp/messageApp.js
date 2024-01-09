@@ -17,7 +17,7 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
 
-  #chatWindow {
+#chatWindow {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -31,9 +31,9 @@ template.innerHTML = `
     background-color: #f9f9f9;
     z-index: 1;
     resize: both;
-    }
+}
 
-  #messageContainer {
+#messageContainer {
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
@@ -41,17 +41,17 @@ template.innerHTML = `
     height: 300px;
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
-    }
+}
 
-  .message {
+.message {
     background-color: #e7f5ff;
     padding: 5px 10px;
     margin: 5px 0;
     border-radius: 4px;
     max-width: 70%;
     word-wrap: break-word;
-    }
-  #messageInput {
+}
+#messageInput {
     flex-grow: 1;
     border: none;
     padding: 10px;
@@ -59,13 +59,13 @@ template.innerHTML = `
     color: #23b82a;
     font-weight: bold;
     resize: none;
-    }
+}
 
-  #messageInput:focus {
+#messageInput:focus {
     outline: none;
-    }
+}
 
-  #sendMessageButton {
+#sendMessageButton {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -73,13 +73,13 @@ template.innerHTML = `
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
-    }
+}
 
-  #sendMessageButton:hover {
+#sendMessageButton:hover {
     background-color: #45a049;
-    }
+}
 
-  #exitButton {
+#exitButton {
     position: absolute;
     right: 1px;
     cursor: pointer;
@@ -87,9 +87,9 @@ template.innerHTML = `
     background: none;
     font-size: 30px;
     color: white;
-    }
+}
 
-  #dragHandle {
+#dragHandle {
     background-color: orange;
     color: transparent;
     width: 100%;
@@ -97,38 +97,38 @@ template.innerHTML = `
     align-items: center;
     display: flex;
     justify-content: space-between;
-    }
+}
 
-  #chatInputContainer {
+#chatInputContainer {
     display: flex;
     height: 40px;
     background: #2a2b2b;
-    }
+}
 
-  .message-sent {
+.message-sent {
     background-color: #95f08d;
     text-align: right;
     float: left;
-    }
+}
 
 .message-received {
     background-color: #89d6f5;
     text-align: left;
     float: right;
-    }
+}
 
 .clearfix::after {
     content: "";
     clear: both;
     display: table;
-    }
+}
 
 
 #encryptionToggle {
     left: 1px;
     font-size: 30px;
     display: none
-    }
+}
 
 #encryptionToggleLabel {
     display: inline-block;
@@ -136,65 +136,61 @@ template.innerHTML = `
     height: 40px;
     background: url("${IMG_URL}") no-repeat center/50%;
     cursor: pointer;
-    }
+}
 
-#encryptionToggle:checked + #encryptionToggleLabel {
+#encryptionToggle:checked+#encryptionToggleLabel {
     display: inline-block;
     background: url("${IMG_URL2}") no-repeat center/50%;
     width: 40px;
     height: 40px;
-    }
-
-.modal {
-  display: none;
-  position: absolute; 
-  z-index: 2;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%); 
-  width: 80%;  
-  max-width: 300px; 
-  }
-
-.modal-content {
-  padding: 20px;
-  }
-
-#dragHandleText {
-  flex-grow: 1;
-  font-weight: bold;
-  color: white;
-  text-align: center;
-  margin-right: 30px;
 }
 
+.modal {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 300px;
+}
 
-  </style>
+.modal-content {
+    padding: 20px;
+}
 
-  <div id="chatWindow">
-  <div id="dragHandle">
-  <input type="checkbox" id="encryptionToggle">
-  <label for="encryptionToggle" id="encryptionToggleLabel"></label>
-  <button id="exitButton">&times;</button>
-  <span id="dragHandleText"></span>
+#dragHandleText {
+    flex-grow: 1;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin-right: 30px;
+}
 
-  </div>
-    <div id="messageContainer">
-    <div id="usernameModal" class="modal">
-  <div class="modal-content">
-  <form id="usernameForm">
-   
-    <input type="text" id="usernameInput" placeholder="Choose your username...">
-    <button id="usernameSubmit">Submit</button>
-    </form>
-  </div>
+</style>
+<div id="chatWindow">
+   <div id="dragHandle">
+      <input type="checkbox" id="encryptionToggle">
+      <label for="encryptionToggle" id="encryptionToggleLabel"></label>
+      <button id="exitButton">&times;</button>
+      <span id="dragHandleText"></span>
+   </div>
+   <div id="messageContainer">
+      <div id="usernameModal" class="modal">
+         <div class="modal-content">
+            <form id="usernameForm">
+               <input type="text" id="usernameInput" placeholder="Choose your username...">
+               <button id="usernameSubmit">Submit</button>
+            </form>
+         </div>
+      </div>
+   </div>
+   <div id="chatInputContainer">
+      <textarea id="messageInput" placeholder="Type your message..."></textarea>
+      <button id="sendMessageButton">Send</button>
+   </div>
 </div>
-    </div>
-    <div id="chatInputContainer">
-    <textarea id="messageInput" placeholder="Type your message..."></textarea>
-    <button id="sendMessageButton">Send</button>
-  </div>
-  </div>
 `
 /*
  * Define custom element.

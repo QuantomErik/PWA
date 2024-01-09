@@ -25,8 +25,8 @@ template.innerHTML = `
   <style>
 
 #Window {
-        position: relative;
-        display: flex;
+    position: relative;
+    display: flex;
     flex-direction: column;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -35,38 +35,36 @@ template.innerHTML = `
     max-height: 600px;
     overflow: hidden;
     margin: 20px;
-    
     background: linear-gradient(to right, #b0bbe7 0%, #1f2e5c 100%);
     text-align: center;
+}
 
-    }
+:host {
+    --tile-size: 80px;
+}
 
-    :host {
-      --tile-size: 80px;
-    }
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(4, var(--tile-size));
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+#game-board.small {
+    grid-template-columns: repeat(2, var(--tile-size));
+}
 
-    #game-board {
-      display: grid;
-      grid-template-columns: repeat(4, var(--tile-size));
-      gap: 20px;
-      justify-content: center;
-      align-items: center;
-    }
-    #game-board.small {
-      grid-template-columns: repeat(2, var(--tile-size));
-    }
+#exitButton {
+    position: absolute;
+    right: 1px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 30px;
+    color: white;
+}
 
-    #exitButton {
-      position: absolute;
-      right: 1px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-size: 30px;
-      color: white;
-    }
-
-    #resetButton {
+#resetButton {
     display: none;
     border-radius: 10px;
     padding: 10px;
@@ -77,69 +75,62 @@ template.innerHTML = `
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
-  }
+}
 
-  #completionMessage {
+#completionMessage {
     text-align: center;
-      color: black;
-      font-size: 20px;
-  }
+    color: black;
+    font-size: 20px;
+}
 
-  #dragHandle {
+#dragHandle {
     margin-bottom: 5px;
     background-color: orange;
     color: transparent;
     width: 100%;
     height: 30px;
-    align-items: center; 
-    display: flex; 
+    align-items: center;
+    display: flex;
     justify-content: center;
-  }
+}
 
-  #menu {
+#menu {
     margin-bottom: 5px;
     position: absolute;
     top: 5px;
     left: 5px;
-  }
+}
 
-    my-flipping-tile {
-      width: var(--tile-size);
-      height: var(--tile-size);
-    }
-    my-flipping-tile::part(tile-back) {
-      border-width: 5px;
-      background: url("${IMG_URLS[0]}") no-repeat center/80%, radial-gradient(#fff, #031a8b);;
-    }
-  </style>
-  <div id="Window">
-  <div id="dragHandle">
-  <button id="exitButton">&times;</button>
-  </div>
-   
-   <button id="resetButton">New Game</button>
-   
-   <div id="menu">
-  
-  <select id="boardSizeSelect" class="hidden">
-    <option value="4x4">4x4</option>
-    <option value="4x2">4x2</option>
-    <option value="2x2">2x2</option>
-  </select>
-  </div>
-  
+my-flipping-tile {
+    width: var(--tile-size);
+    height: var(--tile-size);
+}
+my-flipping-tile::part(tile-back) {
+    border-width: 5px;
+    background: url("${IMG_URLS[0]}") no-repeat center/80%, radial-gradient(#fff, #031a8b);
+}
 
-  <template id="tile-template">
-    <my-flipping-tile>
-      <img />
-    </my-flipping-tile>
-  </template>
-  <div id="game-board">
-  </div>
-
+    </style>
+<div id="Window">
+   <div id="dragHandle">
+      <button id="exitButton">&times;</button>
    </div>
-
-     
+   <button id="resetButton">New Game</button>
+   <div id="menu">
+      <select id="boardSizeSelect" class="hidden">
+         <option value="4x4">4x4</option>
+         <option value="4x2">4x2</option>
+         <option value="2x2">2x2</option>
+      </select>
+   </div>
+   <template id="tile-template">
+      <my-flipping-tile>
+         <img />
+      </my-flipping-tile>
+   </template>
+   <div id="game-board">
+   </div>
+</div>
 `
 
 /**

@@ -18,8 +18,34 @@ self.addEventListener('install', event => {
     return cache.addAll([
       'index.html',
       'css/styles.css',
-      'js/index.js'
-
+      'js/index.js',
+      'js/components/customApp/images/magnifying-glass.png',
+      'js/components/customApp/images/position.png',
+      'js/components/customApp/images/error.png',
+      'js/components/customApp/images/snowing.png',
+      'js/components/customApp/images/cloud.png',
+      'js/components/customApp/images/cloudy-day.png',
+      'js/components/customApp/images/droplet.png',
+      'js/components/customApp/images/humidity.png',
+      'js/components/customApp/images/rain-drops.png',
+      'js/components/customApp/images/raining.png',
+      'js/components/customApp/images/snowflake.png',
+      'js/components/customApp/images/snowing.png',
+      'js/components/customApp/images/sun.png',
+      'js/components/customApp/images/wind.png',
+      'js/components/memoryGame/images/0.png',
+      'js/components/memoryGame/images/1.png',
+      'js/components/memoryGame/images/2.png',
+      'js/components/memoryGame/images/3.png',
+      'js/components/memoryGame/images/4.png',
+      'js/components/memoryGame/images/5.png',
+      'js/components/memoryGame/images/6.png',
+      'js/components/memoryGame/images/7.png',
+      'js/components/memoryGame/images/8.png',
+      'js/components/messageApp/images/cyberpunk.png',
+      'js/components/messageApp/images/encrypted-data.png',
+      'js/components/messageApp/images/open-data.png',
+      'js/components/messageApp/images/safe.png'
     ])
   }
   event.waitUntil(cacheAssets())
