@@ -1,4 +1,4 @@
-const version = '1.0.0'
+const version = '1.1.0'
 
 self.addEventListener('install', event => {
   console.log('ServiceWorker: Installed version ', version)
@@ -30,7 +30,6 @@ self.addEventListener('install', event => {
       'js/components/customApp/images/rain-drops.png',
       'js/components/customApp/images/raining.png',
       'js/components/customApp/images/snowflake.png',
-      'js/components/customApp/images/snowing.png',
       'js/components/customApp/images/sun.png',
       'js/components/customApp/images/wind.png',
       'js/components/memoryGame/images/0.png',
