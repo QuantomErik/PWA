@@ -12,9 +12,7 @@
     "lint:fix": "npx eslint ./src --fix || exit 0"
   },
   "contributors": [
-    "Johan Leitet <johan.leitet@lnu.se>",
-    "Mats Loock <mats.loock@lnu.se>",
-    "// TODO: YOUR NAME <YOUR EMAIL>"
+    "Erik Yang <erikyang@hotmail.com>"
   ],
   "license": "MIT",
   "private": true,
