@@ -7,7 +7,7 @@
     "description": "PWA including a dock, a chat, a memory game and a weather app.",
     "icons": [
       {
-        "src": "images/egg192.png",
+        "src": "./src/images/egg192.png",
         "sizes": "192x192",
         "type": "image/png"
       },

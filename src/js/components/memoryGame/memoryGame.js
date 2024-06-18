@@ -200,6 +200,7 @@ customElements.define('memory-game',
       this.#controller = new AbortController()
     }
 
+
     /**
      * Called after the element is inserted into the DOM.
      */

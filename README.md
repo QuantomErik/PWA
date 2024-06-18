@@ -1,88 +1,106 @@
-# Personal Web Desktop (PWD)
+# QuantumApplication
 
-## Introduction
+## Overview
 
-In this examination assignment, you will focus on building a single-page application (SPA) with chat integration against a web socket server. This assignment's backend (server-side code) will be given, and your assignment is to write the client-side code.
+QuantumApplication is a Progressive Web App (PWA) that includes a dock, a chat application, a memory game, and a weather application. This project showcases a multi-functional PWA with a focus on interactive and dynamic user interfaces.
 
-In this assignment, you are supposed to build a "Personal Web Desktop" (PWD). First of all, have a look at this recording to get a better view of the assignment.
+## Features
 
-[Demo - Personal Web Desktop](https://youtu.be/gNcMvPCyHC0)
+- **Dock**: A floating dock for quick access to different applications.
+- **Chat Application**: A real-time chat application with optional message encryption.
+- **Memory Game**: A classic memory game with adjustable board sizes.
+- **Weather Application**: A weather forecast application with geolocation support and dynamic weather icons.
 
-## The assignment
+## Components
 
-The assignment can be divided into the PWD, the memory sub-application, the messages sub-application, and the custom sub-application.
+### customApp.js
 
-## 1. The PWD (#1, #2, #3, #4, #5, #6)
+This file contains the weather application logic. It fetches weather data using the OpenWeatherMap API and displays it with appropriate icons.
 
-The PWD application is the main application in which the smaller applications live. This part will have a "desktop-like" feeling (#1) with a dock (#3) in which the sub-applications (#2) icons will be presented to the user. This application **should** be constructed as a SPA application (#6), and it is rewarding to create it as a PWA (progressive web application) with offline capabilities.
+- **Weather Icons**: 
+  - Magnifying glass: `images/magnifying-glass.png`
+  - Position: `images/position.png`
+  - Error: `images/error.png`
+  - Snow: `images/snowing.png`
+  - Clouds: `images/cloud.png`
+  - Mist: `images/rain-drops.png`
+  - Haze: `images/cloudy-day.png`
+  - Clear: `images/sun.png`
+  - Rain: `images/raining.png`
+  - Sunny: `images/sun.png`
+  - Wind: `images/wind.png`
+  - Humidity: `images/droplet.png`
 
-A user must be able to open multiple instances of the same sub-application and multiple different sub-applications at once (#5). The sub-applications in the PWD should be draggable using the mouse. It should be possible to place a sub-application on top of another sub-application. When the user gives a sub-application focus, it must be placed in front of other sub-applications. The user should be able to close the sub-applications (#4).
+### dock.jsx
 
-The PWD application should be extended with at least one additional custom feature (#2).
+This component is responsible for the dock interface, allowing users to launch different applications (memory game, chat app, and weather app).
 
-## 2. The Memory sub-app (#7, #8)
+- **Dock Icons**:
+  - Memory Game: `images/memory-game.png`
+  - Chat: `images/chat-box.png`
+  - Weather: `images/weather-app.png`
 
-This sub-application is a simple [memory game](https://en.wikipedia.org/wiki/Concentration_(card_game)).
+### memorygame.js
 
-Several pairs of tiles are placed face-down in a grid in a memory game. The point of the game is to flip over tiles and match the pairs together. If the images on the facing tiles match, the matching tiles are removed. The tiles are flipped back face down if the images do not match. The object of the game is to find all pairs. The game is over when all the tiles are gone.
+This file contains the logic for the memory game. It includes dynamic board sizes and an interactive UI.
 
-The Memory sub-app should be extended with at least one additional custom feature (#8).
+- **Game Images**: 
+  - 0.png to 8.png in `images/`
 
-For a complete list of requirements, refer to #7.
+### messageapp.js
 
-## 3. The Messages sub-app (#9, #10)
+The chat application supports real-time messaging and optional message encryption using CryptoJS.
 
-This sub-application is a course-wide message chat using Web Sockets. This application is a regular message client like WhatsApp, Signal, FB Messenger, or iMessage.
+- **Chat Icons**:
+  - Open Data: `images/open-data.png`
+  - Encrypted Data: `images/encrypted-data.png`
 
-The Messages sub-app should be extended with at least one additional custom feature (#10).
+### myflippingtile.js
 
-For a complete list of requirements, refer to #9.
+Defines the custom `my-flipping-tile` element used in the memory game.
 
-## 4. The Custom sub-app
+### websocket.js
 
-As a third application, you are supposed to let your creativity come into play. Think of an application that you want to create and do that as your third application! Why not use this opportunity to try out some of the APIs in the browser that we still have not used?
+Handles the WebSocket connection for the chat application, ensuring real-time communication.
 
-To fulfill this part of the application, you should create an Issue describing your sub-application in the same way the Memory and Messages sub-applications are described (preferably before coding the sub-app). Make sure to link this issue under "Student-defined requirements" in the submission report.
+### index.js
 
-- Question: "Is it okay to just create a simple "about" application with some text?"
-- Answer: Yes. However, one of the grading criteria for this assignment will be how well you can adapt to using APIs that you have not yet used in the course.
+The main entry point of the application. It initializes the dock and handles application window creation.
 
-## Requirements for a passing grade
+### manifest.json
 
-Read [all application requirements](../../issues/). This includes: (#1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17, #18).
+Defines the PWA's manifest, including metadata like name, icons, and start URL.
 
-In this assignment, you are required to close issues and tasks ([ ]) that you implement. You are also required to create your issues (and close them) for added functionality.
+### serviceworker.js
 
-## Requirements for a higher grade
+A service worker that handles caching, fetch events, and push notifications to ensure offline functionality and improved performance.
 
-To qualify for a higher grade, the application must meet additional requirements. 
+## Getting Started
 
-1. All requirements for a passing grade must be met, #1 to #18.
-2. PWD should be a progressive web application (PWA), #19.
-3. Overall high quality of components and their dependencies, #20.
+To get started with QuantumApplication, follow these steps:
 
-## Extending the assignment
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/QuantomErik/PWA.git
+   cd PWA
 
-This assignment is very flexible for you to extend and add extra features to, and the course management invites you to do so! To make sure that the examinator notices the feature, please create a use case (just like the other issues) as an issue in which you describe the feature. Add the issue to the "Student defined requirements" list in the submission report with a short comment describing the issue, like "Offline support."
+2. **Install dependencies**:
+   npm install
 
-### Example of extensions:
+3. **Run the application**:
+   npm start
 
-- Lazy loading. Why load needed sub-apps before the user clicks on an icon? (mandatory for a higher grade)
-- Offline support (with service workers). (mandatory for a higher grade)
-- Save the state of all windows and their positions when exiting the app.
-- Encrypted message application.
-- Emoji-enabled message application.
-- Multiplayer Memory with game data synced over the chat.
-- Video recording and or streaming using WebRTC and the MediaStream Recording API.
-- Make the app installable by adding a .webmanifest-file. (mandatory for a higher grade)
+4. **Open the application**:
+   Open your browser and navigate to http://localhost:3000.
 
-## Altering the requirements
+### Usage
+  - Use the dock on the right side of the screen to launch the Memory Game, Chat App, or Weather App.
+  - In the chat application, toggle the encryption checkbox to enable or disable message encryption.
+  - Use the search bar in the weather application to find weather information for different cities or use geolocation.
 
-Suppose some requirements block your possibility of extending the application as you would like. In that case, it is often okay to skip or alter some requirements in the assignment as long as you do not make the assignment easier to solve or ignore central goals in the course, like not implementing web sockets.
+### Acknowledgements
+  - Weather data provided by OpenWeatherMap.
+  - Icons and images used in the project are from various free resources.
 
-### What you need to do before side-stepping any requirements:
-
-- When in doubt, contact the course management for a blessing.
-- Add a comment next to the side-stepped issue in the submission report.
-- Do not close the issue or task that is not implemented.
-- If the feature is substantial, add it as a new issue and link it in the submission report.
+### Author
+QuantumApplication is developed by Erik Yang](erikyang@hotmail.com).

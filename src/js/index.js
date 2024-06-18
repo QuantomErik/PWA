@@ -1,5 +1,6 @@
 import './components/dock/index.js'
 
+
 /**
  * The main script file of the application. This script is responsible for creating a dock and managing the creation of different app windows (like
  * message app, memory game, and custom app) on the screen. It also handles the registration of a service worker for the application.

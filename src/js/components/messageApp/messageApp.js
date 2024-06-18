@@ -228,9 +228,29 @@ customElements.define('message-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+
       this.#userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
       this.#secretKey = config.secretKey
       this.#controller = new AbortController()
+
+      this.messageContainer = this.shadowRoot.querySelector('#messageContainer')
+      this.chatInputContainer = this.shadowRoot.querySelector('#chatInputContainer')
+      this.messageInput = this.shadowRoot.querySelector('#messageInput')
+      this.sendMessageButton = this.shadowRoot.querySelector('#sendMessageButton')
+
+      this.chatWindow = this.shadowRoot.querySelector('#chatWindow')
+      this.usernameModal = this.shadowRoot.querySelector('#usernameModal')
+      this.submitButton = this.shadowRoot.querySelector('#usernameSubmit')
+      this.input = this.shadowRoot.querySelector('#usernameInput')
+      this.usernameForm = this.shadowRoot.querySelector('#usernameForm')
+
+      this.isDragging = false
+      this.offsetX = 0
+      this.offsetY = 0
+
+      this.userId = 'user-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
+
+      this.secretKey = 'ey222ci'
     }
 
     /**
